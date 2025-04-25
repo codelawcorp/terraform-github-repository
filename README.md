@@ -1,5 +1,5 @@
 # README
-This is a repo template 👨🏼‍🔬
+This is a reusable Terraform module for creating github repo and related configurations.
 
 ## Description 🤝
 
