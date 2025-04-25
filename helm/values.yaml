@@ -1,0 +1,201 @@
+
+global: 
+  datadog:
+    enabled: false
+## Global values that can be specified here and be applied to all charts:
+  deployment:
+    image:
+      repository: ""
+      tag: latest
+    podLabels: {}  # for monitoring and logging
+  configMap:
+    data: {}
+  externalSecret:
+    awsSecrets:
+      mapping: {}
+      prefix: ""
+    awsSsm:
+      mapping: {}
+      prefix: ""
+
+
+helm-generic-chart: # or alias
+
+  nameOverride: "" # Takes precedence over .Chart.Name or dependencies[].alias (when this is a subchart).  Impacts resources' `app.kubernetes.io/name` labels.
+  fullnameOverride: "" #   If non-empty string, MUST BE UNIQUE ACROSS ALL CHARTS IN THE KUBERNETES CLUSTER. Overrides  .Release.Name . Useful with subcharts. This will become a name for every resource created by the chart if non-empty.
+
+  component: "" # useful when this is a subchart
+
+  deployment: # Currently supports only one container per pod.
+    annotations: {}
+      # link.argocd.argoproj.io/external-link: <URL> # A nice feature of ArgoCD https://argo-cd.readthedocs.io/en/stable/user-guide/external-url/
+    podLabels: {} # for monitoring and logging
+    replicas: 1
+    minReadySeconds: 0 # Kubernetes default is 0
+    progressDeadlineSeconds: 300 # Kubernetes defaul to 600s.
+    revisionHistoryLimit: 3
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        # When useing percentage Kubernetes rounds up to the nearest whole number. Edge example: with 1 deployment replica, maxSurge 0%  becomes 0 replicas  and 1% becomes 1 replica.
+        maxUnavailable: "10%" # Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).  
+        maxSurge: "50%" # Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+    image:
+      repository: "" # example 583764586586.dkr.ecr.ca-central-1.amazonaws.com/my-app
+      pullPolicy: ""
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+    imagePullSecrets: []
+    resources: {}
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+
+    command: []
+    args: [] 
+
+    livenessProbe:  {}
+    readinessProbe: {}
+    
+
+    nodeSelector: {}
+    tolerations: []
+
+    affinity: {}
+      # nodeAffinity:
+      #   requiredDuringSchedulingIgnoredDuringExecution:
+      #     nodeSelectorTerms:
+      #       - matchExpressions:
+      #           - key: "disktype"
+      #             operator: "In"
+      #             values:
+      #               - "ssd"
+
+
+    podSecurityContext: 
+      runAsNonRoot: true
+      runAsUser: 1000
+      fsGroup: 2000
+
+
+    securityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+        add:
+          - NET_BIND_SERVICE
+
+    podAnnotations: {}
+      # https://docs.datadoghq.com/containers/kubernetes/tag/?tab=datadogoperator#tag-autodiscovery
+      # No need to specify tags.datadoghq.com/version - it is automatically added by the chart
+
+    migrationsJob: # This is a migrations job which runs on `pre-install,pre-upgrade`. The template pod is almost a copy of deployment.
+      create: false
+      image:
+        repostiory: ""
+        tag: ""
+      command: []
+      args: []
+      annotations: {}
+
+
+  autoscaling:
+    create: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  serviceAccount: # Service account can be easily "stolen" when deployed in a shared namespace with other applications. 
+    create: true 
+    name: "" # If not set and create is true, a name is generated using the fullname template
+    annotations: {}
+    rbac:
+      rules: []
+  configMap:
+    # Specifies whether a service account should be created
+    create: true
+    name: "" # If not set and create is true, a name is generated using the fullname template
+    annotations: {}
+    data: {} # Only strins. Quote integers and booleans.
+      # some-key: "some-value"
+    binaryData: {}
+
+
+  externalSecret:
+    awsSecrets:
+      create: false  # Check security section in the README.md before using this for sensitive data
+      name: ""
+      annotations:
+        argocd.argoproj.io/sync-wave: "-1"
+      mountPath: "" # leave empty to mount as env vars
+      prefix: ""
+      secretStoreRef: 
+        kind: ClusterSecretStore  # or SecretStore
+        name: aws-secrets-manager   # must be created in advance
+      mapping: {}
+        # PGDATABASE: 
+        #   key: rds-credentials
+        #   property: dbname
+        # PGHOST: 
+        #   key: rds-credentials
+        #   property:  host
+        # PGPASSWORD: 
+        #   key: rds-credentials
+        #   property: password
+        # PGUSER: 
+        #   key: rds-credentials
+        #   property: username
+    awsSsm:
+      create: false  # Check security section in the README.md before using this for sensitive data
+      name: ""
+      annotations:
+        argocd.argoproj.io/sync-wave: "-1"
+      mountPath: "" # leave empty to mount as env vars
+      prefix: ""
+      secretStoreRef: 
+        kind: ClusterSecretStore  # or SecretStore
+        name: aws-ssm-parameter-store   # must be created in advance
+      mapping: {}
+        # PLATFORM_BROKERS_HOSTS: 
+        #   key: /dataplatform/msk/hostname
+        #   property: "" # a key in the json value's object 
+    
+
+
+  service:
+    create: true
+    type: ClusterIP
+    port: 8080
+
+  ingress:
+    create: false
+    className: ""
+    annotations: {}
+      # alb.ingress.kubernetes.io/backend-protocol: HTTP
+      # alb.ingress.kubernetes.io/group.name: main
+      # alb.ingress.kubernetes.io/group.order: '1'
+      # alb.ingress.kubernetes.io/ip-address-type: ipv4
+      # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      # alb.ingress.kubernetes.io/load-balancer-name: main
+      # alb.ingress.kubernetes.io/scheme: internet-facing
+      # alb.ingress.kubernetes.io/ssl-redirect: '443'
+      # alb.ingress.kubernetes.io/success-codes: 200-307
+      # alb.ingress.kubernetes.io/target-type: ip
+    rules: {}
+      # - host: chart-example.local
+      #   paths:
+      #     - path: /
+      #       pathType: Prefix
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+
