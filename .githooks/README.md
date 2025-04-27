@@ -4,3 +4,7 @@
 `git config core.hooksPath .githooks`
 
 It is a good idea to include unit tests into `pre-commit` hook.  
+
+### Gitleaks
+If false positive, add `gitleaks:allow` comment next to exclude it.
+
