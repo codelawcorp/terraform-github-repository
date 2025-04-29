@@ -11,17 +11,25 @@ resource "github_repository" "this" {
   has_wiki      = var.has_wiki
   has_downloads = var.has_downloads
 
-  allow_merge_commit     = var.allow_merge_commit
-  merge_commit_title     = var.merge_commit_title
-  allow_auto_merge        = var.allow_auto_merge
-  allow_squash_merge     = var.allow_squash_merge
-  squash_merge_commit_title = var.squash_merge_commit_title
+  allow_merge_commit          = var.allow_merge_commit
+  merge_commit_title          = var.merge_commit_title
+  merge_commit_message        = var.merge_commit_message
+  allow_auto_merge            = var.allow_auto_merge
+  allow_squash_merge          = var.allow_squash_merge
+  squash_merge_commit_title   = var.squash_merge_commit_title
   squash_merge_commit_message = var.squash_merge_commit_message
-  allow_rebase_merge     = var.allow_rebase_merge
-  delete_branch_on_merge = var.delete_branch_on_merge
+  allow_rebase_merge          = var.allow_rebase_merge
+  delete_branch_on_merge      = var.delete_branch_on_merge
 
   is_template = var.is_template
   archived    = var.archived
+
+  web_commit_signoff_required = var.web_commit_signoff_required
+  vulnerability_alerts        = var.vulnerability_alerts
+  auto_init                   = var.auto_init
+  gitignore_template         = var.gitignore_template
+  license_template           = var.license_template
+  archive_on_destroy         = var.archive_on_destroy
 
   dynamic "template" {
     for_each = var.template != null ? [var.template] : []

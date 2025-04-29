@@ -77,6 +77,16 @@ variable "merge_commit_title" {
   }
 }
 
+variable "merge_commit_message" {
+  description = "The format of the commit message body when using merge commit. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+  type        = string
+  default     = "COMMIT_MESSAGES"
+  validation {
+    condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.merge_commit_message)
+    error_message = "merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+  }
+}
+
 variable "allow_auto_merge" {
   description = "Set to true to allow auto-merging pull requests on the repository"
   type        = bool
@@ -139,6 +149,42 @@ variable "archived" {
   default     = false
 }
 
+variable "archive_on_destroy" {
+  description = "Set to true to archive the repository instead of deleting it when the resource is destroyed"
+  type        = bool
+  default     = true
+}
+
+variable "web_commit_signoff_required" {
+  description = "Require contributors to sign off on web-based commits"
+  type        = bool
+  default     = false
+}
+
+variable "vulnerability_alerts" {
+  description = "Set to true to enable security alerts for vulnerable dependencies"
+  type        = bool
+  default     = false
+}
+
+variable "auto_init" {
+  description = "Set to true to produce an initial commit in the repository"
+  type        = bool
+  default     = false
+}
+
+variable "gitignore_template" {
+  description = "Use the name of the template without the extension. For example, 'Haskell'"
+  type        = string
+  default     = null
+}
+
+variable "license_template" {
+  description = "Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0'"
+  type        = string
+  default     = null
+}
+
 variable "pages" {
   description = "The repository's GitHub Pages configuration"
   type = object({
@@ -189,11 +235,6 @@ variable "branches" {
       dismissal_restrictions          = optional(list(string))
       require_code_owner_reviews      = optional(bool)
       required_approving_review_count = optional(number)
-    }))
-    restrictions = optional(object({
-      users = optional(list(string))
-      teams = optional(list(string))
-      apps  = optional(list(string))
     }))
   }))
   default = []
