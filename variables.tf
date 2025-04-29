@@ -88,12 +88,12 @@ variable "merge_commit_message" {
 }
 
 variable "merge_commit_validation" {
-  type = string
+  type    = string
   default = "_placeholder_for_validation"
   validation {
     condition = contains([
       "PR_TITLE:PR_BODY",
-      "PR_TITLE:BLANK", 
+      "PR_TITLE:BLANK",
       "MERGE_MESSAGE:PR_TITLE",
       var.merge_commit_validation
     ], "${var.merge_commit_title}:${var.merge_commit_message}")
@@ -241,10 +241,10 @@ variable "security_and_analysis" {
 variable "branches" {
   description = "List of branch configurations to create"
   type = list(object({
-    name           = string
-    default = optional(bool)
-    source_branch  = optional(string)
-    source_sha     = optional(string)
+    name          = string
+    default       = optional(bool)
+    source_branch = optional(string)
+    source_sha    = optional(string)
     protection = optional(object({
       enforce_admins = optional(bool)
       required_status_checks = optional(object({

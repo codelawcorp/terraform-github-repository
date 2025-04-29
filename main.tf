@@ -15,10 +15,10 @@ resource "github_repository" "this" {
   has_wiki      = var.has_wiki
   has_downloads = var.has_downloads
 
-  allow_merge_commit          = var.allow_merge_commit
-  merge_commit_title          = var.merge_commit_title
-  merge_commit_message        = var.merge_commit_message
-  
+  allow_merge_commit   = var.allow_merge_commit
+  merge_commit_title   = var.merge_commit_title
+  merge_commit_message = var.merge_commit_message
+
   allow_auto_merge            = var.allow_auto_merge
   allow_squash_merge          = var.allow_squash_merge
   squash_merge_commit_title   = var.squash_merge_commit_title
@@ -83,7 +83,7 @@ resource "github_repository" "this" {
 }
 
 resource "github_branch_default" "this" {
-  count = var.auto_init == false || length(var.branches) > 0 ? 1 : 0
+  count      = var.auto_init == false || length(var.branches) > 0 ? 1 : 0
   repository = github_repository.this.name
   branch     = var.default_branch
 }
@@ -95,7 +95,7 @@ resource "github_branch" "this" {
   branch        = each.value.name
   source_branch = coalesce(each.value.source_branch, github_repository.this.default_branch)
   source_sha    = each.value.source_sha
-  
+
   depends_on = [github_branch_default.this]
 
 }

@@ -64,9 +64,9 @@ module "github_repository" {
 
 
 module "another_repo" {
-  source = "../"
-  name   = "test-another-repo"
+  source             = "../"
+  name               = "test-another-repo"
   archive_on_destroy = false
-  auto_init = true
+  auto_init          = true
 }
 
