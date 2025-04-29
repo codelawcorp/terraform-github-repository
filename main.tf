@@ -73,8 +73,8 @@ resource "github_branch_default" "this" {
 resource "github_branch" "this" {
   for_each = { for branch in var.branches : branch.name => branch }
 
-  repository = github_repository.this.name
-  branch     = each.value.name
+  repository    = github_repository.this.name
+  branch        = each.value.name
   source_branch = each.value.source_branch
   source_sha    = each.value.source_sha
 }
@@ -82,9 +82,9 @@ resource "github_branch" "this" {
 resource "github_branch_protection" "this" {
   for_each = { for branch in var.branches : branch.name => branch if branch.enforce_admins != null || branch.required_status_checks != null || branch.required_pull_request_reviews != null || branch.restrictions != null }
 
-  repository_id       = github_repository.this.node_id
-  pattern            = each.value.name
-  enforce_admins     = each.value.enforce_admins
+  repository_id  = github_repository.this.node_id
+  pattern        = each.value.name
+  enforce_admins = each.value.enforce_admins
 
   dynamic "required_status_checks" {
     for_each = each.value.required_status_checks != null ? [each.value.required_status_checks] : []
@@ -98,20 +98,20 @@ resource "github_branch_protection" "this" {
     for_each = each.value.required_pull_request_reviews != null ? [each.value.required_pull_request_reviews] : []
     content {
       dismiss_stale_reviews           = required_pull_request_reviews.value.dismiss_stale_reviews
-      restrict_dismissals            = required_pull_request_reviews.value.restrict_dismissals
-      dismissal_restrictions         = required_pull_request_reviews.value.dismissal_restrictions
-      require_code_owner_reviews     = required_pull_request_reviews.value.require_code_owner_reviews
+      restrict_dismissals             = required_pull_request_reviews.value.restrict_dismissals
+      dismissal_restrictions          = required_pull_request_reviews.value.dismissal_restrictions
+      require_code_owner_reviews      = required_pull_request_reviews.value.require_code_owner_reviews
       required_approving_review_count = required_pull_request_reviews.value.required_approving_review_count
     }
   }
 
-#   dynamic "restrictions" {
-#     for_each = each.value.restrictions != null ? [each.value.restrictions] : []
-#     content {
-#       users = restrictions.value.users
-#       teams = restrictions.value.teams
-#       apps  = restrictions.value.apps
-#     }
-#   }
+  #   dynamic "restrictions" {
+  #     for_each = each.value.restrictions != null ? [each.value.restrictions] : []
+  #     content {
+  #       users = restrictions.value.users
+  #       teams = restrictions.value.teams
+  #       apps  = restrictions.value.apps
+  #     }
+  #   }
 }
 

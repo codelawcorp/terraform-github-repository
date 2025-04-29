@@ -139,19 +139,19 @@ variable "security_and_analysis" {
 variable "branches" {
   description = "List of branch configurations to create"
   type = list(object({
-    name                = string
-    source_branch      = optional(string)
-    source_sha         = optional(string)
-    enforce_admins     = optional(bool)
+    name           = string
+    source_branch  = optional(string)
+    source_sha     = optional(string)
+    enforce_admins = optional(bool)
     required_status_checks = optional(object({
       strict   = optional(bool)
       contexts = optional(list(string))
     }))
     required_pull_request_reviews = optional(object({
       dismiss_stale_reviews           = optional(bool)
-      restrict_dismissals            = optional(bool)
-      dismissal_restrictions         = optional(list(string))
-      require_code_owner_reviews     = optional(bool)
+      restrict_dismissals             = optional(bool)
+      dismissal_restrictions          = optional(list(string))
+      require_code_owner_reviews      = optional(bool)
       required_approving_review_count = optional(number)
     }))
     restrictions = optional(object({

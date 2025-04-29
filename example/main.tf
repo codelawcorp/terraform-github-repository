@@ -35,31 +35,31 @@ module "github_repository" {
 
   branches = [
     {
-        name = "gh-pages"
+      name = "gh-pages"
     }
   ]
 
-#   # GitHub Pages configuration (optional)
-#   pages = {
-#     source = {
-#       branch = "gh-pages"
-#       path   = "/"
-#     }
-#   }
+  #   # GitHub Pages configuration (optional)
+  #   pages = {
+  #     source = {
+  #       branch = "gh-pages"
+  #       path   = "/"
+  #     }
+  #   }
 
   # Security and analysis features (optional)
-#   security_and_analysis = {
-#     advanced_security = {
-#       status = "enabled"
-#     }
-#     secret_scanning = {
-#       status = "enabled"
-#     }
-#     secret_scanning_push_protection = {
-#       status = "enabled"
-#     }
-#   }
-} 
+  #   security_and_analysis = {
+  #     advanced_security = {
+  #       status = "enabled"
+  #     }
+  #     secret_scanning = {
+  #       status = "enabled"
+  #     }
+  #     secret_scanning_push_protection = {
+  #       status = "enabled"
+  #     }
+  #   }
+}
 
 
 module "another_repo" {
