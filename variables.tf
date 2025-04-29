@@ -70,7 +70,7 @@ variable "allow_merge_commit" {
 variable "merge_commit_title" {
   description = "The format of the commit message when using merge commit. Can be one of: PR_TITLE, MERGE_MESSAGE"
   type        = string
-  default     = "MERGE_MESSAGE"
+  default     = "PR_TITLE"
   validation {
     condition     = contains(["PR_TITLE", "MERGE_MESSAGE"], var.merge_commit_title)
     error_message = "merge_commit_title must be one of: PR_TITLE, MERGE_MESSAGE"
@@ -80,12 +80,27 @@ variable "merge_commit_title" {
 variable "merge_commit_message" {
   description = "The format of the commit message body when using merge commit. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   type        = string
-  default     = "COMMIT_MESSAGES"
+  default     = "PR_BODY"
   validation {
     condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.merge_commit_message)
     error_message = "merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   }
 }
+
+variable "merge_commit_validation" {
+  type = string
+  default = "_placeholder_for_validation"
+  validation {
+    condition = contains([
+      "PR_TITLE:PR_BODY",
+      "PR_TITLE:BLANK", 
+      "MERGE_MESSAGE:PR_TITLE",
+      var.merge_commit_validation
+    ], "${var.merge_commit_title}:${var.merge_commit_message}")
+    error_message = "Invalid combination of merge_commit_title and merge_commit_message. Valid combinations are: PR_TITLE and PR_BODY, PR_TITLE and BLANK, MERGE_MESSAGE and PR_TITLE"
+  }
+}
+
 
 variable "allow_auto_merge" {
   description = "Set to true to allow auto-merging pull requests on the repository"
@@ -141,6 +156,11 @@ variable "default_branch" {
   description = "The name of the default branch of the repository"
   type        = string
   default     = "prod"
+
+  validation { // TODO / review
+    condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
+    error_message = "The default_branch must be included in the branches list if branches are defined and template is not used"
+  }
 }
 
 variable "archived" {
@@ -170,7 +190,7 @@ variable "vulnerability_alerts" {
 variable "auto_init" {
   description = "Set to true to produce an initial commit in the repository"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "gitignore_template" {
@@ -222,19 +242,22 @@ variable "branches" {
   description = "List of branch configurations to create"
   type = list(object({
     name           = string
+    default = optional(bool)
     source_branch  = optional(string)
     source_sha     = optional(string)
-    enforce_admins = optional(bool)
-    required_status_checks = optional(object({
-      strict   = optional(bool)
-      contexts = optional(list(string))
-    }))
-    required_pull_request_reviews = optional(object({
-      dismiss_stale_reviews           = optional(bool)
-      restrict_dismissals             = optional(bool)
-      dismissal_restrictions          = optional(list(string))
-      require_code_owner_reviews      = optional(bool)
-      required_approving_review_count = optional(number)
+    protection = optional(object({
+      enforce_admins = optional(bool)
+      required_status_checks = optional(object({
+        strict   = optional(bool)
+        contexts = optional(list(string))
+      }))
+      required_pull_request_reviews = optional(object({
+        dismiss_stale_reviews           = optional(bool)
+        restrict_dismissals             = optional(bool)
+        dismissal_restrictions          = optional(list(string))
+        require_code_owner_reviews      = optional(bool)
+        required_approving_review_count = optional(number)
+      }))
     }))
   }))
   default = []

@@ -1,7 +1,7 @@
 module "github_repository" {
   source = "../"
 
-  name        = "test-example-repo"
+  name        = "test-example-repo-23"
   description = "An example repository created using Terraform"
   visibility  = "private"
 
@@ -23,7 +23,7 @@ module "github_repository" {
 
   # Repository settings
   is_template    = false
-  default_branch = "main"
+  default_branch = "prod"
   archived       = false
 
   # Template configuration (if using a template repository)
@@ -59,11 +59,14 @@ module "github_repository" {
   #       status = "enabled"
   #     }
   #   }
+  archive_on_destroy = false
 }
 
 
 module "another_repo" {
   source = "../"
   name   = "test-another-repo"
+  archive_on_destroy = false
+  auto_init = true
 }
 
