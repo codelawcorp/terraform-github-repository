@@ -22,11 +22,7 @@ variable "template" {
     repository           = string
     include_all_branches = bool
   })
-  default = {
-    owner                = ""
-    repository           = ""
-    include_all_branches = false
-  }
+  default = null
 }
 
 variable "homepage_url" {
@@ -98,7 +94,7 @@ variable "is_template" {
 variable "default_branch" {
   description = "The name of the default branch of the repository"
   type        = string
-  default     = "main"
+  default     = "prod"
 }
 
 variable "archived" {
@@ -116,6 +112,12 @@ variable "pages" {
     })
   })
   default = null
+  validation {
+    condition = var.pages == null || (try(var.pages.source.branch, "") == var.default_branch || (
+      length([for branch in var.branches : branch.name if branch.name == try(var.pages.source.branch, "")]) > 0
+    ))
+    error_message = "The GitHub Pages branch must be either the default branch or one of the branches defined in the branches variable."
+  }
 }
 
 variable "security_and_analysis" {
@@ -132,4 +134,31 @@ variable "security_and_analysis" {
     })
   })
   default = null
+}
+
+variable "branches" {
+  description = "List of branch configurations to create"
+  type = list(object({
+    name                = string
+    source_branch      = optional(string)
+    source_sha         = optional(string)
+    enforce_admins     = optional(bool)
+    required_status_checks = optional(object({
+      strict   = optional(bool)
+      contexts = optional(list(string))
+    }))
+    required_pull_request_reviews = optional(object({
+      dismiss_stale_reviews           = optional(bool)
+      restrict_dismissals            = optional(bool)
+      dismissal_restrictions         = optional(list(string))
+      require_code_owner_reviews     = optional(bool)
+      required_approving_review_count = optional(number)
+    }))
+    restrictions = optional(object({
+      users = optional(list(string))
+      teams = optional(list(string))
+      apps  = optional(list(string))
+    }))
+  }))
+  default = []
 }
