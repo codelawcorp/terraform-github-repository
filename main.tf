@@ -12,7 +12,11 @@ resource "github_repository" "this" {
   has_downloads = var.has_downloads
 
   allow_merge_commit     = var.allow_merge_commit
+  merge_commit_title     = var.merge_commit_title
+  allow_auto_merge        = var.allow_auto_merge
   allow_squash_merge     = var.allow_squash_merge
+  squash_merge_commit_title = var.squash_merge_commit_title
+  squash_merge_commit_message = var.squash_merge_commit_message
   allow_rebase_merge     = var.allow_rebase_merge
   delete_branch_on_merge = var.delete_branch_on_merge
 

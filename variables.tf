@@ -64,13 +64,49 @@ variable "has_downloads" {
 variable "allow_merge_commit" {
   description = "Set to false to disable merge commits on the repository"
   type        = bool
-  default     = true
+  default     = false
+}
+
+variable "merge_commit_title" {
+  description = "The format of the commit message when using merge commit. Can be one of: PR_TITLE, MERGE_MESSAGE"
+  type        = string
+  default     = "MERGE_MESSAGE"
+  validation {
+    condition     = contains(["PR_TITLE", "MERGE_MESSAGE"], var.merge_commit_title)
+    error_message = "merge_commit_title must be one of: PR_TITLE, MERGE_MESSAGE"
+  }
+}
+
+variable "allow_auto_merge" {
+  description = "Set to true to allow auto-merging pull requests on the repository"
+  type        = bool
+  default     = false
 }
 
 variable "allow_squash_merge" {
   description = "Set to false to disable squash merges on the repository"
   type        = bool
   default     = true
+}
+
+variable "squash_merge_commit_title" {
+  description = "The format of the commit message when using squash merge. Can be one of: PR_TITLE, COMMIT_OR_PR_TITLE"
+  type        = string
+  default     = "COMMIT_OR_PR_TITLE"
+  validation {
+    condition     = contains(["PR_TITLE", "COMMIT_OR_PR_TITLE"], var.squash_merge_commit_title)
+    error_message = "squash_merge_commit_title must be one of: PR_TITLE, COMMIT_OR_PR_TITLE"
+  }
+}
+
+variable "squash_merge_commit_message" {
+  description = "The format of the commit message body when using squash merge. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+  type        = string
+  default     = "COMMIT_MESSAGES"
+  validation {
+    condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.squash_merge_commit_message)
+    error_message = "squash_merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+  }
 }
 
 variable "allow_rebase_merge" {
