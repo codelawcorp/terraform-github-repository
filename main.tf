@@ -17,7 +17,6 @@ resource "github_repository" "this" {
   delete_branch_on_merge = var.delete_branch_on_merge
 
   is_template    = var.is_template
-  default_branch = var.default_branch
   archived       = var.archived
 
   template {
@@ -61,4 +60,9 @@ resource "github_repository" "this" {
       }
     }
   }
+}
+
+resource "github_branch_default" "this" {
+  repository = github_repository.this.name
+  branch     = var.default_branch
 }
