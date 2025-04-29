@@ -3,8 +3,12 @@
 
 npx validate-branch-name -r '^(prod|stg|dev)$|^(feature|fix|hotfix)/.+$'
 
-# echo "formatting tf files"
-# cd $(git rev-parse --show-toplevel)
-# terraform validate  -chdir=terraform
-# terraform  fmt -write=true -recursive; git add . 
+echo "formatting tf files"
+
+echo "Formatting tf files"
+cd $(git rev-parse --show-toplevel)
+terraform fmt -check -recursive || (terraform fmt -write=true -recursive; exit 1) && echo "Files are well-formatted"
+
+terraform validate 
+
 gitleaks git --staged
