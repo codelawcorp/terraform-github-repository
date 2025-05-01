@@ -262,3 +262,8 @@ variable "branches" {
   }))
   default = []
 }
+
+variable "github_actions_variable" {
+  type    = map(string)
+  default = []
+}
