@@ -349,3 +349,22 @@ variable "enable_dependabot_security_updates" {
   type        = bool
   default     = true
 }
+
+variable "use_repository_topics_resource" {
+  description = "Whether to use github_repository_topics resource instead of setting topics in the github_repository resource. This is useful for managing topics separately."
+  type        = bool
+  default     = false
+}
+
+variable "webhooks" {
+  description = "List of webhook configurations to create for the repository"
+  type = list(object({
+    url          = string
+    content_type = string
+    secret       = optional(string)
+    insecure_ssl = optional(bool, false)
+    active       = optional(bool, true)
+    events       = list(string)
+  }))
+  default = []
+}

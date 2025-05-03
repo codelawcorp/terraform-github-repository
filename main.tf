@@ -8,7 +8,7 @@ resource "github_repository" "this" {
   visibility  = var.visibility
 
   homepage_url = var.homepage_url
-  topics       = var.topics
+  topics       = var.use_repository_topics_resource ? null : var.topics
 
   has_issues    = var.has_issues
   has_projects  = var.has_projects
@@ -176,7 +176,31 @@ resource "github_repository_dependabot_security_updates" "this" {
   count      = var.enable_dependabot_security_updates ? 1 : 0
   repository = github_repository.this.name
   enabled    = true
+}
 
+# Manage topics separately with github_repository_topics if use_repository_topics_resource is true
+# Otherwise topics are managed by the github_repository resource
+resource "github_repository_topics" "this" {
+  count      = var.use_repository_topics_resource ? 1 : 0
+  repository = github_repository.this.name
+  topics     = var.topics
+}
+
+# Create webhooks for the repository
+resource "github_repository_webhook" "this" {
+  for_each = { for idx, webhook in var.webhooks : idx => webhook }
+
+  repository = github_repository.this.name
+
+  configuration {
+    url          = each.value.url
+    content_type = each.value.content_type
+    secret       = each.value.secret
+    insecure_ssl = each.value.insecure_ssl
+  }
+
+  active = each.value.active
+  events = each.value.events
 }
 
 resource "github_actions_secret" "this" {

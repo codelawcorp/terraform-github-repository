@@ -125,6 +125,24 @@ module "github_repository" {
   # This also automatically enables vulnerability_alerts
   enable_dependabot_security_updates = true
 
+  # Use the dedicated github_repository_topics resource for topic management
+  use_repository_topics_resource = true
+
+  # Configure webhooks for the repository
+  webhooks = [
+    {
+      url          = "https://jenkins.example.com/github-webhook/"
+      content_type = "json"
+      events       = ["push", "pull_request"]
+    },
+    {
+      url          = "https://ci.example.com/webhook"
+      content_type = "form"
+      secret       = "secureSecret123"
+      events       = ["release"]
+    }
+  ]
+
   # Tag protections disabled temporarily due to bug
   # https://github.com/integrations/terraform-provider-github/issues/2477
   # tag_protections = [
@@ -183,6 +201,18 @@ module "another_repo" {
 
   # But still enable vulnerability alerts
   vulnerability_alerts = true
+
+  # Use built-in topics on the repository resource (default)
+  use_repository_topics_resource = false
+
+  # Configure a simple webhook
+  webhooks = [
+    {
+      url          = "https://notify.example.com/github"
+      content_type = "json"
+      events       = ["push"]
+    }
+  ]
 
   # Tag protections disabled temporarily due to bug
   # https://github.com/integrations/terraform-provider-github/issues/2477
