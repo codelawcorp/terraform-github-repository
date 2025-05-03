@@ -263,7 +263,11 @@ variable "branches" {
   default = []
 }
 
-variable "github_actions_variable" {
-  type    = map(string)
+variable "github_actions_variables" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
   default = []
+  description = "GitHub Actions variables to set on the repository"
 }

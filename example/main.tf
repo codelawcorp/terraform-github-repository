@@ -40,12 +40,12 @@ module "github_repository" {
   ]
 
   #   # GitHub Pages configuration (optional)
-    pages = {
-      source = {
-        branch = "gh-pages" # TODO / create pages branch if this is specified
-        path   = "/"
-      }
+  pages = {
+    source = {
+      branch = "gh-pages" # TODO / create pages branch if this is specified
+      path   = "/"
     }
+  }
 
   # Security and analysis features (optional)
   #   security_and_analysis = {
@@ -68,5 +68,12 @@ module "another_repo" {
   name               = "test-another-repo"
   archive_on_destroy = false
   auto_init          = true
+
+  github_actions_variables = [
+    {
+      name  = "TEST_VARIABLE"
+      value = "test-value"
+    }
+  ]
 }
 

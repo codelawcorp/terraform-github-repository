@@ -128,8 +128,8 @@ resource "github_branch_protection" "this" {
 }
 
 resource "github_actions_variable" "this" {
-  for_each      = var.github_actions_variable
+  for_each      = { for k, v in var.github_actions_variables : v.name => v }
   repository    = github_repository.this.name
   variable_name = each.key
-  value         = each.value
+  value         = each.value.value
 }
