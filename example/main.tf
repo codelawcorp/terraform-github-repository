@@ -39,13 +39,13 @@ module "github_repository" {
     }
   ]
 
-  #   # GitHub Pages configuration (optional)
-  pages = {
-    source = {
-      branch = "gh-pages" 
-      path   = "/"
-    }
-  }
+  # #   # GitHub Pages configuration (optional)
+  # pages = { // TODO / pages branch must exist at applytime / chicken-egg problem
+  #   source = {
+  #     branch = "gh-pages"
+  #     path   = "/"
+  #   }
+  # }
 
   # Security and analysis features (optional)
   #   security_and_analysis = {
@@ -64,20 +64,20 @@ module "github_repository" {
   environments = [
     {
       name = "prod"
-      deployment_branch_policy = {
-        protected_branches     = true
-        custom_branch_policies = false
-      }
       reviewers = {
         users = []
         teams = []
       }
+      protected        = true
+      # tag_pattern   = "v*"
     },
     {
       name = "stg"
       reviewers = {
         users = []
       }
+      protected        = true
+      # tag_pattern   = "stg-v*"
     }
   ]
 }
@@ -99,20 +99,20 @@ module "another_repo" {
   environments = [
     {
       name = "prod"
-      deployment_branch_policy = {
-        protected_branches     = true
-        custom_branch_policies = false
-      }
       reviewers = {
         users = []
         teams = []
       }
+      protected        = true
+      # tag_pattern   = "v*"
     },
     {
       name = "stg"
       reviewers = {
         users = []
       }
+      protected        = true
+      # tag_pattern   = "stg-v*"
     }
   ]
 }

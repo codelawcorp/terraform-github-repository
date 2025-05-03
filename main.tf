@@ -139,13 +139,11 @@ resource "github_repository_environment" "this" {
   environment = each.key
   repository  = github_repository.this.name
 
-  dynamic "deployment_branch_policy" {
-    for_each = each.value.deployment_branch_policy != null ? [each.value.deployment_branch_policy] : []
-    content {
-      protected_branches     = deployment_branch_policy.value.protected_branches
-      custom_branch_policies = deployment_branch_policy.value.custom_branch_policies
+
+    deployment_branch_policy {
+      protected_branches     = false //  Ignoring this setting. Some branch protection is not a green light for deployment.
+      custom_branch_policies = each.value.protected   // This means that the branch allows ataching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
     }
-  }
 
   dynamic "reviewers" {
     for_each = each.value.reviewers != null ? [each.value.reviewers] : []
@@ -155,3 +153,16 @@ resource "github_repository_environment" "this" {
     }
   }
 }
+resource "github_repository_environment_deployment_policy" "this" {
+  for_each = {
+    for env in var.environments : env.name => env
+    if env.protected == true
+  }
+
+  repository     = github_repository.this.name
+  environment    = each.key
+  branch_pattern = each.key
+
+  depends_on = [github_repository_environment.this]
+}
+
