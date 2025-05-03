@@ -143,6 +143,20 @@ module "github_repository" {
     }
   ]
 
+  # Add deploy keys to the repository
+  deploy_keys = [
+    {
+      title     = "CI Server"
+      key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC..."
+      read_only = true
+    },
+    {
+      title     = "Deploy Server"
+      key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD..."
+      read_only = false
+    }
+  ]
+
   # Tag protections disabled temporarily due to bug
   # https://github.com/integrations/terraform-provider-github/issues/2477
   # tag_protections = [
@@ -211,6 +225,15 @@ module "another_repo" {
       url          = "https://notify.example.com/github"
       content_type = "json"
       events       = ["push"]
+    }
+  ]
+
+  # Add a read-only deploy key
+  deploy_keys = [
+    {
+      title = "Read-only CI Key"
+      key   = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDH..."
+      # read_only defaults to true
     }
   ]
 

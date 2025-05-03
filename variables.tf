@@ -368,3 +368,13 @@ variable "webhooks" {
   }))
   default = []
 }
+
+variable "deploy_keys" {
+  description = "List of SSH deploy keys to add to the repository"
+  type = list(object({
+    title     = string
+    key       = string
+    read_only = optional(bool, true)
+  }))
+  default = []
+}

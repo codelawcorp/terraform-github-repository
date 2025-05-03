@@ -203,6 +203,16 @@ resource "github_repository_webhook" "this" {
   events = each.value.events
 }
 
+# Add deploy keys to the repository
+resource "github_repository_deploy_key" "this" {
+  for_each = { for idx, key in var.deploy_keys : idx => key }
+
+  repository = github_repository.this.name
+  title      = each.value.title
+  key        = each.value.key
+  read_only  = each.value.read_only
+}
+
 resource "github_actions_secret" "this" {
   for_each        = { for k, v in var.github_actions_secrets : v.name => v }
   repository      = github_repository.this.name
