@@ -182,7 +182,7 @@ variable "web_commit_signoff_required" {
 }
 
 variable "vulnerability_alerts" {
-  description = "Set to true to enable security alerts for vulnerable dependencies"
+  description = "Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable_dependabot_security_updates is true."
   type        = bool
   default     = false
 }
@@ -342,4 +342,10 @@ variable "custom_properties" {
     property_type  = optional(string, "string")
   }))
   default = []
+}
+
+variable "enable_dependabot_security_updates" {
+  description = "Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well."
+  type        = bool
+  default     = true
 }

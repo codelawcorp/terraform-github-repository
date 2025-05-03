@@ -122,6 +122,9 @@ module "github_repository" {
     }
   ]
 
+  # This also automatically enables vulnerability_alerts
+  enable_dependabot_security_updates = true
+
   # Tag protections disabled temporarily due to bug
   # https://github.com/integrations/terraform-provider-github/issues/2477
   # tag_protections = [
@@ -174,6 +177,12 @@ module "another_repo" {
       value = "some-deployment-token"
     }
   ]
+
+  # Explicitly disable Dependabot security updates
+  enable_dependabot_security_updates = false
+
+  # But still enable vulnerability alerts
+  vulnerability_alerts = true
 
   # Tag protections disabled temporarily due to bug
   # https://github.com/integrations/terraform-provider-github/issues/2477

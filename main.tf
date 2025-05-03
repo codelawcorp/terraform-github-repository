@@ -30,7 +30,7 @@ resource "github_repository" "this" {
   archived    = var.archived
 
   web_commit_signoff_required = var.web_commit_signoff_required
-  vulnerability_alerts        = var.vulnerability_alerts
+  vulnerability_alerts        = var.vulnerability_alerts || var.enable_dependabot_security_updates
   auto_init                   = var.template != null ? false : var.auto_init
   gitignore_template          = var.gitignore_template
   license_template            = var.license_template
@@ -169,6 +169,14 @@ resource "github_repository_custom_property" "this" {
   property_name  = each.key
   property_value = [each.value.property_value]
   property_type  = each.value.property_type
+}
+
+# Then enable Dependabot security updates
+resource "github_repository_dependabot_security_updates" "this" {
+  count      = var.enable_dependabot_security_updates ? 1 : 0
+  repository = github_repository.this.name
+  enabled    = true
+
 }
 
 resource "github_actions_secret" "this" {
