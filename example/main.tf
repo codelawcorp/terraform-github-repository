@@ -40,12 +40,12 @@ module "github_repository" {
   ]
 
   # #   # GitHub Pages configuration (optional)
-  # pages = { // TODO / pages branch must exist at applytime / chicken-egg problem
-  #   source = {
-  #     branch = "gh-pages"
-  #     path   = "/"
-  #   }
-  # }
+  pages = { // TODO / pages branch must exist at applytime / chicken-egg problem
+    source = {
+      branch = "gh-pages"
+      path   = "/"
+    }
+  }
 
   # Security and analysis features (optional)
   #   security_and_analysis = {
@@ -123,6 +123,17 @@ module "another_repo" {
     {
       name  = "TEST_VARIABLE"
       value = "test-value"
+    }
+  ]
+
+  github_actions_secrets = [
+    {
+      name  = "API_KEY"
+      value = "some-api-key-value"
+    },
+    {
+      name  = "DEPLOYMENT_TOKEN"
+      value = "some-deployment-token"
     }
   ]
 

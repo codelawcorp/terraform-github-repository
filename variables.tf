@@ -272,6 +272,15 @@ variable "github_actions_variables" {
   description = "GitHub Actions variables to set on the repository"
 }
 
+variable "github_actions_secrets" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default     = []
+  description = "GitHub Actions secrets to set on the repository"
+}
+
 variable "environments" {
   description = "GitHub repository environments to create"
   type = list(object({

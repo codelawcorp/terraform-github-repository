@@ -134,6 +134,13 @@ resource "github_actions_variable" "this" {
   value         = each.value.value
 }
 
+resource "github_actions_secret" "this" {
+  for_each        = { for k, v in var.github_actions_secrets : v.name => v }
+  repository      = github_repository.this.name
+  secret_name     = each.key
+  plaintext_value = each.value.value
+}
+
 resource "github_repository_environment" "this" {
   for_each    = { for env in var.environments : env.name => env }
   environment = each.key
