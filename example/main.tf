@@ -40,12 +40,12 @@ module "github_repository" {
   ]
 
   #   # GitHub Pages configuration (optional)
-  #   pages = {
-  #     source = {
-  #       branch = "gh-pages"
-  #       path   = "/"
-  #     }
-  #   }
+    pages = {
+      source = {
+        branch = "gh-pages" # TODO / create pages branch if this is specified
+        path   = "/"
+      }
+    }
 
   # Security and analysis features (optional)
   #   security_and_analysis = {
