@@ -280,7 +280,11 @@ variable "environments" {
       teams = optional(list(string), [])
       users = optional(list(string), [])
     }))
-    protected        = optional(bool, false)
+    protected = optional(bool, false)
+    variables = optional(list(object({
+      name  = string
+      value = string
+    })), [])
   }))
   default = []
 }

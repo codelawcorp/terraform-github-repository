@@ -140,10 +140,10 @@ resource "github_repository_environment" "this" {
   repository  = github_repository.this.name
 
 
-    deployment_branch_policy {
-      protected_branches     = false //  Ignoring this setting. Some branch protection is not a green light for deployment.
-      custom_branch_policies = each.value.protected   // This means that the branch allows ataching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
-    }
+  deployment_branch_policy {
+    protected_branches     = false                //  Ignoring this setting. Some branch protection is not a green light for deployment.
+    custom_branch_policies = each.value.protected // This means that the branch allows ataching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
+  }
 
   dynamic "reviewers" {
     for_each = each.value.reviewers != null ? [each.value.reviewers] : []
@@ -153,6 +153,7 @@ resource "github_repository_environment" "this" {
     }
   }
 }
+
 resource "github_repository_environment_deployment_policy" "this" {
   for_each = {
     for env in var.environments : env.name => env
@@ -162,6 +163,27 @@ resource "github_repository_environment_deployment_policy" "this" {
   repository     = github_repository.this.name
   environment    = each.key
   branch_pattern = each.key
+
+  depends_on = [github_repository_environment.this]
+}
+
+resource "github_actions_environment_variable" "this" {
+  for_each = {
+    for pair in flatten([
+      for environment in var.environments : [
+        for variable in environment.variables : {
+          environment = environment.name
+          name        = variable.name
+          value       = variable.value
+        }
+      ]
+    ]) : "${pair.environment}.${pair.name}" => pair
+  }
+
+  repository    = github_repository.this.name
+  environment   = each.value.environment
+  variable_name = each.value.name
+  value         = each.value.value
 
   depends_on = [github_repository_environment.this]
 }

@@ -68,16 +68,36 @@ module "github_repository" {
         users = []
         teams = []
       }
-      protected        = true
+      protected = true
       # tag_pattern   = "v*"
+      variables = [
+        {
+          name  = "API_URL"
+          value = "https://api.example.com/prod"
+        },
+        {
+          name  = "DEBUG_MODE"
+          value = "false"
+        }
+      ]
     },
     {
       name = "stg"
       reviewers = {
         users = []
       }
-      protected        = true
+      protected = true
       # tag_pattern   = "stg-v*"
+      variables = [
+        {
+          name  = "API_URL"
+          value = "https://api.example.com/staging"
+        },
+        {
+          name  = "DEBUG_MODE"
+          value = "true"
+        }
+      ]
     }
   ]
 }
@@ -103,16 +123,28 @@ module "another_repo" {
         users = []
         teams = []
       }
-      protected        = true
+      protected = true
       # tag_pattern   = "v*"
+      variables = [
+        {
+          name  = "ENVIRONMENT"
+          value = "production"
+        }
+      ]
     },
     {
       name = "stg"
       reviewers = {
         users = []
       }
-      protected        = true
+      protected = true
       # tag_pattern   = "stg-v*"
+      variables = [
+        {
+          name  = "test"
+          value = "some-value"
+        }
+      ]
     }
   ]
 }
