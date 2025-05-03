@@ -80,6 +80,16 @@ module "github_repository" {
           value = "false"
         }
       ]
+      secrets = [
+        {
+          name  = "DEPLOY_TOKEN"
+          value = "secret-token-value"
+        },
+        {
+          name  = "DATABASE_PASSWORD"
+          value = "db-password-value"
+        }
+      ]
     },
     {
       name = "stg"
@@ -129,6 +139,12 @@ module "another_repo" {
         {
           name  = "ENVIRONMENT"
           value = "production"
+        }
+      ]
+      secrets = [
+        {
+          name  = "PRODUCTION_API_KEY"
+          value = "your-sensitive-api-key"
         }
       ]
     },

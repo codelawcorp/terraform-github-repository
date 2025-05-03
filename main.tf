@@ -188,3 +188,24 @@ resource "github_actions_environment_variable" "this" {
   depends_on = [github_repository_environment.this]
 }
 
+resource "github_actions_environment_secret" "this" {
+  for_each = {
+    for pair in flatten([
+      for environment in var.environments : [
+        for secret in environment.secrets : {
+          environment = environment.name
+          name        = secret.name
+          value       = secret.value
+        }
+      ]
+    ]) : "${pair.environment}.${pair.name}" => pair
+  }
+
+  repository      = github_repository.this.name
+  environment     = each.value.environment
+  secret_name     = each.value.name
+  plaintext_value = each.value.value
+
+  depends_on = [github_repository_environment.this]
+}
+
