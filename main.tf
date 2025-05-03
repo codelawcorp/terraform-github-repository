@@ -134,7 +134,7 @@ resource "github_actions_variable" "this" {
   value         = each.value.value
 }
 
-resource "github_repository_collaborators" "this" {
+resource "github_repository_collaborators" "this" { # instead of github_repository_collaborator or github_team_repository 
   repository = github_repository.this.name
   dynamic "user" {
     for_each = var.users
@@ -152,6 +152,16 @@ resource "github_repository_collaborators" "this" {
     }
   }
 }
+
+# Does not work due a bug. Temporarily disabled.
+# https://github.com/integrations/terraform-provider-github/issues/2477
+# resource "github_repository_tag_protection" "this" {
+#   for_each            = { for idx, protection in var.tag_protections : idx => protection }
+#   repository          = github_repository.this.name
+#   pattern             = each.value.pattern
+#   allows_force_pushes = each.value.allow_force
+#   allows_deletions    = each.value.allow_deletions
+# }
 
 resource "github_actions_secret" "this" {
   for_each        = { for k, v in var.github_actions_secrets : v.name => v }

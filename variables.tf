@@ -319,3 +319,15 @@ variable "teams" {
   }))
   default = []
 }
+
+# variable "tag_protections" {
+#   description = "List of tag protection patterns to apply to the repository"
+#   type = list(object({
+#     pattern         = string
+#     allow_force     = optional(bool, false)
+#     allow_deletions = optional(bool, false)
+#   }))
+#   default = [{
+#     pattern = "v[0-9]+.[0-9]+.[0-9]+" # Default semantic versioning pattern
+#   }]
+# }

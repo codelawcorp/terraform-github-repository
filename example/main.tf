@@ -122,7 +122,29 @@ module "github_repository" {
     }
   ]
 
+  tag_protections = [
+    {
+      pattern = "v[0-9]+.[0-9]+.[0-9]+" # Protect semantic versioning tags (default)
+    },
+    {
+      pattern         = "release-*" # Also protect release tags
+      allow_deletions = true        # But allow deletions for release tags
+    }
+  ]
 
+  users = [
+    # {
+    #   username   = "example-user"
+    #   permission = "push"
+    # }
+  ]
+
+  teams = [
+    # {
+    #   team_id    = "admin-team"
+    #   permission = "admin"
+    # }
+  ]
 }
 
 
@@ -147,6 +169,12 @@ module "another_repo" {
     {
       name  = "DEPLOYMENT_TOKEN"
       value = "some-deployment-token"
+    }
+  ]
+
+  tag_protections = [
+    {
+      pattern = "v[0-9]+.[0-9]+.[0-9]+" # Default semantic versioning pattern
     }
   ]
 
