@@ -5,7 +5,7 @@ This is a reusable Terraform module for creating github repo and related configu
 ## Description 🤝
 
 This is the most complete github repo module out there.  
-It bundles all resources related to `github_repository`.
+It bundles all resources related to `github_repository` and abstract complexities of github provider.
 
 Github provider has a lot of misperceptions. If you get some API errors, try another combination of parameters. We reduced your possible hardships by including input validations.  
 Do not blame Terraform or this module - this is Github's provider implementation issues.  
