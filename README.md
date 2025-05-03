@@ -1,18 +1,22 @@
 # README
+
 This is a reusable Terraform module for creating github repo and related configurations.
 
 ## Description 🤝
 
-Short.
-What was your motivation?  
-What problem does it solve?  
-What application does?
-Why you used the technologies you used?
+This is the most complete github repo module out there.  
+It bundles all resources related to `github_repository`.
 
-* ⚠️ Do not change repo settings manually in UI. It is managged by Terraform, including variables, secrets, environmetns, protected branches etc.  
+Github provider has a lot of misperceptions. If you get some API errors, try another combination of parameters. We reduced your possible hardships by including input validations.  
+Do not blame Terraform or this module - this is Github's provider implementation issues.  
+Nonetheless, having the opportunity to spin up new projects in seconds and control configurations in a single place is a great advantage.
+
+⬇️ IN PROGRESS ⬇️ do not read.
+
 ## Getting started 🚀
 
-##  Development 🐙
+## Development 🐙
+
 Setup GitHub authentication
 
 ```bash
