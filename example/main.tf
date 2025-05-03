@@ -122,15 +122,18 @@ module "github_repository" {
     }
   ]
 
-  tag_protections = [
-    {
-      pattern = "v[0-9]+.[0-9]+.[0-9]+" # Protect semantic versioning tags (default)
-    },
-    {
-      pattern         = "release-*" # Also protect release tags
-      allow_deletions = true        # But allow deletions for release tags
-    }
-  ]
+  # Tag protections disabled temporarily due to bug
+  # https://github.com/integrations/terraform-provider-github/issues/2477
+  # tag_protections = [
+  #   {
+  #     pattern = "v[0-9]+.[0-9]+.[0-9]+"  # Protect semantic versioning tags (default)
+  #   },
+  #   {
+  #     pattern = "release-*"  # Also protect release tags
+  #     allow_deletions = true  # But allow deletions for release tags
+  #   }
+  # ]
+
 
   users = [
     # {
@@ -172,10 +175,19 @@ module "another_repo" {
     }
   ]
 
-  tag_protections = [
+  # Tag protections disabled temporarily due to bug
+  # https://github.com/integrations/terraform-provider-github/issues/2477
+  # tag_protections = [
+  #   {
+  #     pattern = "v[0-9]+.[0-9]+.[0-9]+"  # Default semantic versioning pattern
+  #   }
+  # ]
+
+  custom_properties = [
     {
-      pattern = "v[0-9]+.[0-9]+.[0-9]+" # Default semantic versioning pattern
-    }
+      property_name  = "test"
+      property_value = "active"
+    },
   ]
 
   users = [

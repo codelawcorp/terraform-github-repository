@@ -320,14 +320,26 @@ variable "teams" {
   default = []
 }
 
+# Variable disabled temporarily due to bug in github_repository_tag_protection resource
+# https://github.com/integrations/terraform-provider-github/issues/2477
 # variable "tag_protections" {
 #   description = "List of tag protection patterns to apply to the repository"
 #   type = list(object({
-#     pattern         = string
-#     allow_force     = optional(bool, false)
+#     pattern       = string
+#     allow_force   = optional(bool, false)
 #     allow_deletions = optional(bool, false)
 #   }))
 #   default = [{
-#     pattern = "v[0-9]+.[0-9]+.[0-9]+" # Default semantic versioning pattern
+#     pattern = "v[0-9]+.[0-9]+.[0-9]+"  # Default semantic versioning pattern
 #   }]
 # }
+
+variable "custom_properties" {
+  description = "Custom properties to set on the repository. Must be defined on the organization level first."
+  type = list(object({
+    property_name  = string
+    property_value = string
+    property_type  = optional(string, "string")
+  }))
+  default = []
+}

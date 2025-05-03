@@ -163,6 +163,14 @@ resource "github_repository_collaborators" "this" { # instead of github_reposito
 #   allows_deletions    = each.value.allow_deletions
 # }
 
+resource "github_repository_custom_property" "this" {
+  for_each       = { for prop in var.custom_properties : prop.property_name => prop }
+  repository     = github_repository.this.name
+  property_name  = each.key
+  property_value = [each.value.property_value]
+  property_type  = each.value.property_type
+}
+
 resource "github_actions_secret" "this" {
   for_each        = { for k, v in var.github_actions_secrets : v.name => v }
   repository      = github_repository.this.name
