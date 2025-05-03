@@ -268,6 +268,22 @@ variable "github_actions_variables" {
     name  = string
     value = string
   }))
-  default = []
+  default     = []
   description = "GitHub Actions variables to set on the repository"
+}
+
+variable "environments" {
+  description = "GitHub repository environments to create"
+  type = list(object({
+    name = string
+    deployment_branch_policy = optional(object({
+      protected_branches     = optional(bool)
+      custom_branch_policies = optional(bool)
+    }))
+    reviewers = optional(object({
+      teams = optional(list(string), [])
+      users = optional(list(string), [])
+    }))
+  }))
+  default = []
 }

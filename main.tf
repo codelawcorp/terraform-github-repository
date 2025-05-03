@@ -133,3 +133,25 @@ resource "github_actions_variable" "this" {
   variable_name = each.key
   value         = each.value.value
 }
+
+resource "github_repository_environment" "this" {
+  for_each    = { for env in var.environments : env.name => env }
+  environment = each.key
+  repository  = github_repository.this.name
+
+  dynamic "deployment_branch_policy" {
+    for_each = each.value.deployment_branch_policy != null ? [each.value.deployment_branch_policy] : []
+    content {
+      protected_branches     = deployment_branch_policy.value.protected_branches
+      custom_branch_policies = deployment_branch_policy.value.custom_branch_policies
+    }
+  }
+
+  dynamic "reviewers" {
+    for_each = each.value.reviewers != null ? [each.value.reviewers] : []
+    content {
+      teams = reviewers.value.teams
+      users = reviewers.value.users
+    }
+  }
+}

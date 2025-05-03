@@ -35,14 +35,14 @@ module "github_repository" {
 
   branches = [
     {
-      name = "gh-pages"
+      name = "gh-pages" # TODO / create pages branch if this is specified
     }
   ]
 
   #   # GitHub Pages configuration (optional)
   pages = {
     source = {
-      branch = "gh-pages" # TODO / create pages branch if this is specified
+      branch = "gh-pages" 
       path   = "/"
     }
   }
@@ -60,6 +60,26 @@ module "github_repository" {
   #     }
   #   }
   archive_on_destroy = false
+
+  environments = [
+    {
+      name = "prod"
+      deployment_branch_policy = {
+        protected_branches     = true
+        custom_branch_policies = false
+      }
+      reviewers = {
+        users = []
+        teams = []
+      }
+    },
+    {
+      name = "stg"
+      reviewers = {
+        users = []
+      }
+    }
+  ]
 }
 
 
@@ -73,6 +93,26 @@ module "another_repo" {
     {
       name  = "TEST_VARIABLE"
       value = "test-value"
+    }
+  ]
+
+  environments = [
+    {
+      name = "prod"
+      deployment_branch_policy = {
+        protected_branches     = true
+        custom_branch_policies = false
+      }
+      reviewers = {
+        users = []
+        teams = []
+      }
+    },
+    {
+      name = "stg"
+      reviewers = {
+        users = []
+      }
     }
   ]
 }
