@@ -134,6 +134,25 @@ resource "github_actions_variable" "this" {
   value         = each.value.value
 }
 
+resource "github_repository_collaborators" "this" {
+  repository = github_repository.this.name
+  dynamic "user" {
+    for_each = var.users
+    content {
+      username   = user.value.username
+      permission = user.value.permission
+    }
+  }
+
+  dynamic "team" {
+    for_each = var.teams
+    content {
+      team_id    = team.value.team_id
+      permission = team.value.permission
+    }
+  }
+}
+
 resource "github_actions_secret" "this" {
   for_each        = { for k, v in var.github_actions_secrets : v.name => v }
   repository      = github_repository.this.name

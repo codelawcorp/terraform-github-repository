@@ -301,3 +301,21 @@ variable "environments" {
   }))
   default = []
 }
+
+variable "users" {
+  description = "List of repository collaborators to add to the repository"
+  type = list(object({
+    username   = string
+    permission = string
+  }))
+  default = []
+}
+
+variable "teams" {
+  description = "List of repository teams to add to the repository"
+  type = list(object({
+    team_id    = string
+    permission = string
+  }))
+  default = []
+}

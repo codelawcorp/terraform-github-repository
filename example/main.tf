@@ -110,6 +110,19 @@ module "github_repository" {
       ]
     }
   ]
+
+  github_actions_variables = [
+    {
+      name  = "CI_ENABLED"
+      value = "true"
+    },
+    {
+      name  = "DEPLOY_ENVIRONMENT"
+      value = "production"
+    }
+  ]
+
+
 }
 
 
@@ -135,6 +148,24 @@ module "another_repo" {
       name  = "DEPLOYMENT_TOKEN"
       value = "some-deployment-token"
     }
+  ]
+
+  users = [
+    # {
+    #   username   = "contributor-user"
+    #   permission = "pull"
+    # },
+    # {
+    #   username   = "maintainer-user"
+    #   permission = "maintain"
+    # }
+  ]
+
+  teams = [
+    # {
+    #   team_id       = "admin-team"
+    #   permission = "admin"
+    # }
   ]
 
   environments = [
