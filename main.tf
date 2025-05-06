@@ -295,3 +295,14 @@ resource "github_actions_environment_secret" "this" {
   depends_on = [github_repository_environment.this]
 }
 
+resource "github_repository_file" "this" {
+  for_each = var.github_repository_files
+
+  repository       = github_repository.this.name
+  file             = each.key
+  content          = each.value.content
+  branch           = each.value.branch
+  commit_sha       = each.value.commit_sha
+  commit_message   = each.value.commit_message
+  overwrite_on_create = each.value.overwrite_on_create
+}

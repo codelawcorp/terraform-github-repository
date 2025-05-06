@@ -378,3 +378,15 @@ variable "deploy_keys" {
   }))
   default = []
 }
+
+variable "github_repository_files" {
+  description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties."
+  type = map(object({
+    content      = string
+    branch       = optional(string, null)
+    commit_sha   = optional(string, null)
+    commit_message = optional(string, "Managed by Terraform")
+    overwrite_on_create = optional(bool, false)
+  }))
+  default = {}
+}

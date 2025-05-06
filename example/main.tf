@@ -183,6 +183,16 @@ module "github_repository" {
     #   permission = "admin"
     # }
   ]
+
+  # Define GitHub repository files
+  github_repository_files = {
+    "README.md" = {
+      content          = "# Example Repository\nThis is an example repository managed by Terraform."
+      branch           = "prod"
+      commit_message   = "Add README.md"
+      overwrite_on_create = true
+    }
+  }
 }
 
 
