@@ -298,12 +298,15 @@ resource "github_actions_environment_secret" "this" {
 resource "github_repository_file" "this" {
   for_each = var.github_repository_files
 
-  repository       = github_repository.this.name
-  file             = each.key
-  content          = each.value.content
-  branch           = each.value.branch
-  commit_message   = each.value.commit_message
-  commit_author = each.value.commit_author
-  overwrite_on_create = each.value.overwrite_on_create
-  autocreate_branch = each.value.autocreate_branch
-  }
+  repository                      = github_repository.this.name
+  file                            = each.key
+  content                         = each.value.content
+  branch                          = each.value.branch
+  commit_message                  = each.value.commit_message
+  commit_author                   = each.value.commit_author
+  commit_email                    = each.value.commit_email
+  overwrite_on_create             = each.value.overwrite_on_create
+  autocreate_branch               = each.value.autocreate_branch
+  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_repository.this.default_branch) # Uses default branch if not set
+  autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
+}

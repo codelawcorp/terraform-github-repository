@@ -175,14 +175,28 @@ module "github_repository" {
   # Define GitHub repository files
   github_repository_files = {
     "README.md" = {
-      content          = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch           = "prod"
-      commit_message   = "Add README.md"
-      commit_author    = {
-        name = "Terraform Bot"
-        email = "test.com"
-      }
+      content             = "# Example Repository\nThis is an example repository managed by Terraform."
+      branch              = "prod"
+      commit_message      = "Add README.md"
+      commit_author       = "Terraform Bot"
+      commit_email        = "test@test.com"
       overwrite_on_create = true
+    }
+    "test.md" = {
+      content = "# A test file."
+      branch  = "random-branch"
+      # commit_message      = "Add README.md"
+      # commit_author       = "Terraform Bot"
+      # commit_email        = "test@test.com"
+      # overwrite_on_create = true
+    }
+    "test-default-branch.md" = {
+      content = "# A test file."
+      # branch              = "random-branch"
+      # commit_message      = "Add README.md"
+      # commit_author       = "Terraform Bot"
+      # commit_email        = "test@test.com"
+      # overwrite_on_create = true
     }
   }
 }
