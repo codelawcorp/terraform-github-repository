@@ -143,19 +143,7 @@ module "github_repository" {
     }
   ]
 
-  # Add deploy keys to the repository
-  deploy_keys = [
-    {
-      title     = "CI Server"
-      key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC..."
-      read_only = true
-    },
-    {
-      title     = "Deploy Server"
-      key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD..."
-      read_only = false
-    }
-  ]
+
 
   # Tag protections disabled temporarily due to bug
   # https://github.com/integrations/terraform-provider-github/issues/2477
@@ -246,7 +234,8 @@ module "another_repo" {
   deploy_keys = [
     {
       title = "Read-only CI Key"
-      key   = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDH..."
+      # this is how to generate the key // ssh-keygen -f test
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB/4GlDREJaArBSKACPHpczJGrw2SoDRE4y5MyBN+7+ maksymonyshchenko@Maksyms-MacBook-Pro-3.local"
       # read_only defaults to true
     }
   ]
