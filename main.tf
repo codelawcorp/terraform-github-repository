@@ -6,6 +6,31 @@ output "debug_default_branch" {
   value = github_branch_default.this
 }
 
+# A hack to track first apply # START
+resource "terraform_data" "first_apply" {
+  input = formatdate("YYYY-MM-DD'T'HH:mm:00Z", timestamp()) # round to the nearest minute
+  # triggers_replace = [
+  #   github_repository.this
+  # ]
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
+locals {
+  is_first_apply = terraform_data.first_apply.output == formatdate("YYYY-MM-DD'T'HH:mm:00Z", timestamp())
+}
+
+output "is_first_apply" {
+  value = local.is_first_apply
+}
+output "debug_terraform_data_first_apply" {
+  value = terraform_data.first_apply
+}
+
+# A hack to track first apply # END
+
+
+
 resource "github_repository" "this" {
   name        = var.name
   description = var.description
@@ -50,7 +75,7 @@ resource "github_repository" "this" {
   }
 
   dynamic "pages" {
-    for_each = var.pages != null ? [var.pages] : []
+    for_each = var.pages != null && !local.is_first_apply ? [var.pages] : []
     content {
       source {
         branch = pages.value.source.branch
