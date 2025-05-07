@@ -77,6 +77,8 @@ resource "github_repository" "this" {
   dynamic "pages" {
     for_each = var.pages != null && !local.is_first_apply ? [var.pages] : []
     content {
+      build_type = pages.value.build_type
+      cname      = pages.value.cname
       source {
         branch = pages.value.source.branch
         path   = pages.value.source.path
