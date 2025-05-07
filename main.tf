@@ -2,6 +2,10 @@ output "repo_debug" {
   value = github_repository.this
 }
 
+output "debug_default_branch" {
+  value = github_branch_default.this
+}
+
 resource "github_repository" "this" {
   name        = var.name
   description = var.description
@@ -31,7 +35,7 @@ resource "github_repository" "this" {
 
   web_commit_signoff_required = var.web_commit_signoff_required
   vulnerability_alerts        = var.vulnerability_alerts || var.enable_dependabot_security_updates
-  auto_init                   = var.template != null ? false : var.auto_init
+  auto_init                   = var.template == null ? var.auto_init : false
   gitignore_template          = var.gitignore_template
   license_template            = var.license_template
   archive_on_destroy          = var.archive_on_destroy
@@ -82,10 +86,9 @@ resource "github_repository" "this" {
   }
 }
 
-resource "github_branch_default" "this" {
-  count      = var.auto_init == false || length(var.branches) > 0 ? 1 : 0
+resource "github_branch_default" "this" { # Changing it RENAMES the current default branch.
   repository = github_repository.this.name
-  branch     = var.default_branch
+  branch     = var.auto_init == true ? "main" : var.default_branch
 }
 
 resource "github_branch" "this" {
@@ -93,10 +96,10 @@ resource "github_branch" "this" {
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, github_repository.this.default_branch)
+  source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
   source_sha    = each.value.source_sha
 
-  depends_on = [github_branch_default.this]
+  # depends_on = [github_branch_default.this]
 
 }
 
@@ -307,6 +310,6 @@ resource "github_repository_file" "this" {
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
   autocreate_branch               = each.value.autocreate_branch
-  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_repository.this.default_branch) # Uses default branch if not set
+  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this.branch) # Uses default branch if not set
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }

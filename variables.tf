@@ -153,9 +153,9 @@ variable "is_template" {
 }
 
 variable "default_branch" {
-  description = "The name of the default branch of the repository"
+  description = "The name of the default branch of the repository."
   type        = string
-  default     = "prod"
+  default     = "main"
 
   validation { // TODO / review
     condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
@@ -188,9 +188,9 @@ variable "vulnerability_alerts" {
 }
 
 variable "auto_init" {
-  description = "Set to true to produce an initial commit in the repository"
+  description = "Set to true to produce an initial commit in the repository. Ignored if template is used."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "gitignore_template" {
