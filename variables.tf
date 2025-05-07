@@ -150,6 +150,11 @@ variable "is_template" {
   description = "Set to true to tell GitHub that this is a template repository"
   type        = bool
   default     = false
+
+  validation {
+    condition     = var.template == null || !var.is_template
+    error_message = "is_template cannot be true when using a template repository"
+  }
 }
 
 variable "default_branch" {
