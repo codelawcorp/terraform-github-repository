@@ -1,18 +1,21 @@
 variable "name" {
   description = "Name of the GitHub repository"
   type        = string
+  nullable    = false
 }
 
 variable "description" {
   description = "Description of the GitHub repository"
   type        = string
   default     = ""
+  nullable    = false
 }
 
 variable "visibility" {
   description = "Visibility of the GitHub repository (public, private, or internal)"
   type        = string
   default     = "private"
+  nullable    = false
 }
 
 variable "template" {
@@ -22,55 +25,64 @@ variable "template" {
     repository           = string
     include_all_branches = bool
   })
-  default = null
+  default  = null
+  nullable = true
 }
 
 variable "homepage_url" {
   description = "URL of a page describing the project"
   type        = string
   default     = ""
+  nullable    = false
 }
 
 variable "topics" {
   description = "List of topics to add to the repository"
   type        = list(string)
   default     = []
+  nullable    = false
 }
 
 variable "has_issues" {
   description = "Set to true to enable the GitHub Issues features on the repository"
   type        = bool
   default     = true
+  nullable    = false
 }
 
 variable "has_projects" {
   description = "Set to true to enable the GitHub Projects features on the repository"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "has_wiki" {
   description = "Set to true to enable the GitHub Wiki features on the repository"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "has_downloads" {
   description = "Set to true to enable the GitHub Downloads features on the repository"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "allow_merge_commit" {
   description = "Set to false to disable merge commits on the repository"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "merge_commit_title" {
   description = "The format of the commit message when using merge commit. Can be one of: PR_TITLE, MERGE_MESSAGE"
   type        = string
   default     = "PR_TITLE"
+  nullable    = false
   validation {
     condition     = contains(["PR_TITLE", "MERGE_MESSAGE"], var.merge_commit_title)
     error_message = "merge_commit_title must be one of: PR_TITLE, MERGE_MESSAGE"
@@ -81,6 +93,7 @@ variable "merge_commit_message" {
   description = "The format of the commit message body when using merge commit. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   type        = string
   default     = "PR_BODY"
+  nullable    = false
   validation {
     condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.merge_commit_message)
     error_message = "merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
@@ -88,8 +101,9 @@ variable "merge_commit_message" {
 }
 
 variable "merge_commit_validation" {
-  type    = string
-  default = "_placeholder_for_validation"
+  type     = string
+  default  = "_placeholder_for_validation"
+  nullable = false
   validation {
     condition = contains([
       "PR_TITLE:PR_BODY",
@@ -106,18 +120,21 @@ variable "allow_auto_merge" {
   description = "Set to true to allow auto-merging pull requests on the repository"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "allow_squash_merge" {
   description = "Set to false to disable squash merges on the repository"
   type        = bool
   default     = true
+  nullable    = false
 }
 
 variable "squash_merge_commit_title" {
   description = "The format of the commit message when using squash merge. Can be one of: PR_TITLE, COMMIT_OR_PR_TITLE"
   type        = string
   default     = "COMMIT_OR_PR_TITLE"
+  nullable    = false
   validation {
     condition     = contains(["PR_TITLE", "COMMIT_OR_PR_TITLE"], var.squash_merge_commit_title)
     error_message = "squash_merge_commit_title must be one of: PR_TITLE, COMMIT_OR_PR_TITLE"
@@ -128,6 +145,7 @@ variable "squash_merge_commit_message" {
   description = "The format of the commit message body when using squash merge. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   type        = string
   default     = "COMMIT_MESSAGES"
+  nullable    = false
   validation {
     condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.squash_merge_commit_message)
     error_message = "squash_merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
@@ -138,18 +156,21 @@ variable "allow_rebase_merge" {
   description = "Set to false to disable rebase merges on the repository"
   type        = bool
   default     = true
+  nullable    = false
 }
 
 variable "delete_branch_on_merge" {
   description = "Automatically delete head branch after a pull request is merged"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "is_template" {
   description = "Set to true to tell GitHub that this is a template repository"
   type        = bool
   default     = false
+  nullable    = false
 
   validation {
     condition     = var.template == null || !var.is_template
@@ -161,6 +182,7 @@ variable "default_branch" {
   description = "The name of the default branch of the repository."
   type        = string
   default     = "main"
+  nullable    = false
 
   validation { // TODO / review
     condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
@@ -172,42 +194,49 @@ variable "archived" {
   description = "Specifies if the repository should be archived"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "archive_on_destroy" {
   description = "Set to true to archive the repository instead of deleting it when the resource is destroyed"
   type        = bool
   default     = true
+  nullable    = false
 }
 
 variable "web_commit_signoff_required" {
   description = "Require contributors to sign off on web-based commits"
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "vulnerability_alerts" {
   description = "Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable_dependabot_security_updates is true."
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "auto_init" {
   description = "Set to true to produce an initial commit in the repository. Ignored if template is used."
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "gitignore_template" {
   description = "Use the name of the template without the extension. For example, 'Haskell'"
   type        = string
   default     = null
+  nullable    = true
 }
 
 variable "license_template" {
   description = "Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0'"
   type        = string
   default     = null
+  nullable    = true
 }
 
 variable "pages" {
@@ -218,7 +247,8 @@ variable "pages" {
       path   = string
     })
   })
-  default = null
+  default  = null
+  nullable = true
   validation {
     condition = var.pages == null || (try(var.pages.source.branch, "") == var.default_branch || (
       length([for branch in var.branches : branch.name if branch.name == try(var.pages.source.branch, "")]) > 0
@@ -240,7 +270,8 @@ variable "security_and_analysis" {
       status = string
     })
   })
-  default = null
+  default  = null
+  nullable = true
 }
 
 variable "branches" {
@@ -265,7 +296,8 @@ variable "branches" {
       }))
     }))
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 variable "github_actions_variables" {
@@ -274,6 +306,7 @@ variable "github_actions_variables" {
     value = string
   }))
   default     = []
+  nullable    = false
   description = "GitHub Actions variables to set on the repository"
 }
 
@@ -283,6 +316,7 @@ variable "github_actions_secrets" {
     value = string
   }))
   default     = []
+  nullable    = false
   description = "GitHub Actions secrets to set on the repository"
 }
 
@@ -304,7 +338,8 @@ variable "environments" {
       value = string
     })), [])
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 variable "users" {
@@ -313,7 +348,8 @@ variable "users" {
     username   = string
     permission = string
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 variable "teams" {
@@ -322,7 +358,8 @@ variable "teams" {
     team_id    = string
     permission = string
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 # Variable disabled temporarily due to bug in github_repository_tag_protection resource
@@ -337,6 +374,7 @@ variable "teams" {
 #   default = [{
 #     pattern = "v[0-9]+.[0-9]+.[0-9]+"  # Default semantic versioning pattern
 #   }]
+#   nullable = false
 # }
 
 variable "custom_properties" {
@@ -346,19 +384,22 @@ variable "custom_properties" {
     property_value = string
     property_type  = optional(string, "string")
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 variable "enable_dependabot_security_updates" {
   description = "Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well."
   type        = bool
   default     = true
+  nullable    = false
 }
 
 variable "use_repository_topics_resource" {
   description = "Whether to use github_repository_topics resource instead of setting topics in the github_repository resource. This is useful for managing topics separately."
   type        = bool
   default     = false
+  nullable    = false
 }
 
 variable "webhooks" {
@@ -371,7 +412,8 @@ variable "webhooks" {
     active       = optional(bool, true)
     events       = list(string)
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 variable "deploy_keys" {
@@ -381,7 +423,8 @@ variable "deploy_keys" {
     key       = string
     read_only = optional(bool, true)
   }))
-  default = []
+  default  = []
+  nullable = false
 }
 
 variable "github_repository_files" {
@@ -398,5 +441,6 @@ variable "github_repository_files" {
     autocreate_branch_source_branch = optional(string, null)
     autocreate_branch_source_sha    = optional(string, null)
   }))
-  default = {}
+  default  = {}
+  nullable = false
 }
