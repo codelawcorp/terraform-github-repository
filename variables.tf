@@ -386,7 +386,12 @@ variable "github_repository_files" {
     branch       = optional(string, null)
     commit_sha   = optional(string, null)
     commit_message = optional(string, "Managed by Terraform")
+    commit_author = optional(object({
+      name = string
+      email = string
+    }))
     overwrite_on_create = optional(bool, false)
+    autocreate_branch = optional(bool,false)
   }))
   default = {}
 }

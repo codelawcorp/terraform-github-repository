@@ -190,6 +190,10 @@ module "github_repository" {
       content          = "# Example Repository\nThis is an example repository managed by Terraform."
       branch           = "prod"
       commit_message   = "Add README.md"
+      commit_author    = {
+        name = "Terraform Bot"
+        email = "test.com"
+      }
       overwrite_on_create = true
     }
   }

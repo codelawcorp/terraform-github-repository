@@ -302,7 +302,8 @@ resource "github_repository_file" "this" {
   file             = each.key
   content          = each.value.content
   branch           = each.value.branch
-  commit_sha       = each.value.commit_sha
   commit_message   = each.value.commit_message
+  commit_author = each.value.commit_author
   overwrite_on_create = each.value.overwrite_on_create
-}
+  autocreate_branch = each.value.autocreate_branch
+  }
