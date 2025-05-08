@@ -12,4 +12,8 @@ terraform fmt -check -recursive || { terraform fmt -write=true -recursive && exi
 
 
 terraform -chdir=terraform validate
+
+terraform test
+
 gitleaks git --staged
+
