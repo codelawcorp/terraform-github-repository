@@ -17,6 +17,13 @@ Nonetheless, having the opportunity to spin up new projects in seconds and contr
 
 ## Development 🐙
 
+
+### Configuring
+
+- There are TODO comments in the code.
+- Install git hooks. Run this command `git config core.hooksPath .githooks`.
+- [Configure GPG keys if required](doc/GPG-KEYS.md)
+
 Setup GitHub authentication
 
 ```bash
@@ -26,13 +33,6 @@ gh auth setup-git
 git clone <this repo>
 ```
 
-### Configuring
-
-- There are TODO comments in the code.
-- Install git hooks. Run this command `git config core.hooksPath .githooks`.
-- [Configure GPG keys if required](doc/GPG-KEYS.md)
-
-### Building 🧱
 
 ### Deploying 🏋🏼
 

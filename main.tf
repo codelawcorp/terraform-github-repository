@@ -31,15 +31,18 @@ resource "github_repository" "this" {
   allow_rebase_merge          = var.allow_rebase_merge
   delete_branch_on_merge      = var.delete_branch_on_merge
 
+  # TODO / add allow_update_branch
+
   is_template = var.is_template
   archived    = var.archived
 
   web_commit_signoff_required = var.web_commit_signoff_required
   vulnerability_alerts        = var.vulnerability_alerts || var.enable_dependabot_security_updates
-  auto_init                   = var.template == null ? var.auto_init : false
-  gitignore_template          = var.gitignore_template
-  license_template            = var.license_template
-  archive_on_destroy          = var.archive_on_destroy
+  # TODO / add ignore_vulnerability_alerts_during_read 
+  auto_init          = var.template == null ? var.auto_init : false
+  gitignore_template = var.gitignore_template
+  license_template   = var.license_template
+  archive_on_destroy = var.archive_on_destroy
 
   dynamic "template" {
     for_each = var.template != null ? [var.template] : []

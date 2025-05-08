@@ -11,6 +11,7 @@
 # }
 
 run "repo_many_args" {
+  command = apply
 
 
   variables {
