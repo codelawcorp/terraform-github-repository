@@ -30,10 +30,10 @@ variable "template" {
 }
 
 variable "homepage_url" {
-  description = "URL of a page describing the project"
+  description = "URL of a page describing the project."
   type        = string
-  default     = ""
-  nullable    = false
+  default     = null
+  nullable    = true
 }
 
 variable "topics" {
@@ -348,7 +348,7 @@ variable "users" {
   description = "List of repository collaborators to add to the repository"
   type = list(object({
     username   = string
-    permission = string
+    permission = string # pull, push, admin, maintain, triage
   }))
   default  = []
   nullable = false
