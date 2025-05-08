@@ -164,23 +164,18 @@ resource "github_actions_variable" "this" {
   value         = each.value.value
 }
 
-resource "github_repository_collaborators" "this" { # instead of github_repository_collaborator or github_team_repository 
+resource "github_repository_collaborator" "this" {
+  for_each   = { for user in var.users : user.username => user }
   repository = github_repository.this.name
-  dynamic "user" {
-    for_each = var.users
-    content {
-      username   = user.value.username
-      permission = user.value.permission
+  username   = each.value.username
+  permission = each.value.permission
     }
-  }
 
-  dynamic "team" {
-    for_each = var.teams
-    content {
-      team_id    = team.value.team_id
-      permission = team.value.permission
-    }
-  }
+resource "github_team_repository" "this" {
+  for_each   = { for team in var.teams : team.team_id => team }
+  repository = github_repository.this.name
+  team_id    = each.value.team_id
+  permission = each.value.permission
 }
 
 # Does not work due a bug. Temporarily disabled.
