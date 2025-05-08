@@ -1,3 +1,4 @@
+# DISABLED: requires a paid GitHub plan.
 # # Define random suffix for repository names to avoid conflicts
 # run "setup_tests" {
 #   module {
