@@ -48,6 +48,8 @@ jobs:
       - name: Check if terraform is well formatted
         run: terraform fmt -recursive  -check
       
+      - name: Run Terraform init
+        run: terraform init
       - name: Run Terraform tests
         # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
         run: GITHUB_TOKEN=${{ secrets.PAT_TOKEN }} terraform test
