@@ -240,7 +240,7 @@ variable "license_template" {
 }
 
 variable "pages" {
-  description = "The repository's GitHub Pages configuration. This is only applied after the first apply because the source branch must exist."
+  description = "The repository's GitHub Pages configuration. Do not apply this configuration before the first apply if the source branch does not exist."
   type = object({
     build_type = optional(string, "legacy")
     cname      = optional(string, null)

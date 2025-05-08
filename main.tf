@@ -1,10 +1,10 @@
-output "repo_debug" {
-  value = github_repository.this
-}
+# output "repo_debug" {
+#   value = github_repository.this
+# }
 
-output "debug_default_branch" {
-  value = github_branch_default.this
-}
+# output "debug_default_branch" {
+#   value = github_branch_default.this
+# }
 
 
 resource "github_repository" "this" {
