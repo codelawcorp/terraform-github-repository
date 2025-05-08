@@ -6,3 +6,5 @@ terraform {
     }
   }
 }
+
+# export GITHUB_OWNER=codelawcorp
