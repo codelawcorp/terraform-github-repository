@@ -40,12 +40,12 @@ module "github_repository" {
   ]
 
   # #   # GitHub Pages configuration (optional)
-  pages = { // TODO / pages branch must exist at applytime / chicken-egg problem
-    source = {
-      branch = "gh-pages"
-      path   = "/"
-    }
-  }
+  # pages = { // TODO / pages branch must exist at applytime / chicken-egg problem
+  #   source = {
+  #     branch = "gh-pages"
+  #     path   = "/"
+  #   }
+  # }
 
   # Security and analysis features (optional)
   #   security_and_analysis = {
