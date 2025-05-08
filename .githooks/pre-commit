@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 
 npx validate-branch-name -r '^(prod|stg|dev)$|^(feature|fix|hotfix)/.+$'
