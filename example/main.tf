@@ -222,14 +222,14 @@ module "github_repository" {
   # Create an autolink reference
   autolink_references = [
     {
-      key_prefix = "PROJECT-" 
+      key_prefix          = "PROJECT-"
       target_url_template = "https://example.com/view/PROJECT-<num>"
-      is_alphanumeric = false # Default is true"
+      is_alphanumeric     = false # Default is true"
     },
     {
-      prefix = "PR-"
+      prefix              = "PR-"
       target_url_template = "https://example.com/pull/PR-<num>"
-      is_alphanumeric = false # Default is true
+      is_alphanumeric     = false # Default is true
     }
   ]
 }
