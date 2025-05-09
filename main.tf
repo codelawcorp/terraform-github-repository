@@ -315,4 +315,92 @@ resource "github_repository_file" "this" {
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }
 
+resource "github_issue_labels" "this" {
+  for_each = { for label in var.issue_labels : label.name => label }
 
+  repository = github_repository.this.name
+
+  label {
+    name        = each.key
+    color       = each.value.color
+    description = each.value.description
+  }
+}
+
+
+
+# resource "github_repository_ruleset" "this" {
+#   repository  = github_repository.this.name
+#   name        = var.ruelset.name
+#   target      = var.target
+#   enforcement = var.enforcement
+
+#   dynamic "conditions" {
+#     for_each = length(var.include_ref_name) > 0 || length(var.exclude_ref_name) > 0 ? [1] : []
+#     content {
+#       ref_name {
+#         include = var.include_ref_name
+#         exclude = var.exclude_ref_name
+#       }
+#     }
+#   }
+
+#   dynamic "bypass_actors" {
+#     for_each = var.bypass_actors == null ? [] : [var.bypass_actors]
+#     content {
+#       actor_id    = bypass_actors.value.actor_id
+#       actor_type  = bypass_actors.value.actor_type
+#       bypass_mode = bypass_actors.value.bypass_mode
+#       }
+#     }
+#   rules {
+#     creation = var.creation
+#     deletion = var.deletion
+#     update = var.update
+#     non_fast_forward = var.non_fast_forward
+#     dynamic "pull_request" {
+#       for_each = var.pull_request_rules != null ? [1] : []
+#       content {
+#         dismiss_stale_reviews_on_push   = var.pull_request_rules.dismiss_stale_reviews
+#         require_code_owner_review       = var.pull_request_rules.require_code_owner_reviews
+#         required_approving_review_count = var.pull_request_rules.required_approving_review_count
+#       }
+#     }
+#   }
+# }
+
+
+# resource "github_repository_ruleset" "this" {
+#   for_each = toset(var.ruleset)
+#   repository  = github_repository.this.name
+#   name        = each.value.name
+#   target      = each.value.target
+#   enforcement = each.value.enforcement
+
+#   conditions {
+#     ref_name {
+#       include = ["~ALL"]
+#       exclude = []
+#     }
+#   }
+
+#   bypass_actors {
+#     actor_id    = 13473
+#     actor_type  = "Integration"
+#     bypass_mode = "always"
+#   }
+
+#   rules {
+#     creation                = true
+#     update                  = true
+#     deletion                = true
+#     required_linear_history = true
+#     required_signatures     = true
+
+#     required_deployments {
+#       required_deployment_environments = ["test"]
+#     }
+
+
+#   }
+# }

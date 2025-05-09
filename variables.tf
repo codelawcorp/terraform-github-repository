@@ -446,3 +446,27 @@ variable "github_repository_files" {
   default  = {}
   nullable = false
 }
+
+variable "issue_labels" {
+  description = "A list of issue labels"
+  type = list(object({
+    name        = string
+    color       = string
+    description = optional(string, null)
+  }))
+  default = []
+}
+
+
+
+
+# variable "ruleset" {
+#   description = "add later"
+#   type = list(object({
+#     name = string
+#     target = string # TODO / add validation branch or tag
+#     enforcement = string # TODO / add validation for values: disabled, active, evaluate
+#   }))
+#   default = []
+
+# }

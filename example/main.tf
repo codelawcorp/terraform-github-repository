@@ -172,14 +172,15 @@ module "github_repository" {
     # }
   ]
 
-  # Define GitHub repository files
+  # Add GitHub repository files
   github_repository_files = {
     "README.md" = {
-      content             = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch              = "prod"
-      commit_message      = "Add README.md"
-      commit_author       = "Terraform Bot"
-      commit_email        = "test@test.com"
+      content        = "# Example Repository\nThis is an example repository managed by Terraform."
+      branch         = "prod"
+      commit_message = "Add README.md"
+      commit_author  = "Terraform Bot"
+      commit_email   = "test@test.com"
+
       overwrite_on_create = true
     }
     "test.md" = {
@@ -199,6 +200,25 @@ module "github_repository" {
       # overwrite_on_create = true
     }
   }
+
+  # Add Github issue labels
+  issue_labels = [
+    {
+      name        = "bug"
+      color       = "d73a4a"
+      description = "Something isn't working"
+    },
+    {
+      name        = "enhancement"
+      color       = "a2eeef"
+      description = "New feature or request"
+    },
+    {
+      name        = "question"
+      color       = "cc317c"
+      description = "Further information is requested"
+    }
+  ]
 }
 
 
@@ -325,4 +345,3 @@ module "another_repo" {
     }
   ]
 }
-
