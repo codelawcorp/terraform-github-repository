@@ -219,6 +219,19 @@ module "github_repository" {
       description = "Further information is requested"
     }
   ]
+  # Create an autolink reference
+  autolink_references = [
+    {
+      key_prefix = "PROJECT-" 
+      target_url_template = "https://example.com/view/PROJECT-<num>"
+      is_alphanumeric = false # Default is true"
+    },
+    {
+      prefix = "PR-"
+      target_url_template = "https://example.com/pull/PR-<num>"
+      is_alphanumeric = false # Default is true
+    }
+  ]
 }
 
 

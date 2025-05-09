@@ -457,7 +457,16 @@ variable "issue_labels" {
   default = []
 }
 
-
+variable "autolink_references" {
+  description = "A list of autolink references to create for the repository"
+  type = list(object({
+    key_prefix = string
+    target_url_template    = string
+    is_alphanumeric = optional(bool)
+  }))
+  default  = []
+  
+}
 
 
 # variable "ruleset" {
