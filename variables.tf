@@ -447,12 +447,12 @@ variable "github_repository_files" {
   nullable = false
 }
 
-variable "issue_labels" {
-  description = "A list of issue labels"
+variable "issue_label" {
+  description = "A list of issue label"
   type = list(object({
     name        = string
     color       = string
-    description = optional(string, null)
+    description = optional(string, "")
   }))
   default = []
 }

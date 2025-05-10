@@ -201,22 +201,17 @@ module "github_repository" {
     }
   }
 
-  # Add Github issue labels
-  issue_labels = [
+  # Add issue labels
+  issue_label = [
     {
-      name        = "bug"
-      color       = "d73a4a"
-      description = "Something isn't working"
+      name        = "critical"
+      color       = "ff0000"
+      description = "Critical issues that need immediate attention"
     },
     {
-      name        = "enhancement"
-      color       = "a2eeef"
-      description = "New feature or request"
-    },
-    {
-      name        = "question"
-      color       = "cc317c"
-      description = "Further information is requested"
+      name        = "feature-request"
+      color       = "00ff00"
+      description = "Suggestions for new features"
     }
   ]
   # Create an autolink reference

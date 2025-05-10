@@ -315,16 +315,13 @@ resource "github_repository_file" "this" {
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }
 
-resource "github_issue_labels" "this" {
-  for_each = { for label in var.issue_labels : label.name => label }
+resource "github_issue_label" "this" {
+  for_each = { for label in var.issue_label : label.name => label }
 
-  repository = github_repository.this.name
-
-  label {
-    name        = each.key
-    color       = each.value.color
-    description = each.value.description
-  }
+  repository  = github_repository.this.name
+  name        = each.value.name
+  color       = each.value.color
+  description = each.value.description
 }
 
 resource "github_repository_autolink_reference" "this" {
@@ -335,7 +332,6 @@ resource "github_repository_autolink_reference" "this" {
   target_url_template = each.value.target_url_template
   is_alphanumeric     = each.value.is_alphanumeric
 }
-
 
 
 
