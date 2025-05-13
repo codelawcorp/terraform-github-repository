@@ -227,6 +227,18 @@ module "github_repository" {
       is_alphanumeric     = false # Default is true
     }
   ]
+
+  # Add projects
+  projects = [
+    {
+      name = "Project 1"
+      body = "This is the first project."
+    },
+    {
+      name = "Project 2"
+      body = "This is the second project."
+    }
+  ]
 }
 
 

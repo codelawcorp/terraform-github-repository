@@ -468,6 +468,16 @@ variable "autolink_references" {
 
 }
 
+variable "projects" {
+  description = "A list of project configurations to create for the repository"
+  type = list(object({
+    name       = string
+    repository = string
+    body       = optional(string, null)
+  }))
+  default = []
+}
+
 
 
 # variable "ruleset" {

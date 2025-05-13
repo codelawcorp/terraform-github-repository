@@ -333,6 +333,14 @@ resource "github_repository_autolink_reference" "this" {
   is_alphanumeric     = each.value.is_alphanumeric
 }
 
+resource "github_repository_project" "this" {
+  for_each = { for project in var.projects : project.name => project }
+
+  name       = each.value.name
+  repository = github_repository.this.name
+  body       = each.value.body
+}
+
 
 
 # resource "github_repository_ruleset" "this" {
