@@ -1,81 +1,20 @@
 # README
-
-This is a reusable Terraform module for creating github repo and related configurations.
+This is a reusable Terraform module for creating github repo and configuring it.  
+The latest version is published to the official [Terraform registry](https://registry.terraform.io/modules/codelawcorp/repository/github/latest).
 
 ## Description 🤝
 
-This is the most complete github repo module out there.  
+This is the most complete GitHub repo module out there.  
 It bundles all resources related to `github_repository` and abstract complexities of github provider.
 
-Github provider has a lot of misperceptions. If you get some API errors, try another combination of parameters. We reduced your possible hardships by including input validations.  
-Do not blame Terraform or this module - this is Github's provider implementation issues.  
+Github provider has a lot of issues - undocumented incompabilities, perpetual plans. If you face some issues, try another combination of parameters and report an issue here (we will add more docs, validations on the modules's side).  
+**Do not blame Terraform core or this module - those is Github's provider implementation issues.**
+
 Nonetheless, having the opportunity to spin up new projects in seconds and control configurations in a single place is a great advantage.
 
-⬇️ IN PROGRESS ⬇️ do not read.
-
-## Getting started 🚀
-
-## Development 🐙
-
-
-### Configuring
-
-- There are TODO comments in the code.
-- Install git hooks. Run this command `git config core.hooksPath .githooks`.
-- [Configure GPG keys if required](docs/GPG-KEYS.md)
-
-Setup GitHub authentication
-
-```bash
-brew install gh
-gh auth login
-gh auth setup-git
-git clone <this repo>
-```
-
-Configure Terraform
-```bash
-brew unlink terraform # if you have it installed
-brew install tfenv
-tfenv install <version>
-tfenv use  <version>
-```
-
-### Deploying 🏋🏼
-
-### Branching strategy 🚨
-
-- Branches are named after environments.
-- Number of environments `==` number of branches. E.g. for `prod`, `stg`, `dev` environments, you should have `prod`, `stg`, `dev` branches respectively.
-- The default branch should be `prod`, not `master`/`main`.
-- Do development on `dev` branch. Propagate changes from `dev` -> `stg` -> `prod` branches. CI/CD will deploy to respective environments upon merging. Merging is a deployment trigger.
-  Also recommended:
-- Do not protect `dev` branch. Do [Trunk Based Development](https://www.youtube.com/watch?v=v4Ijkq6Myfc) on a `dev` branch e.g. everyone can push there. Developers collaborate by doing pull-rebase/push often. Automated tests is a must.
-- Configure on-demand mini-dev per-developer so developers can experiment there, but dev should be accessible to push to integrate changes frequently.
-- If a startup with no users, do everything in `prod` and `prod` branch.
-
-With this branching strategy you are always certain which version of code is deployed to your envs.
-Merging is deploying.
-
-#### Semantic Versioning
-
-Code is versioned according to this convention [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#summary).  
-When a new commit is pushed to the default branch (`prod`), GHA runs an npm script which determines the next version and pushes a git tag. Optionally, it generates `CHANGELOG.md`.
-
-- To force-trigger a new version without actually making any changes, run `git commit --allow-empty -m "fix: trigger release with empty commit" && git push`
-
-## Useful links
-
-- [Choose License](https://choosealicense.com/)
-- Use [this tool](https://githubnext.com/projects/repo-visualization/) to explore the project if it is large
-- [.gitignore file generator](https://www.toptal.com/developers/gitignore/)
-- [Markdown table generator](https://www.tablesgenerator.com/markdown_tables)
-- [Kubernetes Manifests Generator](https://k8syaml.com/)
-- [Generate banner online](https://manytools.org/hacker-tools/ascii-banner/)
-- [Jam - UI bug reports](https://jam.dev/)
-  Enjoy Coding ❤
-
 <!-- BEGIN_TF_DOCS -->
+
+
 ## Requirements
 
 | Name | Version |
@@ -86,7 +25,7 @@ When a new commit is pushed to the default branch (`prod`), GHA runs an npm scri
 
 | Name | Version |
 |------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.6.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 6.6.0 |
 
 ## Modules
 
@@ -177,4 +116,10 @@ No modules.
 | <a name="output_name"></a> [name](#output\_name) | The name of the repository |
 | <a name="output_pages_url"></a> [pages\_url](#output\_pages\_url) | The URL of the GitHub Pages site |
 | <a name="output_visibility"></a> [visibility](#output\_visibility) | The visibility of the repository |
+
+
 <!-- END_TF_DOCS -->
+
+
+## Contributing 🐙
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md)
