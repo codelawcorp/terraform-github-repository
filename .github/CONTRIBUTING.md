@@ -1,8 +1,7 @@
-
-
 ### Configuring 🐙
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.  
+Pick the first issue here: https://github.com/codelawcorp/terraform-github-repository/contribute
 
 - There are TODO comments in the code.
 - There are GitHub issues
@@ -19,6 +18,7 @@ git clone <this repo>
 ```
 
 Configure Terraform
+
 ```bash
 brew unlink terraform # if you have it installed
 brew install tfenv
@@ -29,6 +29,7 @@ tfenv use  <version>
 ### Deploying 🏋🏼
 
 ### Branching strategy 🚨
+
 Default branch is `prod`.
 
 #### Semantic Versioning
@@ -48,4 +49,3 @@ When a new commit is pushed to the default branch (`prod`), GHA runs an npm scri
 - [Generate banner online](https://manytools.org/hacker-tools/ascii-banner/)
 - [Jam - UI bug reports](https://jam.dev/)
   Enjoy Coding ❤
-
