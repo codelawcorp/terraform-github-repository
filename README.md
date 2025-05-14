@@ -378,7 +378,7 @@ No modules.
 
 
 ## Contributing 🐙
-See [CONTRIBUTING.md](.github/CONTRIBUTING.md)
+See [CONTRIBUTING.md](https://github.com/codelawcorp/terraform-github-repository/tree/prod/.github/CONTRIBUTING.md)
 
 ## Authors
 
@@ -386,7 +386,7 @@ Module is maintained by [Max Onyx](https://github.com/magzim21) with help from [
 
 ## License
 
-Apache 2 Licensed. See [LICENSE](https://github.com/codelawcorp/terraform-github-repository/tree/master/LICENSE.md) for full details.
+Apache 2 Licensed. See [LICENSE](https://github.com/codelawcorp/terraform-github-repository/tree/prod/LICENSE.md) for full details.
 
 
 ## Need Help?
