@@ -54,7 +54,7 @@ jobs:
         # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
         run: GITHUB_TOKEN=${{ secrets.PAT_TOKEN }} GITHUB_OWNER=codelawcorp-test terraform test
 
-  terraform-docs:
+  terraform-docs: # https://github.com/terraform-docs/gh-actions
     name: Generate Terraform Docs
     needs: tests
     permissions:
