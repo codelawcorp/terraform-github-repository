@@ -280,7 +280,7 @@ variable "security_and_analysis" {
 variable "branches" {
   description = "List of branch configurations to create"
   type = list(object({
-    name          = string
+    name = string
     # default       = optional(bool) # TODO use it instead of default_branch
     source_branch = optional(string)
     source_sha    = optional(string)
