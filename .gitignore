@@ -139,6 +139,7 @@ __pycache__/
 *.tfstate
 .terraform*/
 .terraform*
+!.terraform-docs.yml
 .terraformrc
 *.tfstate
 *.tfstate.backup
