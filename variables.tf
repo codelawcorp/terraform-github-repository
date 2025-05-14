@@ -4,6 +4,7 @@ variable "name" {
   nullable    = false
 }
 
+# TODO / Remove default values from variables / it will use provider's defaults
 variable "description" {
   description = "Description of the GitHub repository"
   type        = string
@@ -65,7 +66,7 @@ variable "has_wiki" {
 }
 
 variable "has_downloads" {
-  description = "Set to true to enable the GitHub Downloads features on the repository"
+  description = "Set to true to enable the GitHub Downloads features on the repository (deprecated)"
   type        = bool
   default     = false
   nullable    = false
@@ -74,7 +75,7 @@ variable "has_downloads" {
 variable "allow_merge_commit" {
   description = "Set to false to disable merge commits on the repository"
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
 }
 
@@ -280,9 +281,10 @@ variable "branches" {
   description = "List of branch configurations to create"
   type = list(object({
     name          = string
-    default       = optional(bool)
+    # default       = optional(bool) # TODO use it instead of default_branch
     source_branch = optional(string)
     source_sha    = optional(string)
+    # TODO add missing options from https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection
     protection = optional(object({
       enforce_admins = optional(bool)
       required_status_checks = optional(object({

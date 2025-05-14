@@ -95,6 +95,7 @@ resource "github_repository" "this" {
 resource "github_branch_default" "this" { # Changing it RENAMES the current default branch.
   repository = github_repository.this.name
   branch     = var.auto_init == true ? "main" : var.default_branch
+  rename     = false # TODO / experiment with it and add a variable # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default
 }
 
 resource "github_branch" "this" {

@@ -33,6 +33,13 @@ gh auth setup-git
 git clone <this repo>
 ```
 
+Configure Terraform
+```bash
+brew unlink terraform # if you have it installed
+brew install tfenv
+tfenv install <version>
+tfenv use  <version>
+```
 
 ### Deploying 🏋🏼
 
