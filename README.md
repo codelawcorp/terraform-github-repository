@@ -382,5 +382,8 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md)
 
 ## Authors
 
-Module is maintained by [Max Onyx](https://github.com/magzim21) with help from [these awesome contributors](https://github.com/codelawcorp/terraform-github-repository/graphs/contributors).
+Module is maintained by [Max Onyx](https://github.com/magzim21) with help from [Azusa Kadota](https://github.com/kadazusa) and [these awesome contributors](https://github.com/codelawcorp/terraform-github-repository/graphs/contributors).
 
+## License
+
+Apache 2 Licensed. See [LICENSE](https://github.com/codelawcorp/terraform-github-repository/tree/master/LICENSE.md) for full details.
