@@ -60,13 +60,16 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Render terraform docs inside the README.md and push changes
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: .
-          output-file: README.md
-          output-method: inject
           git-push: "true"
+          # git-push-sign-off: "true"
 
   next-version:
     name: Determine the next version
