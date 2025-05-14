@@ -2,7 +2,7 @@ formatter: "markdown" # this is required
 
 version: "v0.20.0" # terraform-docs version
 
-header-from: ""
+header-from: main.tf
 footer-from: ""
 
 recursive:
