@@ -52,6 +52,9 @@ resource "github_repository" "this" {
       include_all_branches = template.value.include_all_branches
     }
   }
+  lifecycle {
+    ignore_changes = [template] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
+  }
 
   dynamic "pages" {
     for_each = var.pages != null ? [var.pages] : []

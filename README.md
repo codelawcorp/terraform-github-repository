@@ -387,3 +387,10 @@ Module is maintained by [Max Onyx](https://github.com/magzim21) with help from [
 ## License
 
 Apache 2 Licensed. See [LICENSE](https://github.com/codelawcorp/terraform-github-repository/tree/master/LICENSE.md) for full details.
+
+
+## Need Help?
+
+[CodeLaw.pro](https://codelaw.pro) — helping to structure Terraform code for maintanability and scalability - no frameworks, no subscriptions, no vendor lock-in.
+
+Reach out for **Internal Development Platform** built for your needs that you actually own in just 3 days (+ migrations).
