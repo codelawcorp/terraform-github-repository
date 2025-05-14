@@ -19,7 +19,7 @@ Nonetheless, having the opportunity to spin up new projects in seconds and contr
 ```hcl
 module "github_repository_minimal" {
   source = "../"
-  name        = "test-example-minimal"
+  name   = "test-example-minimal"
 }
 
 ```
@@ -281,7 +281,7 @@ module "github_repository_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | 6.6.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.6.0 |
 
 ## Modules
 
