@@ -22,7 +22,7 @@ Nonetheless, having the opportunity to spin up new projects in seconds and contr
 
 - There are TODO comments in the code.
 - Install git hooks. Run this command `git config core.hooksPath .githooks`.
-- [Configure GPG keys if required](doc/GPG-KEYS.md)
+- [Configure GPG keys if required](docs/GPG-KEYS.md)
 
 Setup GitHub authentication
 
