@@ -54,6 +54,13 @@ jobs:
         # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
         run: GITHUB_TOKEN=${{ secrets.PAT_TOKEN }} GITHUB_OWNER=codelawcorp-test terraform test
 
+      - name: Render terraform docs inside the README.md and push changes
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
 
   next-version:
     name: Determine the next version
