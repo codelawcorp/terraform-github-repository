@@ -19,6 +19,16 @@ sections:
 
 content: |
   {{ .Header }}
+  # Examples
+  ### Minimal example
+  ```hcl
+  {{ include "example/minimal.tf" }}
+  ```
+
+  ### Complete example
+  ```hcl
+  {{ include "example/complete.tf" }}
+  ```
 
   {{ .Requirements }}
 
