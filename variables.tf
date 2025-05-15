@@ -52,7 +52,7 @@ variable "topics" {
 variable "has_issues" {
   description = "Set to true to enable the GitHub Issues features on the repository"
   type        = bool
-  default     = true
+  default     = false
   nullable    = false
 }
 
