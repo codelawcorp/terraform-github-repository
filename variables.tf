@@ -17,6 +17,11 @@ variable "visibility" {
   type        = string
   default     = "private"
   nullable    = false
+
+  validation {
+    condition     = contains(["public", "private", "internal"], var.visibility)
+    error_message = "The visibility must be one of: public, private, internal"
+  }
 }
 
 variable "template" {
