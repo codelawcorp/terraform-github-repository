@@ -94,8 +94,6 @@ jobs:
           node-version: "lts/*"
       - name: Decide whether to release
         id: decision
-        # env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # TODO / remove this
         run: |
           # Check if there are any changes that are relevant for the release
           SEMVER_TAG=$(npx semantic-release --dry-run | awk '/The next release version is/ {print $NF}')
@@ -126,8 +124,6 @@ jobs:
         with:
           node-version: "lts/*"
       - name: Create a semanitc git tag  
-        # env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # TODO / remove this
         run: |
           npx semantic-release
           echo "#### Created a git tag ${{ needs.next-version.outputs.semver_tag }} 🐙" | tee -a $GITHUB_STEP_SUMMARY

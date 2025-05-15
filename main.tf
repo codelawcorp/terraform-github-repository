@@ -15,10 +15,11 @@ resource "github_repository" "this" {
   homepage_url = var.homepage_url
   topics       = var.use_repository_topics_resource ? null : var.topics
 
-  has_issues    = var.has_issues
-  has_projects  = var.has_projects
-  has_wiki      = var.has_wiki
+  has_issues      = var.has_issues
+  has_projects    = var.has_projects
+  has_wiki        = var.has_wiki
   has_discussions = var.has_discussions
+  has_downloads   = var.has_downloads
 
   allow_merge_commit   = var.allow_merge_commit
   merge_commit_title   = var.merge_commit_title
@@ -31,18 +32,19 @@ resource "github_repository" "this" {
   allow_rebase_merge          = var.allow_rebase_merge
   delete_branch_on_merge      = var.delete_branch_on_merge
 
-  # TODO / add allow_update_branch
 
   is_template = var.is_template
   archived    = var.archived
 
   web_commit_signoff_required = var.web_commit_signoff_required
   vulnerability_alerts        = var.vulnerability_alerts || var.enable_dependabot_security_updates
+  auto_init                   = var.template == null ? var.auto_init : false
+  gitignore_template          = var.gitignore_template
+  license_template            = var.license_template
+  archive_on_destroy          = var.archive_on_destroy
+
+  # TODO / add allow_update_branch
   # TODO / add ignore_vulnerability_alerts_during_read 
-  auto_init          = var.template == null ? var.auto_init : false
-  gitignore_template = var.gitignore_template
-  license_template   = var.license_template
-  archive_on_destroy = var.archive_on_destroy
 
   dynamic "template" {
     for_each = var.template != null ? [var.template] : []
@@ -56,7 +58,7 @@ resource "github_repository" "this" {
     ignore_changes = [template] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
   }
 
-  dynamic "pages" {
+  dynamic "pages" { #  GitHub provider issue: pages branch must exist at apply time / chicken-egg problem
     for_each = var.pages != null ? [var.pages] : []
     content {
       build_type = pages.value.build_type

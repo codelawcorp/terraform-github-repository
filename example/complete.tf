@@ -35,12 +35,12 @@ module "github_repository_complete" {
 
   branches = [
     {
-      name = "gh-pages" # TODO / create pages branch if this is specified
+      name = "gh-pages"
     }
   ]
 
   # #   # GitHub Pages configuration (optional)
-  # pages = { // TODO / pages branch must exist at applytime / chicken-egg problem
+  # pages = { // GitHub provider issue: pages branch must exist at applytime / chicken-egg problem
   #   source = {
   #     branch = "gh-pages"
   #     path   = "/"

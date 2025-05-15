@@ -4,7 +4,6 @@ variable "name" {
   nullable    = false
 }
 
-# TODO / Remove default values from variables / it will use provider's defaults
 variable "description" {
   description = "Description of the GitHub repository"
   type        = string
@@ -128,7 +127,6 @@ variable "merge_commit_validation" {
   }
 }
 
-
 variable "allow_auto_merge" {
   description = "Set to true to allow auto-merging pull requests on the repository"
   type        = bool
@@ -197,9 +195,9 @@ variable "default_branch" {
   default     = "main"
   nullable    = false
 
-  validation { // TODO / review
+  validation { // TODO / write tests for different combinations of template, auto_init, branches, default_branch / Some tests must fail, other succees (use assertions)
     condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
-    error_message = "The default_branch must be included in the branches list if branches are defined and template is not used"
+    error_message = "The default_branch must be included in the branches list or originate from the template repository."
   }
 }
 
@@ -239,21 +237,21 @@ variable "auto_init" {
 }
 
 variable "gitignore_template" {
-  description = "Use the name of the template without the extension. For example, 'Haskell'"
+  description = "Use the name of the template without the extension. For example, 'Haskell'" # Full list is here: https://github.com/github/gitignore
   type        = string
   default     = null
   nullable    = true
 }
 
 variable "license_template" {
-  description = "Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0'"
+  description = "Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0'" # Full list is here: https://github.com/github/choosealicense.com/tree/gh-pages/_licenses
   type        = string
   default     = null
   nullable    = true
 }
 
 variable "pages" {
-  description = "The repository's GitHub Pages configuration. Do not apply this configuration before the first apply if the source branch does not exist. Requires a paid GH plan."
+  description = "The repository's GitHub Pages configuration. Do not apply this configuration before the first apply if the source branch (gh-pages) does not exist. Requires a paid GH plan."
   type = object({
     build_type = optional(string, "legacy")
     cname      = optional(string, null)
@@ -290,15 +288,17 @@ variable "security_and_analysis" {
 }
 
 variable "branches" {
-  description = "List of branch configurations to create"
+  # TODO / add "more info links" for each nested object. Example below
+  description = "List of branch configurations to create" # More info here: https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch
   type = list(object({
     name = string
     # default       = optional(bool) # TODO use it instead of default_branch
     source_branch = optional(string)
     source_sha    = optional(string)
     # TODO add missing options from https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection
-    protection = optional(object({
+    protection = optional(object({ # Empty object means to protect with defaults
       enforce_admins = optional(bool)
+      # pattern is always name of the branch. This is how this module works.
       required_status_checks = optional(object({
         strict   = optional(bool)
         contexts = optional(list(string))
