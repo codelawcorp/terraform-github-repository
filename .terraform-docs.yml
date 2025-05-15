@@ -38,6 +38,9 @@ content: |
 
   {{ .Resources }}
 
+  We used best effort to make sure that default values match provider's defaults to avoid confusions.  
+  Instead of using variable prefixes, we use nested objects: e.g. `branch -> branch protection, environment -> environment protection`. This naturally leads to more readable code, which is one of the goals of this module.
+  When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
   {{ .Inputs }}
 
   {{ .Outputs }}
