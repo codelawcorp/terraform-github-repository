@@ -70,6 +70,7 @@ jobs:
         with:
           working-dir: .
           git-push: "true"
+          git-commit-message: "docs(terraform): automated update of terraform docs"
           # git-push-sign-off: "true"
           # fail-on-diff: "true"
 
