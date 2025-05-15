@@ -18,7 +18,7 @@ resource "github_repository" "this" {
   has_issues    = var.has_issues
   has_projects  = var.has_projects
   has_wiki      = var.has_wiki
-  has_downloads = var.has_downloads
+  has_discussions = var.has_discussions
 
   allow_merge_commit   = var.allow_merge_commit
   merge_commit_title   = var.merge_commit_title

@@ -65,6 +65,13 @@ variable "has_wiki" {
   nullable    = false
 }
 
+variable "has_discussions" {
+  description = "Set to true to enable GitHub Discussions on the repository"
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
 variable "has_downloads" {
   description = "Set to true to enable the GitHub Downloads features on the repository (deprecated)"
   type        = bool
