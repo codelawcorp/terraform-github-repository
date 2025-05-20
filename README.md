@@ -368,10 +368,45 @@ When variable is an object, there is a comment with a link to the provider's doc
 
 | Name | Description |
 |------|-------------|
+| <a name="output_allow_auto_merge"></a> [allow\_auto\_merge](#output\_allow\_auto\_merge) | Whether auto merge is allowed |
+| <a name="output_allow_merge_commit"></a> [allow\_merge\_commit](#output\_allow\_merge\_commit) | Whether merge commits are allowed |
+| <a name="output_allow_rebase_merge"></a> [allow\_rebase\_merge](#output\_allow\_rebase\_merge) | Whether rebase merge is allowed |
+| <a name="output_allow_squash_merge"></a> [allow\_squash\_merge](#output\_allow\_squash\_merge) | Whether squash merge is allowed |
+| <a name="output_archived"></a> [archived](#output\_archived) | Whether the repository is archived |
+| <a name="output_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#output\_delete\_branch\_on\_merge) | Whether to delete branch on merge |
 | <a name="output_description"></a> [description](#output\_description) | The description of the repository |
+| <a name="output_github_actions_environment_secrets"></a> [github\_actions\_environment\_secrets](#output\_github\_actions\_environment\_secrets) | Environment secrets for GitHub Actions |
+| <a name="output_github_actions_environment_variables"></a> [github\_actions\_environment\_variables](#output\_github\_actions\_environment\_variables) | Environment variables for GitHub Actions |
+| <a name="output_github_actions_secrets"></a> [github\_actions\_secrets](#output\_github\_actions\_secrets) | GitHub Actions secrets |
+| <a name="output_github_actions_variables"></a> [github\_actions\_variables](#output\_github\_actions\_variables) | GitHub Actions variables for the repository |
+| <a name="output_github_branch_default"></a> [github\_branch\_default](#output\_github\_branch\_default) | Default branch configuration |
+| <a name="output_github_branch_protections"></a> [github\_branch\_protections](#output\_github\_branch\_protections) | Branch protection rules |
+| <a name="output_github_branches"></a> [github\_branches](#output\_github\_branches) | Repository branches |
+| <a name="output_github_issue_labels"></a> [github\_issue\_labels](#output\_github\_issue\_labels) | Issue labels |
+| <a name="output_github_repository_autolink_references"></a> [github\_repository\_autolink\_references](#output\_github\_repository\_autolink\_references) | Repository autolink references |
+| <a name="output_github_repository_collaborators"></a> [github\_repository\_collaborators](#output\_github\_repository\_collaborators) | Repository collaborators |
+| <a name="output_github_repository_custom_properties"></a> [github\_repository\_custom\_properties](#output\_github\_repository\_custom\_properties) | Repository custom properties |
+| <a name="output_github_repository_dependabot_security_updates"></a> [github\_repository\_dependabot\_security\_updates](#output\_github\_repository\_dependabot\_security\_updates) | Dependabot security updates configuration |
+| <a name="output_github_repository_deploy_keys"></a> [github\_repository\_deploy\_keys](#output\_github\_repository\_deploy\_keys) | Repository deploy keys |
+| <a name="output_github_repository_environment_deployment_policies"></a> [github\_repository\_environment\_deployment\_policies](#output\_github\_repository\_environment\_deployment\_policies) | Environment deployment policies |
+| <a name="output_github_repository_environments"></a> [github\_repository\_environments](#output\_github\_repository\_environments) | Repository environments |
+| <a name="output_github_repository_files"></a> [github\_repository\_files](#output\_github\_repository\_files) | Repository files |
+| <a name="output_github_repository_projects"></a> [github\_repository\_projects](#output\_github\_repository\_projects) | Repository projects |
+| <a name="output_github_repository_topics"></a> [github\_repository\_topics](#output\_github\_repository\_topics) | Repository topics |
+| <a name="output_github_repository_webhooks"></a> [github\_repository\_webhooks](#output\_github\_repository\_webhooks) | Repository webhooks |
+| <a name="output_github_team_repositories"></a> [github\_team\_repositories](#output\_github\_team\_repositories) | Team repository permissions |
+| <a name="output_has_discussions"></a> [has\_discussions](#output\_has\_discussions) | Whether the repository has discussions enabled |
+| <a name="output_has_downloads"></a> [has\_downloads](#output\_has\_downloads) | Whether the repository has downloads enabled |
+| <a name="output_has_issues"></a> [has\_issues](#output\_has\_issues) | Whether the repository has issues enabled |
+| <a name="output_has_projects"></a> [has\_projects](#output\_has\_projects) | Whether the repository has projects enabled |
+| <a name="output_has_wiki"></a> [has\_wiki](#output\_has\_wiki) | Whether the repository has wiki enabled |
+| <a name="output_homepage_url"></a> [homepage\_url](#output\_homepage\_url) | The homepage URL of the repository |
+| <a name="output_is_template"></a> [is\_template](#output\_is\_template) | Whether the repository is a template |
 | <a name="output_name"></a> [name](#output\_name) | The name of the repository |
 | <a name="output_pages_url"></a> [pages\_url](#output\_pages\_url) | The URL of the GitHub Pages site |
 | <a name="output_visibility"></a> [visibility](#output\_visibility) | The visibility of the repository |
+| <a name="output_vulnerability_alerts"></a> [vulnerability\_alerts](#output\_vulnerability\_alerts) | Whether vulnerability alerts are enabled |
+| <a name="output_web_commit_signoff_required"></a> [web\_commit\_signoff\_required](#output\_web\_commit\_signoff\_required) | Whether web commit signoff is required |
 
 
 <!-- END_TF_DOCS -->
