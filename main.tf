@@ -98,6 +98,7 @@ resource "github_repository" "this" {
 }
 
 resource "github_branch_default" "this" { # Changing it RENAMES the current default branch.
+  count      = var.auto_init == true || var.template != null ? 1 : 0
   repository = github_repository.this.name
   branch     = var.auto_init == true ? "main" : var.default_branch
   rename     = false # TODO / experiment with it and add a variable # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default
@@ -108,10 +109,9 @@ resource "github_branch" "this" {
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
+  source_branch = coalesce(each.value.source_branch, github_branch_default.this[0].branch)
   source_sha    = each.value.source_sha
 
-  # depends_on = [github_branch_default.this]
 
 }
 
@@ -237,7 +237,7 @@ resource "github_repository_environment" "this" {
 
 
   deployment_branch_policy {
-    protected_branches     = false                //  Ignoring this setting. Some branch protection is not a green light for deployment.
+    protected_branches     = false                //  Ignoring this setting. Just the fact that a branch is protected is not a green light for deployment.
     custom_branch_policies = each.value.protected // This means that the branch allows ataching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
   }
 
@@ -317,7 +317,7 @@ resource "github_repository_file" "this" {
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
   autocreate_branch               = each.value.autocreate_branch
-  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this.branch) # Uses default branch if not set
+  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this[0].branch) # Uses default branch if not set
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }
 
