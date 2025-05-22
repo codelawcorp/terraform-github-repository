@@ -112,16 +112,17 @@ variable "merge_commit_message" {
   }
 }
 
-variable "merge_commit_validation" {
-  type     = string
-  default  = "_placeholder_for_validation"
-  nullable = false
+variable "_merge_commit_validation" {
+  type        = string
+  default     = "_placeholder_for_validation"
+  description = "Do not use this variable. It is used for validation of the merge_commit_title and merge_commit_message variables."
+  nullable    = false
   validation {
     condition = contains([
       "PR_TITLE:PR_BODY",
       "PR_TITLE:BLANK",
       "MERGE_MESSAGE:PR_TITLE",
-      var.merge_commit_validation
+      var._merge_commit_validation
     ], "${var.merge_commit_title}:${var.merge_commit_message}")
     error_message = "Invalid combination of merge_commit_title and merge_commit_message. Valid combinations are: PR_TITLE and PR_BODY, PR_TITLE and BLANK, MERGE_MESSAGE and PR_TITLE"
   }
@@ -189,6 +190,7 @@ variable "is_template" {
   }
 }
 
+# TODO / remove this variable. Use default attribute on the branches list or pick the first branch in the list.
 variable "default_branch" {
   description = "The name of the default branch of the repository."
   type        = string
