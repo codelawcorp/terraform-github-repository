@@ -14,8 +14,10 @@ It bundles all resources related to `github_repository` and abstract complexitie
 ### Minimal example
 ```hcl
 module "github_repository_minimal" {
-  source = "../"
+  source = "../../"
   name   = "test-example-minimal"
+
+  archive_on_destroy = false # Not a critical repo
 }
 
 ```
@@ -23,7 +25,7 @@ module "github_repository_minimal" {
 ### Complete example
 ```hcl
 module "github_repository_complete" {
-  source = "../"
+  source = "../../"
 
   name        = "test-example-complete"
   description = "An example repository created using Terraform"
@@ -246,23 +248,25 @@ module "github_repository_complete" {
       is_alphanumeric     = false # Default is true"
     },
     {
-      prefix              = "PR-"
+      key_prefix          = "PR-"
       target_url_template = "https://example.com/pull/PR-<num>"
       is_alphanumeric     = false # Default is true
     }
   ]
 
+
+  # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
   # Add projects
-  projects = [
-    {
-      name = "Project 1"
-      body = "This is the first project."
-    },
-    {
-      name = "Project 2"
-      body = "This is the second project."
-    }
-  ]
+  # projects = [
+  #   {
+  #     name = "Project 1"
+  #     body = "This is the first project."
+  #   },
+  #   {
+  #     name = "Project 2"
+  #     body = "This is the second project."
+  #   }
+  # ]
 }
 
 ```
@@ -304,7 +308,6 @@ No modules.
 | [github_repository_environment.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment) | resource |
 | [github_repository_environment_deployment_policy.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment_deployment_policy) | resource |
 | [github_repository_file.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_project.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_project) | resource |
 | [github_repository_topics.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_topics) | resource |
 | [github_repository_webhook.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_webhook) | resource |
 | [github_team_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/team_repository) | resource |
@@ -316,6 +319,7 @@ When variable is an object, there is a comment with a link to the provider's doc
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input__merge_commit_validation"></a> [\_merge\_commit\_validation](#input\_\_merge\_commit\_validation) | Do not use this variable. It is used for validation of the merge\_commit\_title and merge\_commit\_message variables. | `string` | `"_placeholder_for_validation"` | no |
 | <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Set to true to allow auto-merging pull requests on the repository | `bool` | `false` | no |
 | <a name="input_allow_merge_commit"></a> [allow\_merge\_commit](#input\_allow\_merge\_commit) | Set to false to disable merge commits on the repository | `bool` | `true` | no |
 | <a name="input_allow_rebase_merge"></a> [allow\_rebase\_merge](#input\_allow\_rebase\_merge) | Set to false to disable rebase merges on the repository | `bool` | `true` | no |
@@ -347,10 +351,8 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_license_template"></a> [license\_template](#input\_license\_template) | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0' | `string` | `null` | no |
 | <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"PR_BODY"` | no |
 | <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `"PR_TITLE"` | no |
-| <a name="input_merge_commit_validation"></a> [merge\_commit\_validation](#input\_merge\_commit\_validation) | n/a | `string` | `"_placeholder_for_validation"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the GitHub repository | `string` | n/a | yes |
 | <a name="input_pages"></a> [pages](#input\_pages) | The repository's GitHub Pages configuration. Do not apply this configuration before the first apply if the source branch (gh-pages) does not exist. Requires a paid GH plan. | <pre>object({<br/>    build_type = optional(string, "legacy")<br/>    cname      = optional(string, null)<br/>    source = object({<br/>      branch = string<br/>      path   = string<br/>    })<br/>  })</pre> | `null` | no |
-| <a name="input_projects"></a> [projects](#input\_projects) | A list of project configurations to create for the repository | <pre>list(object({<br/>    name       = string<br/>    repository = string<br/>    body       = optional(string, null)<br/>  }))</pre> | `[]` | no |
 | <a name="input_security_and_analysis"></a> [security\_and\_analysis](#input\_security\_and\_analysis) | Security and analysis features for the repository | <pre>object({<br/>    advanced_security = object({<br/>      status = string<br/>    })<br/>    secret_scanning = object({<br/>      status = string<br/>    })<br/>    secret_scanning_push_protection = object({<br/>      status = string<br/>    })<br/>  })</pre> | `null` | no |
 | <a name="input_squash_merge_commit_message"></a> [squash\_merge\_commit\_message](#input\_squash\_merge\_commit\_message) | The format of the commit message body when using squash merge. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"COMMIT_MESSAGES"` | no |
 | <a name="input_squash_merge_commit_title"></a> [squash\_merge\_commit\_title](#input\_squash\_merge\_commit\_title) | The format of the commit message when using squash merge. Can be one of: PR\_TITLE, COMMIT\_OR\_PR\_TITLE | `string` | `"COMMIT_OR_PR_TITLE"` | no |
@@ -391,7 +393,6 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="output_github_repository_environment_deployment_policies"></a> [github\_repository\_environment\_deployment\_policies](#output\_github\_repository\_environment\_deployment\_policies) | Environment deployment policies |
 | <a name="output_github_repository_environments"></a> [github\_repository\_environments](#output\_github\_repository\_environments) | Repository environments |
 | <a name="output_github_repository_files"></a> [github\_repository\_files](#output\_github\_repository\_files) | Repository files |
-| <a name="output_github_repository_projects"></a> [github\_repository\_projects](#output\_github\_repository\_projects) | Repository projects |
 | <a name="output_github_repository_topics"></a> [github\_repository\_topics](#output\_github\_repository\_topics) | Repository topics |
 | <a name="output_github_repository_webhooks"></a> [github\_repository\_webhooks](#output\_github\_repository\_webhooks) | Repository webhooks |
 | <a name="output_github_team_repositories"></a> [github\_team\_repositories](#output\_github\_team\_repositories) | Team repository permissions |
