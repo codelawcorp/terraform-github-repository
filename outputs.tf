@@ -194,7 +194,7 @@ output "github_repository_autolink_references" {
   value       = github_repository_autolink_reference.this
 }
 
-output "github_repository_projects" {
-  description = "Repository projects"
-  value       = github_repository_project.this
-}
+# output "github_repository_projects" {
+#   description = "Repository projects"
+#   value       = github_repository_project.this
+# }

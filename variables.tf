@@ -487,15 +487,16 @@ variable "autolink_references" {
 
 }
 
-variable "projects" {
-  description = "A list of project configurations to create for the repository"
-  type = list(object({
-    name       = string
-    repository = string
-    body       = optional(string, null)
-  }))
-  default = []
-}
+
+# 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
+# variable "projects" {
+#   description = "A list of project configurations to create for the repository"
+#   type = list(object({
+#     name = string
+#     body = optional(string, null)
+#   }))
+#   default = []
+# }
 
 
 
