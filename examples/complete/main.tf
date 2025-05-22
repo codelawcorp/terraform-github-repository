@@ -228,16 +228,18 @@ module "github_repository_complete" {
     }
   ]
 
+
+  # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
   # Add projects
-  projects = [
-    {
-      name = "Project 1"
-      body = "This is the first project."
-    },
-    {
-      name = "Project 2"
-      body = "This is the second project."
-    }
-  ]
+  # projects = [
+  #   {
+  #     name = "Project 1"
+  #     body = "This is the first project."
+  #   },
+  #   {
+  #     name = "Project 2"
+  #     body = "This is the second project."
+  #   }
+  # ]
 }
 
