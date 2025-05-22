@@ -1,5 +1,5 @@
 module "github_repository_complete" {
-  source = "../"
+  source = "../../"
 
   name        = "test-example-complete"
   description = "An example repository created using Terraform"
@@ -222,7 +222,7 @@ module "github_repository_complete" {
       is_alphanumeric     = false # Default is true"
     },
     {
-      prefix              = "PR-"
+      key_prefix          = "PR-"
       target_url_template = "https://example.com/pull/PR-<num>"
       is_alphanumeric     = false # Default is true
     }

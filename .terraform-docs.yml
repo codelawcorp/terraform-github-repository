@@ -22,12 +22,12 @@ content: |
   # Examples
   ### Minimal example
   ```hcl
-  {{ include "example/minimal.tf" }}
+  {{ include "examples/minimal/main.tf" }}
   ```
 
   ### Complete example
   ```hcl
-  {{ include "example/complete.tf" }}
+  {{ include "examples/complete/main.tf" }}
   ```
 
   {{ .Requirements }}
