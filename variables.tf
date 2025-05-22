@@ -230,10 +230,15 @@ variable "vulnerability_alerts" {
 }
 
 variable "auto_init" {
-  description = "Set to true to produce an initial commit in the repository. Ignored if template is used."
+  description = "Set to true to produce an initial commit in the repository. Is not compatible with template."
   type        = bool
   default     = false
   nullable    = false
+
+  validation {
+    condition     = var.template == null || !var.auto_init
+    error_message = "auto_init cannot be true when using a template repository"
+  }
 }
 
 variable "gitignore_template" {
