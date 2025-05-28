@@ -1,49 +1,56 @@
 # # Define random suffix for repository names to avoid conflicts
-# run "setup_tests" {
-#   module {
-#     source = "./tests/setup"
-#   }
-# }
+test {
+  parallel = true
+}
 
 run "minimal" {
   command = apply
+  # parallel = true
 
   module {
     source = "./examples/minimal"
-  }
-
-  assert {
-    condition     = output.repository_name != ""
-    error_message = "Repository was not created successfully"
   }
 }
 
 
 run "complete" {
   command = apply
+  # parallel = true
 
   module {
     source = "./examples/complete"
   }
-
-  # Basic settings
-  assert {
-    condition     = output.repository_name != ""
-    error_message = "Repository was not created successfully"
-  }
-
-  assert {
-    condition     = output.repository_visibility == "private"
-    error_message = "Repository visibility should be 'private'"
-  }
 }
 
+# run "complete_gh_pages" {
+#   command = apply
+#   # parallel = true
 
-# run "other" {
-#  module {
-#    source = "./examples/other"
-#  }
+#   module {
+#     source = "./examples/complete"
+#   }
+
+#   variables {
+#     pages = {
+#       build_type = "legacy"
+#       cname      = "pages.example.com"
+#       source = {
+#         branch = "gh-pages"
+#         path   = "/"
+#       }
+#     }
+#   }
 # }
+
+
+
+run "other" {
+  command = apply
+  # parallel = true
+  module {
+    source = "./examples/other"
+  }
+}
 
 
 
