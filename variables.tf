@@ -489,6 +489,22 @@ variable "autolink_references" {
 
 }
 
+variable "github_actions_permissions" {
+  description = "GitHub Actions permissions configuration"
+  type = object({
+    allowed_actions = optional(string, "all") # all, local_only, or selected
+    enabled         = optional(string, "all") # all, none, or selected
+    allowed_actions_config = optional(object({
+      github_owned_allowed = optional(bool, true)
+      verified_allowed     = optional(bool, true)
+      patterns_allowed     = optional(list(string), [])
+    }))
+  })
+  default  = null
+  nullable = true
+}
+
+
 
 # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
 # variable "projects" {

@@ -339,6 +339,25 @@ resource "github_repository_autolink_reference" "this" {
   is_alphanumeric     = each.value.is_alphanumeric
 }
 
+resource "github_actions_repository_permissions" "this" {
+  count = var.github_actions_permissions != null ? 1 : 0
+
+  repository = github_repository.this.name
+
+  allowed_actions = var.github_actions_permissions.allowed_actions
+  enabled         = var.github_actions_permissions.enabled
+
+  dynamic "allowed_actions_config" {
+    for_each = var.github_actions_permissions.allowed_actions_config != null ? [var.github_actions_permissions.allowed_actions_config] : []
+    content {
+      github_owned_allowed = allowed_actions_config.value.github_owned_allowed
+      patterns_allowed     = allowed_actions_config.value.patterns_allowed
+      verified_allowed     = allowed_actions_config.value.verified_allowed
+    }
+  }
+}
+
+
 
 # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
 # resource "github_repository_project" "this" {
