@@ -1,6 +1,6 @@
-
 module "another_repo" {
-  source             = "../../"
+  source = "../../"
+
   name               = "test-another-repo"
   archive_on_destroy = false
   auto_init          = true

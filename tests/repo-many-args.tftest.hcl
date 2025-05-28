@@ -19,11 +19,24 @@ run "minimal" {
 }
 
 
-# run "complete" {
-#  module {
-#    source = "./examples/complete"
-#  }
-# }
+run "complete" {
+  command = apply
+
+  module {
+    source = "./examples/complete"
+  }
+
+  # Basic settings
+  assert {
+    condition     = output.repository_name != ""
+    error_message = "Repository was not created successfully"
+  }
+
+  assert {
+    condition     = output.repository_visibility == "private"
+    error_message = "Repository visibility should be 'private'"
+  }
+}
 
 
 # run "other" {
