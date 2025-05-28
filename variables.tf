@@ -96,8 +96,8 @@ variable "merge_commit_title" {
   default     = "PR_TITLE"
   nullable    = false
   validation {
-    condition     = contains(["PR_TITLE", "MERGE_MESSAGE"], var.merge_commit_title)
-    error_message = "merge_commit_title must be one of: PR_TITLE, MERGE_MESSAGE"
+    condition     = var.allow_merge_commit == true && contains(["PR_TITLE", "MERGE_MESSAGE"], var.merge_commit_title)
+    error_message = "allow_merge_commit must be enabled, merge_commit_title must be one of: PR_TITLE, MERGE_MESSAGE"
   }
 }
 
@@ -107,8 +107,8 @@ variable "merge_commit_message" {
   default     = "PR_BODY"
   nullable    = false
   validation {
-    condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.merge_commit_message)
-    error_message = "merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+    condition     = var.allow_merge_commit == true && contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.merge_commit_message)
+    error_message = "allow_merge_commit must be enabled, merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   }
 }
 
@@ -149,8 +149,8 @@ variable "squash_merge_commit_title" {
   default     = "COMMIT_OR_PR_TITLE"
   nullable    = false
   validation {
-    condition     = contains(["PR_TITLE", "COMMIT_OR_PR_TITLE"], var.squash_merge_commit_title)
-    error_message = "squash_merge_commit_title must be one of: PR_TITLE, COMMIT_OR_PR_TITLE"
+    condition     = var.allow_squash_merge == true && contains(["PR_TITLE", "COMMIT_OR_PR_TITLE"], var.squash_merge_commit_title)
+    error_message = "allow_squash_merge must be enabled, squash_merge_commit_title must be one of: PR_TITLE, COMMIT_OR_PR_TITLE"
   }
 }
 
@@ -160,8 +160,8 @@ variable "squash_merge_commit_message" {
   default     = "COMMIT_MESSAGES"
   nullable    = false
   validation {
-    condition     = contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.squash_merge_commit_message)
-    error_message = "squash_merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+    condition     = var.allow_squash_merge == true && contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.squash_merge_commit_message)
+    error_message = "allow_squash_merge must be enabled, squash_merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   }
 }
 
