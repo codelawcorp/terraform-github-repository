@@ -15,10 +15,11 @@ module "github_repository_complete" {
   homepage_url = "https://example.com"
   topics       = ["terraform", "github", "example"]
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues      = true
+  has_projects    = true
+  has_wiki        = true
+  has_downloads   = true
+  has_discussions = true
 
   # Merge settings
   allow_auto_merge       = true
@@ -26,6 +27,8 @@ module "github_repository_complete" {
   allow_squash_merge     = true
   allow_rebase_merge     = true
   delete_branch_on_merge = true
+  merge_commit_message   = "BLANK"
+  merge_commit_title     = "PR_TITLE"
 
 
 
@@ -87,7 +90,7 @@ module "github_repository_complete" {
     {
       title = "Some CI Key"
       # this is how to generate the key // ssh-keygen -f test
-      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB/4GlDREJaArBSKACPHpczJGrw2SoDRE4y5MyBN+7+ some-metadata"
+      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0kKdZ/vUygOfzycmhqe4JoX6AJFl2XVOXyvbuP9L/0 some-metadata"
       read_only = false
     }
   ]
@@ -168,12 +171,15 @@ module "github_repository_complete" {
 
   github_actions_variables = [
     {
-      name  = "CI_ENABLED"
+      name  = "TEST_VAR"
       value = "true"
-    },
+    }
+  ]
+
+  github_actions_secrets = [
     {
-      name  = "DEPLOY_ENVIRONMENT"
-      value = "production"
+      name  = "DEPLOY_TOKEN"
+      value = "secret-token-value"
     }
   ]
 
@@ -231,7 +237,7 @@ module "github_repository_complete" {
   github_repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch         = "stg" # Configure signed commits if require_signed_commits is true on this branch.
+      branch         = "stg" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
       commit_message = "Add README.md"
       commit_author  = "Terraform Bot"
       commit_email   = "test@test.com"
@@ -256,6 +262,9 @@ module "github_repository_complete" {
       is_alphanumeric     = false # Default is true"
     }
   ]
+
+  gitignore_template = "Python"
+  license_template   = "mit"
 
 
   # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
