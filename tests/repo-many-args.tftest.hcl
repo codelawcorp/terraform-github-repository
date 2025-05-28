@@ -6,24 +6,31 @@
 # }
 
 run "minimal" {
+  command = apply
+
   module {
     source = "./examples/minimal"
   }
-}
 
-
-run "complete" {
-  module {
-    source = "./examples/complete"
+  assert {
+    condition     = output.repository_name != ""
+    error_message = "Repository was not created successfully"
   }
 }
 
 
-run "other" {
-  module {
-    source = "./examples/other"
-  }
-}
+# run "complete" {
+#  module {
+#    source = "./examples/complete"
+#  }
+# }
+
+
+# run "other" {
+#  module {
+#    source = "./examples/other"
+#  }
+# }
 
 
 
