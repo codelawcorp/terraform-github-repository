@@ -1,7 +1,7 @@
 module "github_repository_complete" {
   source = "../../"
 
-  name        = "test-example-complete"
+  name        = "test-${basename(path.root)}"
   description = "An example repository created using Terraform"
   visibility  = "private"
 
