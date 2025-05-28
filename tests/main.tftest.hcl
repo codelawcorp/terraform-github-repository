@@ -4,8 +4,8 @@ test {
 }
 
 run "minimal" {
-  command = apply
-  # parallel = true
+  command   = apply
+  state_key = "minimal"
 
   module {
     source = "./examples/minimal"
@@ -14,8 +14,8 @@ run "minimal" {
 
 
 run "complete" {
-  command = apply
-  # parallel = true
+  command   = apply
+  state_key = "complete"
 
   module {
     source = "./examples/complete"
@@ -24,7 +24,7 @@ run "complete" {
 
 # run "complete_gh_pages" {
 #   command = apply
-#   # parallel = true
+#   state_key = "complete"
 
 #   module {
 #     source = "./examples/complete"
@@ -45,8 +45,8 @@ run "complete" {
 
 
 run "other" {
-  command = apply
-  # parallel = true
+  command   = apply
+  state_key = "other"
   module {
     source = "./examples/other"
   }

@@ -112,6 +112,7 @@ variable "merge_commit_message" {
   }
 }
 
+# TODO / refactor to remove this variable somehow
 variable "_merge_commit_validation" {
   type        = string
   default     = "_placeholder_for_validation"
@@ -231,7 +232,7 @@ variable "vulnerability_alerts" {
   nullable    = false
 }
 
-variable "auto_init" {
+variable "auto_init" { # Deprecated by this module. Might be removed in the future.
   description = "Set to true to produce an initial commit in the repository. Is not compatible with template."
   type        = bool
   default     = false
@@ -258,7 +259,7 @@ variable "license_template" {
 }
 
 variable "pages" {
-  description = "The repository's GitHub Pages configuration. Do not apply this configuration before the first apply if the source branch (gh-pages) does not exist. Requires a paid GH plan."
+  description = "GitHub Pages configuration for the repository. ⚠️ Note: Requires a paid GitHub plan and ⚠️ the source branch must exist before applying this configuration - the first apply always fails - disable on the first apply. ⚠️ "
   type = object({
     build_type = optional(string, "legacy")
     cname      = optional(string, null)
@@ -300,12 +301,19 @@ variable "branches" {
   type = list(object({
     name = string
     # default       = optional(bool) # TODO use it instead of default_branch
-    source_branch = optional(string)
+    source_branch = optional(string) # By default, the source branch is the default branch.
     source_sha    = optional(string)
-    # TODO add missing options from https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection
+    # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection
     protection = optional(object({ # Empty object means to protect with defaults
-      enforce_admins = optional(bool)
-      # pattern is always name of the branch. This is how this module works.
+      # `pattern` is always name of the branch. This is how this module works.
+      enforce_admins                  = optional(bool)
+      require_signed_commits          = optional(bool)
+      required_linear_history         = optional(bool)
+      require_conversation_resolution = optional(bool)
+      allows_deletions                = optional(bool)
+      allows_force_pushes             = optional(bool)
+      force_push_bypassers            = optional(list(string))
+      lock_branch                     = optional(bool)
       required_status_checks = optional(object({
         strict   = optional(bool)
         contexts = optional(list(string))
@@ -314,8 +322,14 @@ variable "branches" {
         dismiss_stale_reviews           = optional(bool)
         restrict_dismissals             = optional(bool)
         dismissal_restrictions          = optional(list(string))
+        pull_request_bypassers          = optional(list(string))
         require_code_owner_reviews      = optional(bool)
         required_approving_review_count = optional(number)
+        require_last_push_approval      = optional(bool)
+      }))
+      restrict_pushes = optional(object({
+        blocks_creations = optional(bool)
+        push_allowances  = optional(list(string))
       }))
     }))
   }))
@@ -348,8 +362,8 @@ variable "environments" {
   type = list(object({
     name = string
     reviewers = optional(object({
-      teams = optional(list(string), [])
-      users = optional(list(string), [])
+      teams = optional(list(string), []) # This is a team id, not a team name
+      users = optional(list(string), []) # This is a user id, not a username
     }))
     protected = optional(bool, false)
     variables = optional(list(object({
@@ -440,7 +454,7 @@ variable "webhooks" {
 }
 
 variable "deploy_keys" {
-  description = "List of SSH deploy keys to add to the repository"
+  description = "List of SSH deploy keys to add to the repository. Must be allowed on the org level."
   type = list(object({
     title     = string
     key       = string

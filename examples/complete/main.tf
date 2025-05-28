@@ -1,30 +1,33 @@
 module "github_repository_complete" {
   source = "../../"
 
-  name        = "test-${basename(path.root)}"
+  name        = "test-${basename(path.root)}" # Any repository name.
   description = "An example repository created using Terraform"
-  visibility  = "private"
+  visibility  = "public"
 
-  # Optional settings
+  default_branch = "prod"
+
+  archive_on_destroy = false
+  archived           = false
+  auto_init          = false # Deprecated by this module. Might be removed in the future.
+  is_template        = false
+
   homepage_url = "https://example.com"
   topics       = ["terraform", "github", "example"]
 
-  # Feature flags
   has_issues    = true
   has_projects  = true
   has_wiki      = true
   has_downloads = true
 
   # Merge settings
+  allow_auto_merge       = true
   allow_merge_commit     = true
   allow_squash_merge     = true
   allow_rebase_merge     = true
   delete_branch_on_merge = true
 
-  # Repository settings
-  is_template    = false
-  default_branch = "prod"
-  archived       = false
+
 
   # Template configuration (if using a template repository)
   template = {
@@ -36,6 +39,39 @@ module "github_repository_complete" {
   branches = [
     {
       name = "gh-pages"
+    },
+    {
+      name = "prod" # Try test without prod
+      protection = {
+        enforce_admins                  = true
+        required_linear_history         = true
+        require_conversation_resolution = true
+        require_signed_commits          = true
+        allows_deletions                = false
+        allows_force_pushes             = false
+        force_push_bypassers            = ["/magzim21"]
+        lock_branch                     = true
+        required_status_checks = {
+          strict   = true
+          contexts = ["ci/test", "ci/lint"]
+        }
+        required_pull_request_reviews = {
+          dismiss_stale_reviews           = true
+          restrict_dismissals             = true
+          dismissal_restrictions          = ["/magzim21"]
+          pull_request_bypassers          = ["/magzim21"]
+          require_code_owner_reviews      = true
+          required_approving_review_count = 2
+          require_last_push_approval      = true
+        }
+        restrict_pushes = {
+          blocks_creations = true
+          push_allowances  = ["/magzim21"]
+        }
+      }
+    },
+    {
+      name = "stg"
     }
   ]
 
@@ -59,7 +95,6 @@ module "github_repository_complete" {
   #       status = "enabled"
   #     }
   #   }
-  archive_on_destroy = false
 
   environments = [
     {
@@ -176,28 +211,12 @@ module "github_repository_complete" {
   github_repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch         = "prod"
+      branch         = "stg" # Configure signed commits if require_signed_commits is true on this branch.
       commit_message = "Add README.md"
       commit_author  = "Terraform Bot"
       commit_email   = "test@test.com"
 
       overwrite_on_create = true
-    }
-    "test.md" = {
-      content = "# A test file."
-      branch  = "random-branch"
-      # commit_message      = "Add README.md"
-      # commit_author       = "Terraform Bot"
-      # commit_email        = "test@test.com"
-      # overwrite_on_create = true
-    }
-    "test-default-branch.md" = {
-      content = "# A test file."
-      # branch              = "random-branch"
-      # commit_message      = "Add README.md"
-      # commit_author       = "Terraform Bot"
-      # commit_email        = "test@test.com"
-      # overwrite_on_create = true
     }
   }
 
@@ -207,11 +226,6 @@ module "github_repository_complete" {
       name        = "critical"
       color       = "ff0000"
       description = "Critical issues that need immediate attention"
-    },
-    {
-      name        = "feature-request"
-      color       = "00ff00"
-      description = "Suggestions for new features"
     }
   ]
   # Create an autolink reference
@@ -220,11 +234,6 @@ module "github_repository_complete" {
       key_prefix          = "PROJECT-"
       target_url_template = "https://example.com/view/PROJECT-<num>"
       is_alphanumeric     = false # Default is true"
-    },
-    {
-      key_prefix          = "PR-"
-      target_url_template = "https://example.com/pull/PR-<num>"
-      is_alphanumeric     = false # Default is true
     }
   ]
 

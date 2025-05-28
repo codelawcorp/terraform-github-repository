@@ -105,7 +105,8 @@ resource "github_branch_default" "this" { # Changing it RENAMES the current defa
 }
 
 resource "github_branch" "this" {
-  for_each = { for branch in var.branches : branch.name => branch }
+  # Avoiding ` 422 Cannot delete the default branch []` error.
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch }
 
   repository    = github_repository.this.name
   branch        = each.value.name
@@ -118,28 +119,45 @@ resource "github_branch" "this" {
 resource "github_branch_protection" "this" {
   for_each = { for branch in var.branches : branch.name => branch if branch.protection != null }
 
-  repository_id  = github_repository.this.node_id
-  pattern        = each.value.name
-  enforce_admins = coalesce(each.value.protection.enforce_admins, false)
+  repository_id                   = github_repository.this.node_id
+  pattern                         = each.value.name
+  enforce_admins                  = try(each.value.protection.enforce_admins, null)
+  require_signed_commits          = try(each.value.protection.require_signed_commits, null)
+  required_linear_history         = try(each.value.protection.required_linear_history, null)
+  require_conversation_resolution = try(each.value.protection.require_conversation_resolution, null)
+  allows_deletions                = try(each.value.protection.allows_deletions, false)
+  allows_force_pushes             = try(each.value.protection.allows_force_pushes, null)
+  force_push_bypassers            = try(each.value.protection.force_push_bypassers, [])
+  lock_branch                     = try(each.value.protection.lock_branch, null)
 
   dynamic "required_status_checks" {
     for_each = each.value.protection.required_status_checks != null ? [each.value.protection.required_status_checks] : []
     content {
-      strict   = coalesce(required_status_checks.value.strict, false)
-      contexts = coalesce(required_status_checks.value.contexts, [])
+      strict   = try(required_status_checks.value.strict, null)
+      contexts = try(required_status_checks.value.contexts, [])
     }
   }
 
   dynamic "required_pull_request_reviews" {
     for_each = each.value.protection.required_pull_request_reviews != null ? [each.value.protection.required_pull_request_reviews] : []
     content {
-      dismiss_stale_reviews           = coalesce(required_pull_request_reviews.value.dismiss_stale_reviews, false)
-      restrict_dismissals             = coalesce(required_pull_request_reviews.value.restrict_dismissals, false)
-      dismissal_restrictions          = coalesce(required_pull_request_reviews.value.dismissal_restrictions, [])
-      require_code_owner_reviews      = coalesce(required_pull_request_reviews.value.require_code_owner_reviews, false)
-      required_approving_review_count = coalesce(required_pull_request_reviews.value.required_approving_review_count, 1)
+      dismiss_stale_reviews           = try(required_pull_request_reviews.value.dismiss_stale_reviews, null)
+      restrict_dismissals             = try(required_pull_request_reviews.value.restrict_dismissals, null)
+      dismissal_restrictions          = try(required_pull_request_reviews.value.dismissal_restrictions, [])
+      pull_request_bypassers          = try(required_pull_request_reviews.value.pull_request_bypassers, [])
+      require_code_owner_reviews      = try(required_pull_request_reviews.value.require_code_owner_reviews, null)
+      required_approving_review_count = try(required_pull_request_reviews.value.required_approving_review_count, 1)
+      require_last_push_approval      = try(required_pull_request_reviews.value.require_last_push_approval, null)
     }
   }
+  dynamic "restrict_pushes" {
+    for_each = each.value.protection.restrict_pushes != null ? [each.value.protection.restrict_pushes] : []
+    content {
+      blocks_creations = try(restrict_pushes.value.blocks_creations, null)
+      push_allowances  = try(restrict_pushes.value.push_allowances, [])
+    }
+  }
+
 }
 
 resource "github_actions_variable" "this" {
