@@ -75,6 +75,23 @@ module "github_repository_complete" {
     }
   ]
 
+  custom_properties = [
+    {
+      property_name  = "test"
+      property_value = "test"
+      property_type  = "string"
+    }
+  ]
+
+  deploy_keys = [
+    {
+      title = "Some CI Key"
+      # this is how to generate the key // ssh-keygen -f test
+      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB/4GlDREJaArBSKACPHpczJGrw2SoDRE4y5MyBN+7+ some-metadata"
+      read_only = false
+    }
+  ]
+
   # #   # GitHub Pages configuration (optional)
   # pages = { // GitHub provider issue: pages branch must exist at applytime / chicken-egg problem
   #   source = {
@@ -103,7 +120,10 @@ module "github_repository_complete" {
         users = []
         teams = []
       }
-      protected = true
+      protected           = true
+      wait_timer          = 10
+      can_admins_bypass   = true
+      prevent_self_review = true
       # tag_pattern   = "v*"
       variables = [
         {

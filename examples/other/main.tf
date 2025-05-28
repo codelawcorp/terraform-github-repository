@@ -41,13 +41,12 @@ module "another_repo" {
     }
   ]
 
-  # Add a read-only deploy key
   deploy_keys = [
     {
-      title = "Read-only CI Key"
+      title = "Some CI Key"
       # this is how to generate the key // ssh-keygen -f test
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB/4GlDREJaArBSKACPHpczJGrw2SoDRE4y5MyBN+7+ maksymonyshchenko@Maksyms-MacBook-Pro-3.local"
-      # read_only defaults to true
+      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB/4GlDREJaArBSKACPHpczJGrw2SoDRE4y5MyBN+7+ some-metadata"
+      read_only = false
     }
   ]
 

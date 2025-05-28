@@ -359,13 +359,16 @@ variable "github_actions_secrets" {
 
 variable "environments" {
   description = "GitHub repository environments to create"
-  type = list(object({
-    name = string
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment
+    name                = string
+    wait_timer          = optional(number, null)
+    can_admins_bypass   = optional(bool, null)
+    prevent_self_review = optional(bool, null)
     reviewers = optional(object({
       teams = optional(list(string), []) # This is a team id, not a team name
       users = optional(list(string), []) # This is a user id, not a username
     }))
-    protected = optional(bool, false)
+    protected = optional(bool, false) # This is instead of deployment_branch_policy block. This module enforces 1:1 environment and branch name. Open a PR or issue if you disagree.
     variables = optional(list(object({
       name  = string
       value = string

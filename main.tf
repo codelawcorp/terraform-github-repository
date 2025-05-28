@@ -253,10 +253,14 @@ resource "github_repository_environment" "this" {
   environment = each.key
   repository  = github_repository.this.name
 
+  wait_timer          = try(each.value.wait_timer, null)
+  can_admins_bypass   = try(each.value.can_admins_bypass, null)
+  prevent_self_review = try(each.value.prevent_self_review, null)
+
 
   deployment_branch_policy {
-    protected_branches     = false                //  Ignoring this setting. Just the fact that a branch is protected is not a green light for deployment.
-    custom_branch_policies = each.value.protected // This means that the branch allows ataching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
+    protected_branches     = false                //  Ignoring this setting.  Just the fact that a branch is protected is not a green light for deployment to this environment.
+    custom_branch_policies = each.value.protected // This means that the branch allows attaching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
   }
 
   dynamic "reviewers" {
