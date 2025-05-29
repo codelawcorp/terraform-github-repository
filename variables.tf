@@ -199,6 +199,7 @@ variable "default_branch" {
   nullable    = false
 
   validation { // TODO / write tests for different combinations of template, auto_init, branches, default_branch / Some tests must fail, other succees (use assertions)
+    # condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
     condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
     error_message = "The default_branch must be included in the branches list or originate from the template repository."
   }

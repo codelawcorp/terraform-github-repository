@@ -6,6 +6,9 @@
 #   value = github_branch_default.this
 # }
 
+locals {
+  default_branch = var.auto_init == true ? "main" : coalesce(var.default_branch, "main")
+}
 
 resource "github_repository" "this" {
   name        = var.name
@@ -97,20 +100,19 @@ resource "github_repository" "this" {
   }
 }
 
-resource "github_branch_default" "this" { # Changing it RENAMES the current default branch.
-  count      = var.auto_init == true || var.template != null ? 1 : 0
+resource "github_branch_default" "this" { # Changing it RENAMES the current default branch. 
   repository = github_repository.this.name
-  branch     = var.auto_init == true ? "main" : var.default_branch
+  branch     = local.default_branch
   rename     = false # TODO / experiment with it and add a variable # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default
 }
 
 resource "github_branch" "this" {
-  # Avoiding ` 422 Cannot delete the default branch []` error.
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch }
+  # `if` condition prevents ` 422 Cannot delete the default branch []` error.
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != local.default_branch } 
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, github_branch_default.this[0].branch)
+  source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
   source_sha    = each.value.source_sha
 
 
@@ -343,7 +345,7 @@ resource "github_repository_file" "this" {
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
   autocreate_branch               = each.value.autocreate_branch
-  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this[0].branch) # Uses default branch if not set
+  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this.branch) # Uses default branch if not set
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }
 
