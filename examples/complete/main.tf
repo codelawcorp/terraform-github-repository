@@ -40,7 +40,7 @@ module "github_repository_complete" {
   template = {
     owner                = "codelawcorp"
     repository           = "template"
-    include_all_branches = true
+    include_all_branches = true # TODO / try without this
   }
 
   branches = [
@@ -124,7 +124,7 @@ module "github_repository_complete" {
     {
       name = "prod"
       reviewers = {
-        users = []
+        users = ["/magzim21"]
         teams = []
       }
       protected           = true
@@ -199,12 +199,6 @@ module "github_repository_complete" {
       url          = "https://jenkins.example.com/github-webhook/"
       content_type = "json"
       events       = ["push", "pull_request"]
-    },
-    {
-      url          = "https://ci.example.com/webhook"
-      content_type = "form"
-      secret       = "secureSecret123"
-      events       = ["release"]
     }
   ]
 
@@ -224,15 +218,15 @@ module "github_repository_complete" {
 
 
   users = [
-    # {
-    #   username   = "example-user"
-    #   permission = "push"
-    # }
+    {
+      username   = "/magzim21"
+      permission = "admin"
+    }
   ]
 
   teams = [
     # {
-    #   team_id    = "admin-team"
+    #   team_id    = "your-org/admin-team"
     #   permission = "admin"
     # }
   ]

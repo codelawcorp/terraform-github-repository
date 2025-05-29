@@ -13,7 +13,7 @@ resource "github_repository" "this" {
   visibility  = var.visibility
 
   homepage_url = var.homepage_url
-  topics       = var.use_repository_topics_resource ? null : var.topics
+  # topics       = var.use_repository_topics_resource ? null : var.topics # Using a dedicated resource for topics.
 
   has_issues      = var.has_issues
   has_projects    = var.has_projects
@@ -209,7 +209,7 @@ resource "github_repository_dependabot_security_updates" "this" {
 # Manage topics separately with github_repository_topics if use_repository_topics_resource is true
 # Otherwise topics are managed by the github_repository resource
 resource "github_repository_topics" "this" {
-  count      = var.use_repository_topics_resource ? 1 : 0
+  count      = var.topics != [] ? 1 : 0
   repository = github_repository.this.name
   topics     = var.topics
 }
