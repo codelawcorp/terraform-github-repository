@@ -362,19 +362,19 @@ resource "github_repository_autolink_reference" "this" {
 }
 
 resource "github_actions_repository_permissions" "this" {
-  count = var.github_actions_permissions != null ? 1 : 0
+  count = var.github_actions_repository_permissions != null ? 1 : 0
 
   repository = github_repository.this.name
 
-  allowed_actions = var.github_actions_permissions.allowed_actions
-  enabled         = var.github_actions_permissions.enabled
+  allowed_actions = var.github_actions_repository_permissions.allowed_actions
+  enabled         = var.github_actions_repository_permissions.enabled
 
   dynamic "allowed_actions_config" {
-    for_each = var.github_actions_permissions.allowed_actions_config != null ? [var.github_actions_permissions.allowed_actions_config] : []
+    for_each = var.github_actions_repository_permissions.allowed_actions_config != null ? [var.github_actions_repository_permissions.allowed_actions_config] : []
     content {
-      github_owned_allowed = allowed_actions_config.value.github_owned_allowed
-      patterns_allowed     = allowed_actions_config.value.patterns_allowed
-      verified_allowed     = allowed_actions_config.value.verified_allowed
+      github_owned_allowed = try(allowed_actions_config.value.github_owned_allowed, null)
+      patterns_allowed     = try(allowed_actions_config.value.patterns_allowed, [])
+      verified_allowed     = try(allowed_actions_config.value.verified_allowed, null)
     }
   }
 }

@@ -506,15 +506,15 @@ variable "autolink_references" {
 
 }
 
-variable "github_actions_permissions" {
-  description = "GitHub Actions permissions configuration"
-  type = object({
+variable "github_actions_repository_permissions" {
+  description = "GitHub Actions repository permissions configuration"
+  type = object({                             # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_permissions
     allowed_actions = optional(string, "all") # all, local_only, or selected
-    enabled         = optional(string, "all") # all, none, or selected
+    enabled         = optional(bool, true)
     allowed_actions_config = optional(object({
-      github_owned_allowed = optional(bool, true)
-      verified_allowed     = optional(bool, true)
+      github_owned_allowed = optional(bool, null)
       patterns_allowed     = optional(list(string), [])
+      verified_allowed     = optional(bool, null)
     }))
   })
   default  = null

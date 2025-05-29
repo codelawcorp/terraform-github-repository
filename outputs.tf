@@ -194,7 +194,7 @@ output "github_repository_autolink_references" {
   value       = github_repository_autolink_reference.this
 }
 
-output "github_actions_permissions" {
+output "github_actions_repository_permissions" {
   description = "GitHub Actions permissions configuration"
   value       = github_actions_repository_permissions.this
 }

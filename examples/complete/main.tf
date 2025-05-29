@@ -264,18 +264,17 @@ module "github_repository_complete" {
   gitignore_template = "Python"
   license_template   = "mit"
 
+  github_actions_repository_permissions = {
+    allowed_actions = "selected"
+    enabled         = true
+    allowed_actions_config = {
+      github_owned_allowed = true
+      patterns_allowed     = ["actions/*"]
+      verified_allowed     = true
+    }
+  }
 
+  # Projects are not supported by this module.
   # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
-  # Add projects
-  # projects = [
-  #   {
-  #     name = "Project 1"
-  #     body = "This is the first project."
-  #   },
-  #   {
-  #     name = "Project 2"
-  #     body = "This is the second project."
-  #   }
-  # ]
 }
 
