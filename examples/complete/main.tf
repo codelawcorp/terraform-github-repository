@@ -220,7 +220,16 @@ module "github_repository_complete" {
   github_repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch         = "stg" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
+      branch         = "some-new-branch" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
+      commit_message = "Add README.md"
+      commit_author  = "Terraform Bot"
+      commit_email   = "test@test.com"
+
+      overwrite_on_create = true
+    },
+    "README.md" = {
+      content        = "# Example Repository\nThis is an example repository managed by Terraform."
+      branch         = "stg" # Testing Existing branch
       commit_message = "Add README.md"
       commit_author  = "Terraform Bot"
       commit_email   = "test@test.com"

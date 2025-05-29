@@ -24,7 +24,7 @@ variable "visibility" {
 }
 
 variable "template" {
-  description = "Template configuration for the GitHub repository"
+  description = "Template configuration for the GitHub repository. Changes to the existing repository will be ignored."
   type = object({
     owner                = string
     repository           = string
@@ -482,6 +482,7 @@ variable "github_repository_files" {
   }))
   default  = {}
   nullable = false
+
 }
 
 variable "issue_label" {

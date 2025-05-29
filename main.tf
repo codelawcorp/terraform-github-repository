@@ -7,7 +7,7 @@
 # }
 
 locals {
-  default_branch = coalesce(var.default_branch, "prod") # TODO remove , expla var.default_branch can't be "main"
+  default_branch = coalesce(var.default_branch, "prod") # TODO remove , explain var.default_branch can't be "main", add validataion
 }
 
 resource "github_repository" "this" {
@@ -356,8 +356,10 @@ resource "github_repository_file" "this" {
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
   autocreate_branch               = each.value.autocreate_branch
-  autocreate_branch_source_branch = each.value.autocreate_branch_source_branch
+  autocreate_branch_source_branch = each.value.autocreate_branch_source_branch # Does it use the default branch or "main" branch ?
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
+
+  depends_on = [github_branch.this] # Without it, getting insonsistent results as this resource might create a new branch.
 }
 
 # If repository is empty (not initialized) it does not work.
