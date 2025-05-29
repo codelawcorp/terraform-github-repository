@@ -11,13 +11,11 @@ It bundles all resources related to `github_repository` and abstract complexitie
 <!-- BEGIN_TF_DOCS -->
 
 # Examples
-
 ### Minimal example
-
 ```hcl
 module "github_repository_minimal" {
   source = "../../"
-  name   = "test-example-minimal"
+  name   = "test-${basename(path.root)}"
 
   archive_on_destroy = false # Not a critical repo
 }
@@ -25,46 +23,105 @@ module "github_repository_minimal" {
 ```
 
 ### Complete example
-
 ```hcl
 module "github_repository_complete" {
   source = "../../"
 
-  name        = "test-example-complete"
+  name        = "test-${basename(path.root)}" # Any repository name.
   description = "An example repository created using Terraform"
-  visibility  = "private"
+  visibility  = "public"
 
-  # Optional settings
+  default_branch = "prod"
+
+  archive_on_destroy = false
+  archived           = false
+  auto_init          = false # Deprecated by this module. Might be removed in the future.
+  is_template        = false
+
   homepage_url = "https://example.com"
   topics       = ["terraform", "github", "example"]
 
-  # Feature flags
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues      = true
+  has_projects    = true
+  has_wiki        = true
+  has_downloads   = true
+  has_discussions = true
 
   # Merge settings
+  allow_auto_merge       = true
   allow_merge_commit     = true
   allow_squash_merge     = true
   allow_rebase_merge     = true
   delete_branch_on_merge = true
 
-  # Repository settings
-  is_template    = false
-  default_branch = "prod"
-  archived       = false
+  merge_commit_title          = "PR_TITLE"
+  merge_commit_message        = "PR_BODY"
+  squash_merge_commit_title   = "PR_TITLE"
+  squash_merge_commit_message = "PR_BODY"
+
+
+
 
   # Template configuration (if using a template repository)
   template = {
     owner                = "codelawcorp"
     repository           = "template"
-    include_all_branches = true
+    include_all_branches = true # TODO / try without this
   }
 
   branches = [
     {
       name = "gh-pages"
+    },
+    {
+      name = "prod" # Try test without prod
+      protection = {
+        enforce_admins                  = true
+        required_linear_history         = true
+        require_conversation_resolution = true
+        require_signed_commits          = true
+        allows_deletions                = false
+        allows_force_pushes             = false
+        force_push_bypassers            = ["/magzim21"]
+        lock_branch                     = true
+        required_status_checks = {
+          strict   = true
+          contexts = ["ci/test", "ci/lint"]
+        }
+        required_pull_request_reviews = {
+          dismiss_stale_reviews           = true
+          restrict_dismissals             = true
+          dismissal_restrictions          = ["/magzim21"]
+          pull_request_bypassers          = ["/magzim21"]
+          require_code_owner_reviews      = true
+          required_approving_review_count = 2
+          require_last_push_approval      = true
+        }
+        restrict_pushes = {
+          blocks_creations = true
+          push_allowances  = ["/magzim21"]
+        }
+      }
+    },
+    {
+      name = "stg"
+    }
+  ]
+
+  custom_properties = [
+    {
+      property_name  = "test"
+      property_value = "test"
+      property_type  = "string"
+    }
+  ]
+
+  deploy_keys = [
+    {
+      title = "Some CI Key"
+      # this is how to generate the key // ssh-keygen -f test
+      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0kKdZ/vUygOfzycmhqe4JoX6AJFl2XVOXyvbuP9L/0 some-metadata"
+      read_only = false
     }
   ]
 
@@ -88,16 +145,18 @@ module "github_repository_complete" {
   #       status = "enabled"
   #     }
   #   }
-  archive_on_destroy = false
 
   environments = [
     {
       name = "prod"
       reviewers = {
-        users = []
-        teams = []
+        users = [data.github_user.admin.id] # Must be a user id, not a username
+        teams = []                          # Must be a team id, not a team name
       }
-      protected = true
+      protected           = true
+      wait_timer          = 10
+      can_admins_bypass   = true
+      prevent_self_review = true
       # tag_pattern   = "v*"
       variables = [
         {
@@ -121,33 +180,22 @@ module "github_repository_complete" {
       ]
     },
     {
-      name = "stg"
-      reviewers = {
-        users = []
-      }
-      protected = true
-      # tag_pattern   = "stg-v*"
-      variables = [
-        {
-          name  = "API_URL"
-          value = "https://api.example.com/staging"
-        },
-        {
-          name  = "DEBUG_MODE"
-          value = "true"
-        }
-      ]
-    }
+      name      = "dev"
+      protected = false
+    },
   ]
 
   github_actions_variables = [
     {
-      name  = "CI_ENABLED"
+      name  = "TEST_VAR"
       value = "true"
-    },
+    }
+  ]
+
+  github_actions_secrets = [
     {
-      name  = "DEPLOY_ENVIRONMENT"
-      value = "production"
+      name  = "DEPLOY_TOKEN"
+      value = "secret-token-value"
     }
   ]
 
@@ -163,12 +211,6 @@ module "github_repository_complete" {
       url          = "https://jenkins.example.com/github-webhook/"
       content_type = "json"
       events       = ["push", "pull_request"]
-    },
-    {
-      url          = "https://ci.example.com/webhook"
-      content_type = "form"
-      secret       = "secureSecret123"
-      events       = ["release"]
     }
   ]
 
@@ -188,15 +230,15 @@ module "github_repository_complete" {
 
 
   users = [
-    # {
-    #   username   = "example-user"
-    #   permission = "push"
-    # }
+    {
+      username   = "magzim21"
+      permission = "admin"
+    }
   ]
 
   teams = [
     # {
-    #   team_id    = "admin-team"
+    #   team_id    = "your-org/admin-team"
     #   permission = "admin"
     # }
   ]
@@ -205,28 +247,12 @@ module "github_repository_complete" {
   github_repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch         = "prod"
+      branch         = "stg" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
       commit_message = "Add README.md"
       commit_author  = "Terraform Bot"
       commit_email   = "test@test.com"
 
       overwrite_on_create = true
-    }
-    "test.md" = {
-      content = "# A test file."
-      branch  = "random-branch"
-      # commit_message      = "Add README.md"
-      # commit_author       = "Terraform Bot"
-      # commit_email        = "test@test.com"
-      # overwrite_on_create = true
-    }
-    "test-default-branch.md" = {
-      content = "# A test file."
-      # branch              = "random-branch"
-      # commit_message      = "Add README.md"
-      # commit_author       = "Terraform Bot"
-      # commit_email        = "test@test.com"
-      # overwrite_on_create = true
     }
   }
 
@@ -236,11 +262,6 @@ module "github_repository_complete" {
       name        = "critical"
       color       = "ff0000"
       description = "Critical issues that need immediate attention"
-    },
-    {
-      name        = "feature-request"
-      color       = "00ff00"
-      description = "Suggestions for new features"
     }
   ]
   # Create an autolink reference
@@ -249,42 +270,39 @@ module "github_repository_complete" {
       key_prefix          = "PROJECT-"
       target_url_template = "https://example.com/view/PROJECT-<num>"
       is_alphanumeric     = false # Default is true"
-    },
-    {
-      key_prefix          = "PR-"
-      target_url_template = "https://example.com/pull/PR-<num>"
-      is_alphanumeric     = false # Default is true
     }
   ]
 
+  gitignore_template = "Python"
+  license_template   = "mit"
 
+  github_actions_repository_permissions = {
+    allowed_actions = "selected"
+    enabled         = true
+    allowed_actions_config = {
+      github_owned_allowed = true
+      patterns_allowed     = ["actions/*"]
+      verified_allowed     = true
+    }
+  }
+
+  # Projects are not supported by this module.
   # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
-  # Add projects
-  # projects = [
-  #   {
-  #     name = "Project 1"
-  #     body = "This is the first project."
-  #   },
-  #   {
-  #     name = "Project 2"
-  #     body = "This is the second project."
-  #   }
-  # ]
 }
 
 ```
 
 ## Requirements
 
-| Name                                                            | Version  |
-| --------------------------------------------------------------- | -------- |
-| <a name="requirement_github"></a> [github](#requirement_github) | ~> 6.6.0 |
+| Name | Version |
+|------|---------|
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.6.0 |
 
 ## Providers
 
-| Name                                                      | Version  |
-| --------------------------------------------------------- | -------- |
-| <a name="provider_github"></a> [github](#provider_github) | ~> 6.6.0 |
+| Name | Version |
+|------|---------|
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.6.0 |
 
 ## Modules
 
@@ -292,129 +310,132 @@ No modules.
 
 ## Resources
 
-| Name                                                                                                                                                                            | Type     |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| [github_actions_environment_secret.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_environment_secret)                             | resource |
-| [github_actions_environment_variable.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_environment_variable)                         | resource |
-| [github_actions_repository_permissions.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_repository_permissions)                     | resource |
-| [github_actions_secret.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_secret)                                                     | resource |
-| [github_actions_variable.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_variable)                                                 | resource |
-| [github_branch.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch)                                                                     | resource |
-| [github_branch_default.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch_default)                                                     | resource |
-| [github_branch_protection.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch_protection)                                               | resource |
-| [github_issue_label.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/issue_label)                                                           | resource |
-| [github_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository)                                                             | resource |
-| [github_repository_autolink_reference.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_autolink_reference)                       | resource |
-| [github_repository_collaborator.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_collaborator)                                   | resource |
-| [github_repository_custom_property.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_custom_property)                             | resource |
-| [github_repository_dependabot_security_updates.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_dependabot_security_updates)     | resource |
-| [github_repository_deploy_key.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_deploy_key)                                       | resource |
-| [github_repository_environment.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment)                                     | resource |
+| Name | Type |
+|------|------|
+| [github_actions_environment_secret.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_environment_secret) | resource |
+| [github_actions_environment_variable.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_environment_variable) | resource |
+| [github_actions_repository_permissions.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_repository_permissions) | resource |
+| [github_actions_secret.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_secret) | resource |
+| [github_actions_variable.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_variable) | resource |
+| [github_branch.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch) | resource |
+| [github_branch_default.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch_default) | resource |
+| [github_branch_protection.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch_protection) | resource |
+| [github_issue_label.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/issue_label) | resource |
+| [github_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository) | resource |
+| [github_repository_autolink_reference.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_autolink_reference) | resource |
+| [github_repository_collaborator.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_collaborator) | resource |
+| [github_repository_custom_property.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_custom_property) | resource |
+| [github_repository_dependabot_security_updates.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_dependabot_security_updates) | resource |
+| [github_repository_deploy_key.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_deploy_key) | resource |
+| [github_repository_environment.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment) | resource |
 | [github_repository_environment_deployment_policy.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment_deployment_policy) | resource |
-| [github_repository_file.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_file)                                                   | resource |
-| [github_repository_topics.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_topics)                                               | resource |
-| [github_repository_webhook.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_webhook)                                             | resource |
-| [github_team_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/team_repository)                                                   | resource |
+| [github_repository_file.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_file) | resource |
+| [github_repository_topics.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_topics) | resource |
+| [github_repository_webhook.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_webhook) | resource |
+| [github_team_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/team_repository) | resource |
 
 We used best effort to make sure that default values match provider's defaults to avoid confusions.  
 Instead of using variable prefixes, we use nested objects: e.g. `branch -> branch protection, environment -> environment protection`. This naturally leads to more readable code, which is one of the goals of this module.
 When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
 
+
+➡️ Scroll right ➡️ to see Default values.
 ## Inputs
 
-| Name                                                                                                                                    | Description                                                                                                                                                                  | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Default                         | Required |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | :------: |
-| <a name="input__merge_commit_validation"></a> [\_merge_commit_validation](#input__merge_commit_validation)                              | Do not use this variable. It is used for validation of the merge_commit_title and merge_commit_message variables.                                                            | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"_placeholder_for_validation"` |    no    |
-| <a name="input_allow_auto_merge"></a> [allow_auto_merge](#input_allow_auto_merge)                                                       | Set to true to allow auto-merging pull requests on the repository                                                                                                            | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_allow_merge_commit"></a> [allow_merge_commit](#input_allow_merge_commit)                                                 | Set to false to disable merge commits on the repository                                                                                                                      | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `true`                          |    no    |
-| <a name="input_allow_rebase_merge"></a> [allow_rebase_merge](#input_allow_rebase_merge)                                                 | Set to false to disable rebase merges on the repository                                                                                                                      | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `true`                          |    no    |
-| <a name="input_allow_squash_merge"></a> [allow_squash_merge](#input_allow_squash_merge)                                                 | Set to false to disable squash merges on the repository                                                                                                                      | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `true`                          |    no    |
-| <a name="input_archive_on_destroy"></a> [archive_on_destroy](#input_archive_on_destroy)                                                 | Set to true to archive the repository instead of deleting it when the resource is destroyed                                                                                  | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `true`                          |    no    |
-| <a name="input_archived"></a> [archived](#input_archived)                                                                               | Specifies if the repository should be archived                                                                                                                               | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_auto_init"></a> [auto_init](#input_auto_init)                                                                            | Set to true to produce an initial commit in the repository. Is not compatible with template.                                                                                 | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_autolink_references"></a> [autolink_references](#input_autolink_references)                                              | A list of autolink references to create for the repository                                                                                                                   | <pre>list(object({<br/> key_prefix = string<br/> target_url_template = string<br/> is_alphanumeric = optional(bool)<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | `[]`                            |    no    |
-| <a name="input_branches"></a> [branches](#input_branches)                                                                               | List of branch configurations to create                                                                                                                                      | <pre>list(object({<br/> name = string<br/> # default = optional(bool) # TODO use it instead of default_branch<br/> source_branch = optional(string)<br/> source_sha = optional(string)<br/> # TODO add missing options from https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection<br/> protection = optional(object({ # Empty object means to protect with defaults<br/> enforce_admins = optional(bool)<br/> # pattern is always name of the branch. This is how this module works.<br/> required_status_checks = optional(object({<br/> strict = optional(bool)<br/> contexts = optional(list(string))<br/> }))<br/> required_pull_request_reviews = optional(object({<br/> dismiss_stale_reviews = optional(bool)<br/> restrict_dismissals = optional(bool)<br/> dismissal_restrictions = optional(list(string))<br/> require_code_owner_reviews = optional(bool)<br/> required_approving_review_count = optional(number)<br/> }))<br/> }))<br/> }))</pre> | `[]`                            |    no    |
-| <a name="input_custom_properties"></a> [custom_properties](#input_custom_properties)                                                    | Custom properties to set on the repository. Must be defined on the organization level first.                                                                                 | <pre>list(object({<br/> property_name = string<br/> property_value = string<br/> property_type = optional(string, "string")<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `[]`                            |    no    |
-| <a name="input_default_branch"></a> [default_branch](#input_default_branch)                                                             | The name of the default branch of the repository.                                                                                                                            | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"main"`                        |    no    |
-| <a name="input_delete_branch_on_merge"></a> [delete_branch_on_merge](#input_delete_branch_on_merge)                                     | Automatically delete head branch after a pull request is merged                                                                                                              | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_deploy_keys"></a> [deploy_keys](#input_deploy_keys)                                                                      | List of SSH deploy keys to add to the repository                                                                                                                             | <pre>list(object({<br/> title = string<br/> key = string<br/> read_only = optional(bool, true)<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `[]`                            |    no    |
-| <a name="input_description"></a> [description](#input_description)                                                                      | Description of the GitHub repository                                                                                                                                         | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `""`                            |    no    |
-| <a name="input_enable_dependabot_security_updates"></a> [enable_dependabot_security_updates](#input_enable_dependabot_security_updates) | Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well.                                                   | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `true`                          |    no    |
-| <a name="input_environments"></a> [environments](#input_environments)                                                                   | GitHub repository environments to create                                                                                                                                     | <pre>list(object({<br/> name = string<br/> reviewers = optional(object({<br/> teams = optional(list(string), [])<br/> users = optional(list(string), [])<br/> }))<br/> protected = optional(bool, false)<br/> variables = optional(list(object({<br/> name = string<br/> value = string<br/> })), [])<br/> secrets = optional(list(object({<br/> name = string<br/> value = string<br/> })), [])<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `[]`                            |    no    |
-| <a name="input_github_actions_repository_permissions"></a> [github_actions_permissions](#input_github_actions_permissions)              | GitHub Actions permissions configuration                                                                                                                                     | <pre>object({<br/> allowed_actions = optional(string, "all") # all, local_only, or selected<br/> enabled = optional(string, "all") # all, none, or selected<br/> allowed_actions_config = optional(object({<br/> github_owned_allowed = optional(bool, true)<br/> verified_allowed = optional(bool, true)<br/> patterns_allowed = optional(list(string), [])<br/> }))<br/> })</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `null`                          |    no    |
-| <a name="input_github_actions_secrets"></a> [github_actions_secrets](#input_github_actions_secrets)                                     | GitHub Actions secrets to set on the repository                                                                                                                              | <pre>list(object({<br/> name = string<br/> value = string<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `[]`                            |    no    |
-| <a name="input_github_actions_variables"></a> [github_actions_variables](#input_github_actions_variables)                               | GitHub Actions variables to set on the repository                                                                                                                            | <pre>list(object({<br/> name = string<br/> value = string<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `[]`                            |    no    |
-| <a name="input_github_repository_files"></a> [github_repository_files](#input_github_repository_files)                                  | A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties.                                        | <pre>map(object({<br/> content = string<br/> branch = optional(string, null)<br/> commit_sha = optional(string, null)<br/> commit_message = optional(string, "Managed by Terraform")<br/> commit_author = optional(string, null)<br/> commit_email = optional(string, null)<br/> overwrite_on_create = optional(bool, false)<br/> autocreate_branch = optional(bool, true)<br/> autocreate_branch_source_branch = optional(string, null)<br/> autocreate_branch_source_sha = optional(string, null)<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | `{}`                            |    no    |
-| <a name="input_gitignore_template"></a> [gitignore_template](#input_gitignore_template)                                                 | Use the name of the template without the extension. For example, 'Haskell'                                                                                                   | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `null`                          |    no    |
-| <a name="input_has_discussions"></a> [has_discussions](#input_has_discussions)                                                          | Set to true to enable GitHub Discussions on the repository                                                                                                                   | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_has_downloads"></a> [has_downloads](#input_has_downloads)                                                                | Set to true to enable the GitHub Downloads features on the repository (deprecated)                                                                                           | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_has_issues"></a> [has_issues](#input_has_issues)                                                                         | Set to true to enable the GitHub Issues features on the repository                                                                                                           | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_has_projects"></a> [has_projects](#input_has_projects)                                                                   | Set to true to enable the GitHub Projects features on the repository                                                                                                         | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_has_wiki"></a> [has_wiki](#input_has_wiki)                                                                               | Set to true to enable the GitHub Wiki features on the repository                                                                                                             | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_homepage_url"></a> [homepage_url](#input_homepage_url)                                                                   | URL of a page describing the project.                                                                                                                                        | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `null`                          |    no    |
-| <a name="input_is_template"></a> [is_template](#input_is_template)                                                                      | Set to true to tell GitHub that this is a template repository                                                                                                                | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_issue_label"></a> [issue_label](#input_issue_label)                                                                      | A list of issue label                                                                                                                                                        | <pre>list(object({<br/> name = string<br/> color = string<br/> description = optional(string, "")<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `[]`                            |    no    |
-| <a name="input_license_template"></a> [license_template](#input_license_template)                                                       | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0'                                                                                          | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `null`                          |    no    |
-| <a name="input_merge_commit_message"></a> [merge_commit_message](#input_merge_commit_message)                                           | The format of the commit message body when using merge commit. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK                                                                | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"PR_BODY"`                     |    no    |
-| <a name="input_merge_commit_title"></a> [merge_commit_title](#input_merge_commit_title)                                                 | The format of the commit message when using merge commit. Can be one of: PR_TITLE, MERGE_MESSAGE                                                                             | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"PR_TITLE"`                    |    no    |
-| <a name="input_name"></a> [name](#input_name)                                                                                           | Name of the GitHub repository                                                                                                                                                | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | n/a                             |   yes    |
-| <a name="input_pages"></a> [pages](#input_pages)                                                                                        | The repository's GitHub Pages configuration. Do not apply this configuration before the first apply if the source branch (gh-pages) does not exist. Requires a paid GH plan. | <pre>object({<br/> build_type = optional(string, "legacy")<br/> cname = optional(string, null)<br/> source = object({<br/> branch = string<br/> path = string<br/> })<br/> })</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `null`                          |    no    |
-| <a name="input_security_and_analysis"></a> [security_and_analysis](#input_security_and_analysis)                                        | Security and analysis features for the repository                                                                                                                            | <pre>object({<br/> advanced_security = object({<br/> status = string<br/> })<br/> secret_scanning = object({<br/> status = string<br/> })<br/> secret_scanning_push_protection = object({<br/> status = string<br/> })<br/> })</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `null`                          |    no    |
-| <a name="input_squash_merge_commit_message"></a> [squash_merge_commit_message](#input_squash_merge_commit_message)                      | The format of the commit message body when using squash merge. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK                                                                | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"COMMIT_MESSAGES"`             |    no    |
-| <a name="input_squash_merge_commit_title"></a> [squash_merge_commit_title](#input_squash_merge_commit_title)                            | The format of the commit message when using squash merge. Can be one of: PR_TITLE, COMMIT_OR_PR_TITLE                                                                        | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"COMMIT_OR_PR_TITLE"`          |    no    |
-| <a name="input_teams"></a> [teams](#input_teams)                                                                                        | List of repository teams to add to the repository                                                                                                                            | <pre>list(object({<br/> team_id = string<br/> permission = string<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `[]`                            |    no    |
-| <a name="input_template"></a> [template](#input_template)                                                                               | Template configuration for the GitHub repository                                                                                                                             | <pre>object({<br/> owner = string<br/> repository = string<br/> include_all_branches = bool<br/> })</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `null`                          |    no    |
-| <a name="input_topics"></a> [topics](#input_topics)                                                                                     | List of topics to add to the repository                                                                                                                                      | `list(string)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `[]`                            |    no    |
-| <a name="input_use_repository_topics_resource"></a> [use_repository_topics_resource](#input_use_repository_topics_resource)             | Whether to use github_repository_topics resource instead of setting topics in the github_repository resource. This is useful for managing topics separately.                 | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_users"></a> [users](#input_users)                                                                                        | List of repository collaborators to add to the repository                                                                                                                    | <pre>list(object({<br/> username = string<br/> permission = string # pull, push, admin, maintain, triage<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `[]`                            |    no    |
-| <a name="input_visibility"></a> [visibility](#input_visibility)                                                                         | Visibility of the GitHub repository (public, private, or internal)                                                                                                           | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `"private"`                     |    no    |
-| <a name="input_vulnerability_alerts"></a> [vulnerability_alerts](#input_vulnerability_alerts)                                           | Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable_dependabot_security_updates is true.                              | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_web_commit_signoff_required"></a> [web_commit_signoff_required](#input_web_commit_signoff_required)                      | Require contributors to sign off on web-based commits                                                                                                                        | `bool`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                         |    no    |
-| <a name="input_webhooks"></a> [webhooks](#input_webhooks)                                                                               | List of webhook configurations to create for the repository                                                                                                                  | <pre>list(object({<br/> url = string<br/> content_type = string<br/> secret = optional(string)<br/> insecure_ssl = optional(bool, false)<br/> active = optional(bool, true)<br/> events = list(string)<br/> }))</pre>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `[]`                            |    no    |
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input__merge_commit_validation"></a> [\_merge\_commit\_validation](#input\_\_merge\_commit\_validation) | Do not use this variable. It is used for validation of the merge\_commit\_title and merge\_commit\_message variables. | `string` | `"_placeholder_for_validation"` | no |
+| <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Set to true to allow auto-merging pull requests on the repository | `bool` | `false` | no |
+| <a name="input_allow_merge_commit"></a> [allow\_merge\_commit](#input\_allow\_merge\_commit) | Set to false to disable merge commits on the repository | `bool` | `true` | no |
+| <a name="input_allow_rebase_merge"></a> [allow\_rebase\_merge](#input\_allow\_rebase\_merge) | Set to false to disable rebase merges on the repository | `bool` | `true` | no |
+| <a name="input_allow_squash_merge"></a> [allow\_squash\_merge](#input\_allow\_squash\_merge) | Set to false to disable squash merges on the repository | `bool` | `true` | no |
+| <a name="input_archive_on_destroy"></a> [archive\_on\_destroy](#input\_archive\_on\_destroy) | Set to true to archive the repository instead of deleting it when the resource is destroyed | `bool` | `true` | no |
+| <a name="input_archived"></a> [archived](#input\_archived) | Specifies if the repository should be archived | `bool` | `false` | no |
+| <a name="input_auto_init"></a> [auto\_init](#input\_auto\_init) | Set to true to produce an initial commit in the repository. Is not compatible with template. | `bool` | `false` | no |
+| <a name="input_autolink_references"></a> [autolink\_references](#input\_autolink\_references) | A list of autolink references to create for the repository | <pre>list(object({<br/>    key_prefix          = string<br/>    target_url_template = string<br/>    is_alphanumeric     = optional(bool)<br/>  }))</pre> | `[]` | no |
+| <a name="input_branches"></a> [branches](#input\_branches) | List of branch configurations to create | <pre>list(object({<br/>    name          = string<br/>    source_branch = optional(string) # By default, the source branch is the default branch.<br/>    source_sha    = optional(string)<br/>    # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection<br/>    protection = optional(object({ # Empty object means to protect with defaults<br/>      # `pattern` is always name of the branch. This is how this module works.<br/>      enforce_admins                  = optional(bool)<br/>      require_signed_commits          = optional(bool)<br/>      required_linear_history         = optional(bool)<br/>      require_conversation_resolution = optional(bool)<br/>      allows_deletions                = optional(bool)<br/>      allows_force_pushes             = optional(bool)<br/>      force_push_bypassers            = optional(list(string))<br/>      lock_branch                     = optional(bool)<br/>      required_status_checks = optional(object({<br/>        strict   = optional(bool)<br/>        contexts = optional(list(string))<br/>      }))<br/>      required_pull_request_reviews = optional(object({<br/>        dismiss_stale_reviews           = optional(bool)<br/>        restrict_dismissals             = optional(bool)<br/>        dismissal_restrictions          = optional(list(string))<br/>        pull_request_bypassers          = optional(list(string))<br/>        require_code_owner_reviews      = optional(bool)<br/>        required_approving_review_count = optional(number)<br/>        require_last_push_approval      = optional(bool)<br/>      }))<br/>      restrict_pushes = optional(object({<br/>        blocks_creations = optional(bool)<br/>        push_allowances  = optional(list(string))<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_custom_properties"></a> [custom\_properties](#input\_custom\_properties) | Custom properties to set on the repository. Must be defined on the organization level first. | <pre>list(object({<br/>    property_name  = string<br/>    property_value = string<br/>    property_type  = optional(string, "string")<br/>  }))</pre> | `[]` | no |
+| <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | The name of the default branch of the repository. | `string` | `"main"` | no |
+| <a name="input_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#input\_delete\_branch\_on\_merge) | Automatically delete head branch after a pull request is merged | `bool` | `false` | no |
+| <a name="input_deploy_keys"></a> [deploy\_keys](#input\_deploy\_keys) | List of SSH deploy keys to add to the repository. Must be allowed on the org level. | <pre>list(object({<br/>    title     = string<br/>    key       = string<br/>    read_only = optional(bool, true)<br/>  }))</pre> | `[]` | no |
+| <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `""` | no |
+| <a name="input_enable_dependabot_security_updates"></a> [enable\_dependabot\_security\_updates](#input\_enable\_dependabot\_security\_updates) | Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well. | `bool` | `true` | no |
+| <a name="input_environments"></a> [environments](#input\_environments) | GitHub repository environments to create | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment<br/>    name                = string<br/>    wait_timer          = optional(number, null)<br/>    can_admins_bypass   = optional(bool, null)<br/>    prevent_self_review = optional(bool, null)<br/>    reviewers = optional(object({<br/>      teams = optional(list(string), []) # This is a team id, not a team name<br/>      users = optional(list(string), []) # This is a user id, not a username<br/>    }))<br/>    protected = optional(bool, false) # This is instead of deployment_branch_policy block. This module enforces 1:1 environment and branch name. Open a PR or issue if you disagree.<br/>    variables = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    secrets = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>  }))</pre> | `[]` | no |
+| <a name="input_github_actions_repository_permissions"></a> [github\_actions\_repository\_permissions](#input\_github\_actions\_repository\_permissions) | GitHub Actions repository permissions configuration | <pre>object({                             # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_permissions<br/>    allowed_actions = optional(string, "all") # all, local_only, or selected<br/>    enabled         = optional(bool, true)<br/>    allowed_actions_config = optional(object({<br/>      github_owned_allowed = optional(bool, null)<br/>      patterns_allowed     = optional(list(string), [])<br/>      verified_allowed     = optional(bool, null)<br/>    }))<br/>  })</pre> | `null` | no |
+| <a name="input_github_actions_secrets"></a> [github\_actions\_secrets](#input\_github\_actions\_secrets) | GitHub Actions secrets to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_github_actions_variables"></a> [github\_actions\_variables](#input\_github\_actions\_variables) | GitHub Actions variables to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_github_repository_files"></a> [github\_repository\_files](#input\_github\_repository\_files) | A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. | <pre>map(object({<br/>    content                         = string<br/>    branch                          = optional(string, null)<br/>    commit_sha                      = optional(string, null)<br/>    commit_message                  = optional(string, "Managed by Terraform")<br/>    commit_author                   = optional(string, null)<br/>    commit_email                    = optional(string, null)<br/>    overwrite_on_create             = optional(bool, false)<br/>    autocreate_branch               = optional(bool, true)<br/>    autocreate_branch_source_branch = optional(string, null)<br/>    autocreate_branch_source_sha    = optional(string, null)<br/>  }))</pre> | `{}` | no |
+| <a name="input_gitignore_template"></a> [gitignore\_template](#input\_gitignore\_template) | Use the name of the template without the extension. For example, 'Haskell' | `string` | `null` | no |
+| <a name="input_has_discussions"></a> [has\_discussions](#input\_has\_discussions) | Set to true to enable GitHub Discussions on the repository | `bool` | `false` | no |
+| <a name="input_has_downloads"></a> [has\_downloads](#input\_has\_downloads) | Set to true to enable the GitHub Downloads features on the repository (deprecated) | `bool` | `false` | no |
+| <a name="input_has_issues"></a> [has\_issues](#input\_has\_issues) | Set to true to enable the GitHub Issues features on the repository | `bool` | `false` | no |
+| <a name="input_has_projects"></a> [has\_projects](#input\_has\_projects) | Set to true to enable the GitHub Projects features on the repository | `bool` | `false` | no |
+| <a name="input_has_wiki"></a> [has\_wiki](#input\_has\_wiki) | Set to true to enable the GitHub Wiki features on the repository | `bool` | `false` | no |
+| <a name="input_homepage_url"></a> [homepage\_url](#input\_homepage\_url) | URL of a page describing the project. | `string` | `null` | no |
+| <a name="input_is_template"></a> [is\_template](#input\_is\_template) | Set to true to tell GitHub that this is a template repository | `bool` | `false` | no |
+| <a name="input_issue_label"></a> [issue\_label](#input\_issue\_label) | A list of issue label | <pre>list(object({<br/>    name        = string<br/>    color       = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
+| <a name="input_license_template"></a> [license\_template](#input\_license\_template) | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0' | `string` | `null` | no |
+| <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"PR_BODY"` | no |
+| <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `"PR_TITLE"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the GitHub repository | `string` | n/a | yes |
+| <a name="input_pages"></a> [pages](#input\_pages) | GitHub Pages configuration for the repository. ⚠️ Note: Requires a paid GitHub plan and ⚠️ the source branch must exist before applying this configuration - the first apply always fails - disable on the first apply. ⚠️ | <pre>object({<br/>    build_type = optional(string, "legacy")<br/>    cname      = optional(string, null)<br/>    source = object({<br/>      branch = string<br/>      path   = string<br/>    })<br/>  })</pre> | `null` | no |
+| <a name="input_security_and_analysis"></a> [security\_and\_analysis](#input\_security\_and\_analysis) | Security and analysis features for the repository | <pre>object({<br/>    advanced_security = object({<br/>      status = string<br/>    })<br/>    secret_scanning = object({<br/>      status = string<br/>    })<br/>    secret_scanning_push_protection = object({<br/>      status = string<br/>    })<br/>  })</pre> | `null` | no |
+| <a name="input_squash_merge_commit_message"></a> [squash\_merge\_commit\_message](#input\_squash\_merge\_commit\_message) | The format of the commit message body when using squash merge. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"COMMIT_MESSAGES"` | no |
+| <a name="input_squash_merge_commit_title"></a> [squash\_merge\_commit\_title](#input\_squash\_merge\_commit\_title) | The format of the commit message when using squash merge. Can be one of: PR\_TITLE, COMMIT\_OR\_PR\_TITLE | `string` | `"COMMIT_OR_PR_TITLE"` | no |
+| <a name="input_teams"></a> [teams](#input\_teams) | List of repository teams to add to the repository | <pre>list(object({<br/>    team_id    = string<br/>    permission = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_template"></a> [template](#input\_template) | Template configuration for the GitHub repository | <pre>object({<br/>    owner                = string<br/>    repository           = string<br/>    include_all_branches = bool<br/>  })</pre> | `null` | no |
+| <a name="input_topics"></a> [topics](#input\_topics) | List of topics to add to the repository | `list(string)` | `[]` | no |
+| <a name="input_use_repository_topics_resource"></a> [use\_repository\_topics\_resource](#input\_use\_repository\_topics\_resource) | Whether to use github\_repository\_topics resource instead of setting topics in the github\_repository resource. This is useful for managing topics separately. | `bool` | `false` | no |
+| <a name="input_users"></a> [users](#input\_users) | List of repository collaborators to add to the repository | <pre>list(object({<br/>    username   = string<br/>    permission = string # pull, push, admin, maintain, triage<br/>  }))</pre> | `[]` | no |
+| <a name="input_visibility"></a> [visibility](#input\_visibility) | Visibility of the GitHub repository (public, private, or internal) | `string` | `"private"` | no |
+| <a name="input_vulnerability_alerts"></a> [vulnerability\_alerts](#input\_vulnerability\_alerts) | Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable\_dependabot\_security\_updates is true. | `bool` | `false` | no |
+| <a name="input_web_commit_signoff_required"></a> [web\_commit\_signoff\_required](#input\_web\_commit\_signoff\_required) | Require contributors to sign off on web-based commits | `bool` | `false` | no |
+| <a name="input_webhooks"></a> [webhooks](#input\_webhooks) | List of webhook configurations to create for the repository | <pre>list(object({<br/>    url          = string<br/>    content_type = string<br/>    secret       = optional(string)<br/>    insecure_ssl = optional(bool, false)<br/>    active       = optional(bool, true)<br/>    events       = list(string)<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 
-| Name                                                                                                                                                                                   | Description                                    |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| <a name="output_allow_auto_merge"></a> [allow_auto_merge](#output_allow_auto_merge)                                                                                                    | Whether auto merge is allowed                  |
-| <a name="output_allow_merge_commit"></a> [allow_merge_commit](#output_allow_merge_commit)                                                                                              | Whether merge commits are allowed              |
-| <a name="output_allow_rebase_merge"></a> [allow_rebase_merge](#output_allow_rebase_merge)                                                                                              | Whether rebase merge is allowed                |
-| <a name="output_allow_squash_merge"></a> [allow_squash_merge](#output_allow_squash_merge)                                                                                              | Whether squash merge is allowed                |
-| <a name="output_archived"></a> [archived](#output_archived)                                                                                                                            | Whether the repository is archived             |
-| <a name="output_delete_branch_on_merge"></a> [delete_branch_on_merge](#output_delete_branch_on_merge)                                                                                  | Whether to delete branch on merge              |
-| <a name="output_description"></a> [description](#output_description)                                                                                                                   | The description of the repository              |
-| <a name="output_github_actions_environment_secrets"></a> [github_actions_environment_secrets](#output_github_actions_environment_secrets)                                              | Environment secrets for GitHub Actions         |
-| <a name="output_github_actions_environment_variables"></a> [github_actions_environment_variables](#output_github_actions_environment_variables)                                        | Environment variables for GitHub Actions       |
-| <a name="output_github_actions_repository_permissions"></a> [github_actions_permissions](#output_github_actions_permissions)                                                           | GitHub Actions permissions configuration       |
-| <a name="output_github_actions_secrets"></a> [github_actions_secrets](#output_github_actions_secrets)                                                                                  | GitHub Actions secrets                         |
-| <a name="output_github_actions_variables"></a> [github_actions_variables](#output_github_actions_variables)                                                                            | GitHub Actions variables for the repository    |
-| <a name="output_github_branch_default"></a> [github_branch_default](#output_github_branch_default)                                                                                     | Default branch configuration                   |
-| <a name="output_github_branch_protections"></a> [github_branch_protections](#output_github_branch_protections)                                                                         | Branch protection rules                        |
-| <a name="output_github_branches"></a> [github_branches](#output_github_branches)                                                                                                       | Repository branches                            |
-| <a name="output_github_issue_labels"></a> [github_issue_labels](#output_github_issue_labels)                                                                                           | Issue labels                                   |
-| <a name="output_github_repository_autolink_references"></a> [github_repository_autolink_references](#output_github_repository_autolink_references)                                     | Repository autolink references                 |
-| <a name="output_github_repository_collaborators"></a> [github_repository_collaborators](#output_github_repository_collaborators)                                                       | Repository collaborators                       |
-| <a name="output_github_repository_custom_properties"></a> [github_repository_custom_properties](#output_github_repository_custom_properties)                                           | Repository custom properties                   |
-| <a name="output_github_repository_dependabot_security_updates"></a> [github_repository_dependabot_security_updates](#output_github_repository_dependabot_security_updates)             | Dependabot security updates configuration      |
-| <a name="output_github_repository_deploy_keys"></a> [github_repository_deploy_keys](#output_github_repository_deploy_keys)                                                             | Repository deploy keys                         |
-| <a name="output_github_repository_environment_deployment_policies"></a> [github_repository_environment_deployment_policies](#output_github_repository_environment_deployment_policies) | Environment deployment policies                |
-| <a name="output_github_repository_environments"></a> [github_repository_environments](#output_github_repository_environments)                                                          | Repository environments                        |
-| <a name="output_github_repository_files"></a> [github_repository_files](#output_github_repository_files)                                                                               | Repository files                               |
-| <a name="output_github_repository_topics"></a> [github_repository_topics](#output_github_repository_topics)                                                                            | Repository topics                              |
-| <a name="output_github_repository_webhooks"></a> [github_repository_webhooks](#output_github_repository_webhooks)                                                                      | Repository webhooks                            |
-| <a name="output_github_team_repositories"></a> [github_team_repositories](#output_github_team_repositories)                                                                            | Team repository permissions                    |
-| <a name="output_has_discussions"></a> [has_discussions](#output_has_discussions)                                                                                                       | Whether the repository has discussions enabled |
-| <a name="output_has_downloads"></a> [has_downloads](#output_has_downloads)                                                                                                             | Whether the repository has downloads enabled   |
-| <a name="output_has_issues"></a> [has_issues](#output_has_issues)                                                                                                                      | Whether the repository has issues enabled      |
-| <a name="output_has_projects"></a> [has_projects](#output_has_projects)                                                                                                                | Whether the repository has projects enabled    |
-| <a name="output_has_wiki"></a> [has_wiki](#output_has_wiki)                                                                                                                            | Whether the repository has wiki enabled        |
-| <a name="output_homepage_url"></a> [homepage_url](#output_homepage_url)                                                                                                                | The homepage URL of the repository             |
-| <a name="output_is_template"></a> [is_template](#output_is_template)                                                                                                                   | Whether the repository is a template           |
-| <a name="output_name"></a> [name](#output_name)                                                                                                                                        | The name of the repository                     |
-| <a name="output_pages_url"></a> [pages_url](#output_pages_url)                                                                                                                         | The URL of the GitHub Pages site               |
-| <a name="output_visibility"></a> [visibility](#output_visibility)                                                                                                                      | The visibility of the repository               |
-| <a name="output_vulnerability_alerts"></a> [vulnerability_alerts](#output_vulnerability_alerts)                                                                                        | Whether vulnerability alerts are enabled       |
-| <a name="output_web_commit_signoff_required"></a> [web_commit_signoff_required](#output_web_commit_signoff_required)                                                                   | Whether web commit signoff is required         |
+| Name | Description |
+|------|-------------|
+| <a name="output_allow_auto_merge"></a> [allow\_auto\_merge](#output\_allow\_auto\_merge) | Whether auto merge is allowed |
+| <a name="output_allow_merge_commit"></a> [allow\_merge\_commit](#output\_allow\_merge\_commit) | Whether merge commits are allowed |
+| <a name="output_allow_rebase_merge"></a> [allow\_rebase\_merge](#output\_allow\_rebase\_merge) | Whether rebase merge is allowed |
+| <a name="output_allow_squash_merge"></a> [allow\_squash\_merge](#output\_allow\_squash\_merge) | Whether squash merge is allowed |
+| <a name="output_archived"></a> [archived](#output\_archived) | Whether the repository is archived |
+| <a name="output_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#output\_delete\_branch\_on\_merge) | Whether to delete branch on merge |
+| <a name="output_description"></a> [description](#output\_description) | The description of the repository |
+| <a name="output_github_actions_environment_secrets"></a> [github\_actions\_environment\_secrets](#output\_github\_actions\_environment\_secrets) | Environment secrets for GitHub Actions |
+| <a name="output_github_actions_environment_variables"></a> [github\_actions\_environment\_variables](#output\_github\_actions\_environment\_variables) | Environment variables for GitHub Actions |
+| <a name="output_github_actions_repository_permissions"></a> [github\_actions\_repository\_permissions](#output\_github\_actions\_repository\_permissions) | GitHub Actions permissions configuration |
+| <a name="output_github_actions_secrets"></a> [github\_actions\_secrets](#output\_github\_actions\_secrets) | GitHub Actions secrets |
+| <a name="output_github_actions_variables"></a> [github\_actions\_variables](#output\_github\_actions\_variables) | GitHub Actions variables for the repository |
+| <a name="output_github_branch_default"></a> [github\_branch\_default](#output\_github\_branch\_default) | Default branch configuration |
+| <a name="output_github_branch_protections"></a> [github\_branch\_protections](#output\_github\_branch\_protections) | Branch protection rules |
+| <a name="output_github_branches"></a> [github\_branches](#output\_github\_branches) | Repository branches |
+| <a name="output_github_issue_labels"></a> [github\_issue\_labels](#output\_github\_issue\_labels) | Issue labels |
+| <a name="output_github_repository_autolink_references"></a> [github\_repository\_autolink\_references](#output\_github\_repository\_autolink\_references) | Repository autolink references |
+| <a name="output_github_repository_collaborators"></a> [github\_repository\_collaborators](#output\_github\_repository\_collaborators) | Repository collaborators |
+| <a name="output_github_repository_custom_properties"></a> [github\_repository\_custom\_properties](#output\_github\_repository\_custom\_properties) | Repository custom properties |
+| <a name="output_github_repository_dependabot_security_updates"></a> [github\_repository\_dependabot\_security\_updates](#output\_github\_repository\_dependabot\_security\_updates) | Dependabot security updates configuration |
+| <a name="output_github_repository_deploy_keys"></a> [github\_repository\_deploy\_keys](#output\_github\_repository\_deploy\_keys) | Repository deploy keys |
+| <a name="output_github_repository_environment_deployment_policies"></a> [github\_repository\_environment\_deployment\_policies](#output\_github\_repository\_environment\_deployment\_policies) | Environment deployment policies |
+| <a name="output_github_repository_environments"></a> [github\_repository\_environments](#output\_github\_repository\_environments) | Repository environments |
+| <a name="output_github_repository_files"></a> [github\_repository\_files](#output\_github\_repository\_files) | Repository files |
+| <a name="output_github_repository_topics"></a> [github\_repository\_topics](#output\_github\_repository\_topics) | Repository topics |
+| <a name="output_github_repository_webhooks"></a> [github\_repository\_webhooks](#output\_github\_repository\_webhooks) | Repository webhooks |
+| <a name="output_github_team_repositories"></a> [github\_team\_repositories](#output\_github\_team\_repositories) | Team repository permissions |
+| <a name="output_has_discussions"></a> [has\_discussions](#output\_has\_discussions) | Whether the repository has discussions enabled |
+| <a name="output_has_downloads"></a> [has\_downloads](#output\_has\_downloads) | Whether the repository has downloads enabled |
+| <a name="output_has_issues"></a> [has\_issues](#output\_has\_issues) | Whether the repository has issues enabled |
+| <a name="output_has_projects"></a> [has\_projects](#output\_has\_projects) | Whether the repository has projects enabled |
+| <a name="output_has_wiki"></a> [has\_wiki](#output\_has\_wiki) | Whether the repository has wiki enabled |
+| <a name="output_homepage_url"></a> [homepage\_url](#output\_homepage\_url) | The homepage URL of the repository |
+| <a name="output_is_template"></a> [is\_template](#output\_is\_template) | Whether the repository is a template |
+| <a name="output_name"></a> [name](#output\_name) | The name of the repository |
+| <a name="output_pages_url"></a> [pages\_url](#output\_pages\_url) | The URL of the GitHub Pages site |
+| <a name="output_visibility"></a> [visibility](#output\_visibility) | The visibility of the repository |
+| <a name="output_vulnerability_alerts"></a> [vulnerability\_alerts](#output\_vulnerability\_alerts) | Whether vulnerability alerts are enabled |
+| <a name="output_web_commit_signoff_required"></a> [web\_commit\_signoff\_required](#output\_web\_commit\_signoff\_required) | Whether web commit signoff is required |
+
 
 <!-- END_TF_DOCS -->
 
