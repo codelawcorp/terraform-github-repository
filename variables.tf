@@ -298,7 +298,7 @@ variable "security_and_analysis" {
 variable "branches" {
   description = "List of branch configurations to create" # More info here: https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch
   type = list(object({
-    name = string
+    name          = string
     source_branch = optional(string) # By default, the source branch is the default branch.
     source_sha    = optional(string)
     # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection

@@ -1,3 +1,3 @@
-  data "github_user" "admin" {
-    username = "magzim21"
-  }
+data "github_user" "admin" {
+  username = "magzim21"
+}

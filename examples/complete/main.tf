@@ -124,8 +124,8 @@ module "github_repository_complete" {
     {
       name = "prod"
       reviewers = {
-        users = [data.github_user.admin.id]  # Must be a user id, not a username
-        teams = [] # Must be a team id, not a team name
+        users = [data.github_user.admin.id] # Must be a user id, not a username
+        teams = []                          # Must be a team id, not a team name
       }
       protected           = true
       wait_timer          = 10
@@ -154,7 +154,7 @@ module "github_repository_complete" {
       ]
     },
     {
-      name = "dev"
+      name      = "dev"
       protected = false
     },
   ]
