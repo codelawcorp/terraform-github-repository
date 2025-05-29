@@ -124,8 +124,8 @@ module "github_repository_complete" {
     {
       name = "prod"
       reviewers = {
-        users = ["/magzim21"]
-        teams = []
+        users = [data.github_user.admin.id]  # Must be a user id, not a username
+        teams = [] # Must be a team id, not a team name
       }
       protected           = true
       wait_timer          = 10
@@ -154,23 +154,9 @@ module "github_repository_complete" {
       ]
     },
     {
-      name = "stg"
-      reviewers = {
-        users = []
-      }
-      protected = true
-      # tag_pattern   = "stg-v*"
-      variables = [
-        {
-          name  = "API_URL"
-          value = "https://api.example.com/staging"
-        },
-        {
-          name  = "DEBUG_MODE"
-          value = "true"
-        }
-      ]
-    }
+      name = "dev"
+      protected = false
+    },
   ]
 
   github_actions_variables = [
@@ -219,7 +205,7 @@ module "github_repository_complete" {
 
   users = [
     {
-      username   = "/magzim21"
+      username   = "magzim21"
       permission = "admin"
     }
   ]

@@ -10,3 +10,9 @@ variable "pages" {
   })
   default = null
 }
+
+variable "user_id" {
+  description = "User ID to use for the repository"
+  type        = string
+  default     = null
+}

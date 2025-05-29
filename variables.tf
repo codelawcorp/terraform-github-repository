@@ -296,11 +296,9 @@ variable "security_and_analysis" {
 }
 
 variable "branches" {
-  # TODO / add "more info links" for each nested object. Example below
   description = "List of branch configurations to create" # More info here: https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch
   type = list(object({
     name = string
-    # default       = optional(bool) # TODO use it instead of default_branch
     source_branch = optional(string) # By default, the source branch is the default branch.
     source_sha    = optional(string)
     # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection
