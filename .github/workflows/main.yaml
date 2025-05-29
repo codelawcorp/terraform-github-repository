@@ -44,7 +44,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.9.5"
+          terraform_version: "1.12.1" # "1.9.5"
       - name: Check if terraform is well formatted
         run: terraform fmt -recursive  -check
       
