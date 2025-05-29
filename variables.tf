@@ -200,7 +200,7 @@ variable "default_branch" {
 
   validation { // TODO / write tests for different combinations of template, auto_init, branches, default_branch / Some tests must fail, other succees (use assertions)
     # condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
-    condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
+    condition     = var.template != null || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
     error_message = "The default_branch must be included in the branches list or originate from the template repository."
   }
 }
@@ -233,17 +233,17 @@ variable "vulnerability_alerts" {
   nullable    = false
 }
 
-variable "auto_init" { # Deprecated by this module. Might be removed in the future.
-  description = "Set to true to produce an initial commit in the repository. Is not compatible with template."
-  type        = bool
-  default     = false
-  nullable    = false
+# variable "auto_init" { # Deprecated by this module. Might be removed in the future.
+#   description = "Set to true to produce an initial commit in the repository. Is not compatible with template."
+#   type        = bool
+#   default     = false
+#   nullable    = false
 
-  validation {
-    condition     = var.template == null || !var.auto_init
-    error_message = "auto_init cannot be true when using a template repository"
-  }
-}
+#   validation {
+#     condition     = var.template == null || ! var.auto_init
+#     error_message = "auto_init cannot be true when using a template repository"
+#   }
+# }
 
 variable "gitignore_template" {
   description = "Use the name of the template without the extension. For example, 'Haskell'" # Full list is here: https://github.com/github/gitignore

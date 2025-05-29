@@ -7,7 +7,7 @@
 # }
 
 locals {
-  default_branch = var.auto_init == true ? "main" : coalesce(var.default_branch, "main")
+  default_branch = coalesce(var.default_branch, "main")
 }
 
 resource "github_repository" "this" {
@@ -41,7 +41,7 @@ resource "github_repository" "this" {
 
   web_commit_signoff_required = var.web_commit_signoff_required
   vulnerability_alerts        = var.vulnerability_alerts || var.enable_dependabot_security_updates
-  auto_init                   = var.template == null ? var.auto_init : false
+  auto_init                   = true # TODO / explain why it is true
   gitignore_template          = var.gitignore_template
   license_template            = var.license_template
   archive_on_destroy          = var.archive_on_destroy
@@ -103,19 +103,20 @@ resource "github_repository" "this" {
 resource "github_branch_default" "this" { # Changing it RENAMES the current default branch. 
   repository = github_repository.this.name
   branch     = local.default_branch
-  rename     = false # TODO / experiment with it and add a variable # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default
+  rename     = true # TODO / experiment with it and add a variable # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default
+  # depends_on = [github_branch.this]
 }
 
 resource "github_branch" "this" {
-  # `if` condition prevents ` 422 Cannot delete the default branch []` error.
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != local.default_branch } 
+  # `if` condition prevents ` 422 Cannot delete the default branch []` error. # Try without it now.
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != local.default_branch }
 
   repository    = github_repository.this.name
   branch        = each.value.name
   source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
   source_sha    = each.value.source_sha
 
-
+  # depends_on = [github_repository_file.initial_commit]
 }
 
 resource "github_branch_protection" "this" {
@@ -348,6 +349,19 @@ resource "github_repository_file" "this" {
   autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this.branch) # Uses default branch if not set
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }
+# resource "github_repository_file" "initial_commit" {
+#   # count = var.template != null || var.github_repository_files != {} || var.gitignore_template != null || var.license_template  != null  ? 0 : 1
+#   count =  1
+
+#   repository                      = github_repository.this.name
+#   file                            = "README.md"
+#   content                         = "This is a placeholder README file. It will be overwritten by the template or the repository files."
+#   branch                          = local.default_branch
+#   commit_message                  = "feat: initial commit"
+#   commit_author                   = "Terraform"
+#   commit_email                    = "terraform@terraform.io"
+#   autocreate_branch               = true
+# }
 
 resource "github_issue_label" "this" {
   for_each = { for label in var.issue_label : label.name => label }

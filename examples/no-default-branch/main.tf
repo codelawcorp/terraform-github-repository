@@ -6,8 +6,8 @@ module "no_default_branch" {
   description = "Test repository without a default branch."
   topics      = ["any", "deployment", "devops", "gitops"]
 
-  visibility     = "private"
-  default_branch = "prod"
+  visibility         = "private"
+  default_branch     = "prod"
   archive_on_destroy = false # Not a critical repo
 
   # homepage_url  = "https://argocd.core.maxim.run/applications/argocd/root-application" # TODO: change to the actual URL and de-hardcode
@@ -33,9 +33,9 @@ module "no_default_branch" {
 
   web_commit_signoff_required = true
 
-  auto_init = false
+  # auto_init = true
 
-  archived           = false
+  archived = false # TODO / test different combinations of archived and archive_on_destroy
 
 
   branches = [
