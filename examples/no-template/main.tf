@@ -44,7 +44,7 @@ module "no_default_branch" {
 
     },
     {
-      name          = "dev",
+      name = "dev",
     },
     {
       name          = "tests",

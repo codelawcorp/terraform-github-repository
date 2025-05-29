@@ -98,29 +98,31 @@ resource "github_repository" "this" {
   }
 }
 
+# resource "github_branch" "default_branch" {
+#   count = var.template == null ? 1 : 0
+#   repository    = github_repository.this.name
+#   branch        = var.default_branch
+#   source_branch = "main"
+# }
 
-# It currently works by renaming the default branch after the initial repository creation.
-resource "github_branch_default" "this" {
-  # `var.default_branch != "main"` condition prevents error "Validation Failed [{Resource: Field: Code: Message:New branch cannot be the same as the current branch" # "main" branch is 
-  # count = var.template == null && var.default_branch != "main" ? 1 : 0
-  count = var.template == null ? 1 : 0
-  # count = var.template == null || var.default_branch != "main" ? 1 : 0 # TODO / fix using 'main' default branch
+resource "github_branch_default" "this" { # TODO / test changing default branch after the initial repository creation, especially if branch is defined in branches list.
+  count = var.template == null && var.default_branch != "main" ? 1 : 0
+
   repository = github_repository.this.name
   branch     = var.default_branch
-  rename     = false # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
+  rename     = true # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
   # depends_on = [github_branch.this]
 
+  # TODO add pre condition
 }
 
 resource "github_branch" "this" {
-  # `if` condition prevents ` 422 Cannot delete the default branch []` error. # Try without it now.
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch } # # It currently works by renaming the default branch after the initial repository creation.
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch }
 
   repository    = github_repository.this.name
   branch        = each.value.name
   source_branch = coalesce(each.value.source_branch, var.default_branch)
-  # source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
-  source_sha = each.value.source_sha
+  source_sha    = each.value.source_sha
 
   depends_on = [github_branch_default.this]
 }

@@ -5,7 +5,7 @@ module "github_repository_complete" {
   description = "An example repository created using Terraform"
   visibility  = "public"
 
-  default_branch = "prod" 
+  default_branch = "prod"
 
   archive_on_destroy = false
   archived           = false

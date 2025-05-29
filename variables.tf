@@ -193,10 +193,15 @@ variable "is_template" {
 
 # TODO / remove this variable. Use default attribute on the branches list or pick the first branch in the list.
 variable "default_branch" {
-  description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️"
+  description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed."
   type        = string
+  default     = "prod"
   nullable    = false
 
+  validation {
+    condition     = var.default_branch != "main"
+    error_message = "default_branch cannot be 'main'. Use 'prod' instead or another name instead."
+  }
   # validation {
   #   condition     = (var.template == null && var.default_branch != null) || (var.template != null && var.default_branch == null)
   #   error_message = "Default branch must be set only if template is not used"
