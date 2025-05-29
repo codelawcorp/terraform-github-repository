@@ -45,7 +45,6 @@ module "no_default_branch" {
     },
     {
       name          = "dev",
-      source_branch = "prod"
     },
     {
       name          = "tests",

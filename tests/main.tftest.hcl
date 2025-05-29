@@ -57,11 +57,11 @@ run "other" {
   }
 }
 
-run "no_default_branch" {
+run "no_template" {
   command   = apply
-  state_key = "no_default_branch"
+  state_key = "no_template"
   module {
-    source = "./examples/no-default-branch"
+    source = "./examples/no-template"
   }
 }
 

@@ -4,6 +4,8 @@ module "another_repo" {
   name               = "test-${basename(path.root)}"
   archive_on_destroy = false
 
+  default_branch = "main"
+
   github_actions_variables = [
     {
       name  = "TEST_VARIABLE"

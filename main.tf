@@ -6,9 +6,7 @@
 #   value = github_branch_default.this
 # }
 
-locals {
-  default_branch = coalesce(var.default_branch, "prod") # TODO remove , explain var.default_branch can't be "main", add validataion
-}
+
 
 resource "github_repository" "this" {
   name        = var.name
@@ -100,29 +98,27 @@ resource "github_repository" "this" {
   }
 }
 
+
+# It currently works by renaming the default branch after the initial repository creation.
 resource "github_branch_default" "this" {
+  # `var.default_branch != "main"` condition prevents error "Validation Failed [{Resource: Field: Code: Message:New branch cannot be the same as the current branch" # "main" branch is 
+  # count = var.template == null && var.default_branch != "main" ? 1 : 0
   count = var.template == null ? 1 : 0
   # count = var.template == null || var.default_branch != "main" ? 1 : 0 # TODO / fix using 'main' default branch
   repository = github_repository.this.name
-  branch     = local.default_branch
-  rename     = true # This effectively renames "main" branch after the initial repository creation.
+  branch     = var.default_branch
+  rename     = false # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
   # depends_on = [github_branch.this]
 
-  # lifecycle {
-  #   postcondition {
-  #     condition     = self.branch == local.default_branch
-  #     error_message = "Failed to set default branch to '${local.default_branch}'. This can happen if the branch does not exist yet."
-  #   }
-  # }
 }
 
 resource "github_branch" "this" {
   # `if` condition prevents ` 422 Cannot delete the default branch []` error. # Try without it now.
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != local.default_branch }
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch } # # It currently works by renaming the default branch after the initial repository creation.
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, local.default_branch)
+  source_branch = coalesce(each.value.source_branch, var.default_branch)
   # source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
   source_sha = each.value.source_sha
 
@@ -370,7 +366,7 @@ resource "github_repository_file" "this" {
 #   repository                      = github_repository.this.name
 #   file                            = "README.md"
 #   content                         = "This is a placeholder README file. It will be overwritten by the template or the repository files."
-#   branch                          = local.default_branch
+#   branch                          = var.default_branch
 #   commit_message                  = "feat: initial commit"
 #   commit_author                   = "Terraform"
 #   commit_email                    = "terraform@terraform.io"
