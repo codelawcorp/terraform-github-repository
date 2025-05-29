@@ -195,7 +195,7 @@ variable "is_template" {
 variable "default_branch" {
   description = "The name of the default branch of the repository."
   type        = string
-  default     = "main"
+  default     = "prod"
   nullable    = false
 
   validation { // TODO / write tests for different combinations of template, auto_init, branches, default_branch / Some tests must fail, other succees (use assertions)

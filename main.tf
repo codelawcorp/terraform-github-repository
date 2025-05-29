@@ -7,7 +7,7 @@
 # }
 
 locals {
-  default_branch = coalesce(var.default_branch, "main")
+  default_branch = coalesce(var.default_branch, "prod") # TODO remove , expla var.default_branch can't be "main"
 }
 
 resource "github_repository" "this" {
@@ -100,11 +100,20 @@ resource "github_repository" "this" {
   }
 }
 
-resource "github_branch_default" "this" { # Changing it RENAMES the current default branch. 
+resource "github_branch_default" "this" {
+  count = var.template == null ? 1 : 0
+  # count = var.template == null || var.default_branch != "main" ? 1 : 0 # TODO / fix using 'main' default branch
   repository = github_repository.this.name
   branch     = local.default_branch
-  rename     = true # TODO / experiment with it and add a variable # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default
+  rename     = true # This effectively renames "main" branch after the initial repository creation.
   # depends_on = [github_branch.this]
+
+  # lifecycle {
+  #   postcondition {
+  #     condition     = self.branch == local.default_branch
+  #     error_message = "Failed to set default branch to '${local.default_branch}'. This can happen if the branch does not exist yet."
+  #   }
+  # }
 }
 
 resource "github_branch" "this" {
@@ -113,10 +122,11 @@ resource "github_branch" "this" {
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
-  source_sha    = each.value.source_sha
+  source_branch = coalesce(each.value.source_branch, local.default_branch)
+  # source_branch = coalesce(each.value.source_branch, github_branch_default.this.branch)
+  source_sha = each.value.source_sha
 
-  # depends_on = [github_repository_file.initial_commit]
+  depends_on = [github_branch_default.this]
 }
 
 resource "github_branch_protection" "this" {
@@ -346,9 +356,11 @@ resource "github_repository_file" "this" {
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
   autocreate_branch               = each.value.autocreate_branch
-  autocreate_branch_source_branch = coalesce(each.value.autocreate_branch_source_branch, github_branch_default.this.branch) # Uses default branch if not set
+  autocreate_branch_source_branch = each.value.autocreate_branch_source_branch
   autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
 }
+
+# If repository is empty (not initialized) it does not work.
 # resource "github_repository_file" "initial_commit" {
 #   # count = var.template != null || var.github_repository_files != {} || var.gitignore_template != null || var.license_template  != null  ? 0 : 1
 #   count =  1
@@ -360,7 +372,7 @@ resource "github_repository_file" "this" {
 #   commit_message                  = "feat: initial commit"
 #   commit_author                   = "Terraform"
 #   commit_email                    = "terraform@terraform.io"
-#   autocreate_branch               = true
+#   autocreate_branch               = true # Even with this option option the repo must be initialized first.
 # }
 
 resource "github_issue_label" "this" {

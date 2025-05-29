@@ -9,7 +9,6 @@ module "github_repository_complete" {
 
   archive_on_destroy = false
   archived           = false
-  auto_init          = false # Deprecated by this module. Might be removed in the future.
   is_template        = false
 
   homepage_url = "https://example.com"

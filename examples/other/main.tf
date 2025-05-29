@@ -3,7 +3,6 @@ module "another_repo" {
 
   name               = "test-${basename(path.root)}"
   archive_on_destroy = false
-  auto_init          = true
 
   github_actions_variables = [
     {
