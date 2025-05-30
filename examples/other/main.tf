@@ -23,6 +23,8 @@ module "another_repo" {
     }
   ]
 
+  allow_merge_commit = false
+
   # Explicitly disable Dependabot security updates
   enable_dependabot_security_updates = false
 
