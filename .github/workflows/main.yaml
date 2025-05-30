@@ -40,7 +40,7 @@ jobs:
       - name: Check if the last commit message is properly formatted
         run: |
           npm install -g @commitlint/config-conventional
-          npx commitlint --config ".githooks/.commitlintrc.yml"  --verbose
+          npx commitlint --config ".githooks/.commitlintrc.yml" --last  --verbose
 
       - uses: hashicorp/setup-terraform@v3
         with:
