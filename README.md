@@ -17,6 +17,7 @@ module "github_repository_minimal" {
   source = "../../"
   name   = "test-${basename(path.root)}"
 
+
   archive_on_destroy = false # Not a critical repo
 }
 
@@ -35,7 +36,6 @@ module "github_repository_complete" {
 
   archive_on_destroy = false
   archived           = false
-  auto_init          = false # Deprecated by this module. Might be removed in the future.
   is_template        = false
 
   homepage_url = "https://example.com"
@@ -120,7 +120,7 @@ module "github_repository_complete" {
     {
       title = "Some CI Key"
       # this is how to generate the key // ssh-keygen -f test
-      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0kKdZ/vUygOfzycmhqe4JoX6AJFl2XVOXyvbuP9L/0 some-metadata"
+      key       = tls_private_key.this.public_key_openssh
       read_only = false
     }
   ]
@@ -247,7 +247,16 @@ module "github_repository_complete" {
   github_repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch         = "stg" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
+      branch         = "some-new-branch" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
+      commit_message = "Add README.md"
+      commit_author  = "Terraform Bot"
+      commit_email   = "test@test.com"
+
+      overwrite_on_create = true
+    },
+    "README.md" = {
+      content        = "# Example Repository\nThis is an example repository managed by Terraform."
+      branch         = "stg" # Testing Existing branch
       commit_message = "Add README.md"
       commit_author  = "Terraform Bot"
       commit_email   = "test@test.com"
@@ -339,6 +348,7 @@ Instead of using variable prefixes, we use nested objects: e.g. `branch -> branc
 When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
 
 
+`auto_init` is always true for other resources to work.
 ➡️ Scroll right ➡️ to see Default values.
 ## Inputs
 
@@ -351,11 +361,10 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_allow_squash_merge"></a> [allow\_squash\_merge](#input\_allow\_squash\_merge) | Set to false to disable squash merges on the repository | `bool` | `true` | no |
 | <a name="input_archive_on_destroy"></a> [archive\_on\_destroy](#input\_archive\_on\_destroy) | Set to true to archive the repository instead of deleting it when the resource is destroyed | `bool` | `true` | no |
 | <a name="input_archived"></a> [archived](#input\_archived) | Specifies if the repository should be archived | `bool` | `false` | no |
-| <a name="input_auto_init"></a> [auto\_init](#input\_auto\_init) | Set to true to produce an initial commit in the repository. Is not compatible with template. | `bool` | `false` | no |
 | <a name="input_autolink_references"></a> [autolink\_references](#input\_autolink\_references) | A list of autolink references to create for the repository | <pre>list(object({<br/>    key_prefix          = string<br/>    target_url_template = string<br/>    is_alphanumeric     = optional(bool)<br/>  }))</pre> | `[]` | no |
 | <a name="input_branches"></a> [branches](#input\_branches) | List of branch configurations to create | <pre>list(object({<br/>    name          = string<br/>    source_branch = optional(string) # By default, the source branch is the default branch.<br/>    source_sha    = optional(string)<br/>    # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection<br/>    protection = optional(object({ # Empty object means to protect with defaults<br/>      # `pattern` is always name of the branch. This is how this module works.<br/>      enforce_admins                  = optional(bool)<br/>      require_signed_commits          = optional(bool)<br/>      required_linear_history         = optional(bool)<br/>      require_conversation_resolution = optional(bool)<br/>      allows_deletions                = optional(bool)<br/>      allows_force_pushes             = optional(bool)<br/>      force_push_bypassers            = optional(list(string))<br/>      lock_branch                     = optional(bool)<br/>      required_status_checks = optional(object({<br/>        strict   = optional(bool)<br/>        contexts = optional(list(string))<br/>      }))<br/>      required_pull_request_reviews = optional(object({<br/>        dismiss_stale_reviews           = optional(bool)<br/>        restrict_dismissals             = optional(bool)<br/>        dismissal_restrictions          = optional(list(string))<br/>        pull_request_bypassers          = optional(list(string))<br/>        require_code_owner_reviews      = optional(bool)<br/>        required_approving_review_count = optional(number)<br/>        require_last_push_approval      = optional(bool)<br/>      }))<br/>      restrict_pushes = optional(object({<br/>        blocks_creations = optional(bool)<br/>        push_allowances  = optional(list(string))<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_custom_properties"></a> [custom\_properties](#input\_custom\_properties) | Custom properties to set on the repository. Must be defined on the organization level first. | <pre>list(object({<br/>    property_name  = string<br/>    property_value = string<br/>    property_type  = optional(string, "string")<br/>  }))</pre> | `[]` | no |
-| <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | The name of the default branch of the repository. | `string` | `"main"` | no |
+| <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. | `string` | `"main"` | no |
 | <a name="input_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#input\_delete\_branch\_on\_merge) | Automatically delete head branch after a pull request is merged | `bool` | `false` | no |
 | <a name="input_deploy_keys"></a> [deploy\_keys](#input\_deploy\_keys) | List of SSH deploy keys to add to the repository. Must be allowed on the org level. | <pre>list(object({<br/>    title     = string<br/>    key       = string<br/>    read_only = optional(bool, true)<br/>  }))</pre> | `[]` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `""` | no |
@@ -383,7 +392,7 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_squash_merge_commit_message"></a> [squash\_merge\_commit\_message](#input\_squash\_merge\_commit\_message) | The format of the commit message body when using squash merge. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"COMMIT_MESSAGES"` | no |
 | <a name="input_squash_merge_commit_title"></a> [squash\_merge\_commit\_title](#input\_squash\_merge\_commit\_title) | The format of the commit message when using squash merge. Can be one of: PR\_TITLE, COMMIT\_OR\_PR\_TITLE | `string` | `"COMMIT_OR_PR_TITLE"` | no |
 | <a name="input_teams"></a> [teams](#input\_teams) | List of repository teams to add to the repository | <pre>list(object({<br/>    team_id    = string<br/>    permission = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_template"></a> [template](#input\_template) | Template configuration for the GitHub repository | <pre>object({<br/>    owner                = string<br/>    repository           = string<br/>    include_all_branches = bool<br/>  })</pre> | `null` | no |
+| <a name="input_template"></a> [template](#input\_template) | Template configuration for the GitHub repository. Changes to the existing repository will be ignored. | <pre>object({<br/>    owner                = string<br/>    repository           = string<br/>    include_all_branches = bool<br/>  })</pre> | `null` | no |
 | <a name="input_topics"></a> [topics](#input\_topics) | List of topics to add to the repository | `list(string)` | `[]` | no |
 | <a name="input_use_repository_topics_resource"></a> [use\_repository\_topics\_resource](#input\_use\_repository\_topics\_resource) | Whether to use github\_repository\_topics resource instead of setting topics in the github\_repository resource. This is useful for managing topics separately. | `bool` | `false` | no |
 | <a name="input_users"></a> [users](#input\_users) | List of repository collaborators to add to the repository | <pre>list(object({<br/>    username   = string<br/>    permission = string # pull, push, admin, maintain, triage<br/>  }))</pre> | `[]` | no |
