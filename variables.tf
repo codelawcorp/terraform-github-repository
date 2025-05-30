@@ -24,7 +24,7 @@ variable "visibility" {
 }
 
 variable "template" {
-  description = "Template configuration for the GitHub repository. Changes to the existing repository will be ignored."
+  description = "A repo to use as a template for the new repository. ⚠️ Removing this block changes default branch to 'prod'. ⚠️"
   type = object({
     owner                = string
     repository           = string
@@ -192,26 +192,26 @@ variable "is_template" {
 }
 
 # TODO / remove this variable. Use default attribute on the branches list or pick the first branch in the list.
-variable "default_branch" {
-  description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed."
-  type        = string
-  default     = "prod"
-  nullable    = false
+# variable "default_branch" {
+#   description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed."
+#   type        = string
+#   default     = "prod"
+#   nullable    = false
 
-  validation {
-    condition     = var.default_branch != "main"
-    error_message = "default_branch cannot be 'main'. Use 'prod' instead or another name instead."
-  }
-  # validation {
-  #   condition     = (var.template == null && var.default_branch != null) || (var.template != null && var.default_branch == null)
-  #   error_message = "Default branch must be set only if template is not used"
-  # }
-  # validation { // TODO / write tests for different combinations of template, auto_init, branches, default_branch / Some tests must fail, other succees (use assertions)
-  #   # condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
-  #   condition     = var.template == null && var.default_branch == var.default_branch
-  #   error_message = "Default branch should not be set if the template is used. You can set default branch later, after the repository is created and template attribute is removed."
-  # }
-}
+#   validation {
+#     condition     = var.default_branch != "main"
+#     error_message = "default_branch cannot be 'main'. Use 'prod' instead or another name instead."
+#   }
+#   # validation {
+#   #   condition     = (var.template == null && var.default_branch != null) || (var.template != null && var.default_branch == null)
+#   #   error_message = "Default branch must be set only if template is not used"
+#   # }
+#   # validation { // TODO / write tests for different combinations of template, auto_init, branches, default_branch / Some tests must fail, other succees (use assertions)
+#   #   # condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
+#   #   condition     = var.template == null && var.default_branch == var.default_branch
+#   #   error_message = "Default branch should not be set if the template is used. You can set default branch later, after the repository is created and template attribute is removed."
+#   # }
+# }
 
 variable "archived" {
   description = "Specifies if the repository should be archived"
@@ -279,12 +279,12 @@ variable "pages" {
   })
   default  = null
   nullable = true
-  validation {
-    condition = var.pages == null || (try(var.pages.source.branch, "") == var.default_branch || (
-      length([for branch in var.branches : branch.name if branch.name == try(var.pages.source.branch, "")]) > 0
-    ))
-    error_message = "The GitHub Pages branch must be either the default branch or one of the branches defined in the branches variable."
-  }
+  # validation {
+  #   condition = var.pages == null || (try(var.pages.source.branch, "") == var.default_branch || (
+  #     length([for branch in var.branches : branch.name if branch.name == try(var.pages.source.branch, "")]) > 0
+  #   ))
+  #   error_message = "The GitHub Pages branch must be either the default branch or one of the branches defined in the branches variable."
+  # }
 }
 
 variable "security_and_analysis" {

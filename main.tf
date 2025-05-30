@@ -2,11 +2,9 @@
 #   value = github_repository.this
 # }
 
-# output "debug_default_branch" {
-#   value = github_branch_default.this
-# }
-
-
+locals{
+  default_branch = "prod"
+}
 
 resource "github_repository" "this" {
   name        = var.name
@@ -101,15 +99,15 @@ resource "github_repository" "this" {
 # resource "github_branch" "default_branch" {
 #   count = var.template == null ? 1 : 0
 #   repository    = github_repository.this.name
-#   branch        = var.default_branch
+#   branch        = local.default_branch
 #   source_branch = "main"
 # }
 
 resource "github_branch_default" "this" { # TODO / test changing default branch after the initial repository creation, especially if branch is defined in branches list.
-  count = var.template == null && var.default_branch != "main" ? 1 : 0
+  count = var.template == null && local.default_branch != "main" ? 1 : 0
 
   repository = github_repository.this.name
-  branch     = var.default_branch
+  branch     = local.default_branch
   rename     = true # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
   # depends_on = [github_branch.this]
 
@@ -117,11 +115,11 @@ resource "github_branch_default" "this" { # TODO / test changing default branch 
 }
 
 resource "github_branch" "this" {
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch }
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != local.default_branch }
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, var.default_branch)
+  source_branch = coalesce(each.value.source_branch, local.default_branch)
   source_sha    = each.value.source_sha
 
   depends_on = [github_branch_default.this]
@@ -368,7 +366,7 @@ resource "github_repository_file" "this" {
 #   repository                      = github_repository.this.name
 #   file                            = "README.md"
 #   content                         = "This is a placeholder README file. It will be overwritten by the template or the repository files."
-#   branch                          = var.default_branch
+#   branch                          = local.default_branch
 #   commit_message                  = "feat: initial commit"
 #   commit_author                   = "Terraform"
 #   commit_email                    = "terraform@terraform.io"

@@ -7,7 +7,6 @@ module "no_default_branch" {
   topics      = ["any", "deployment", "devops", "gitops"]
 
   visibility         = "private"
-  default_branch     = "prod"
   archive_on_destroy = false # Not a critical repo
 
   # homepage_url  = "https://argocd.core.maxim.run/applications/argocd/root-application" # TODO: change to the actual URL and de-hardcode
