@@ -57,6 +57,17 @@ run "other" {
   }
 }
 
+run "other_branch_change" {
+  command   = apply
+  state_key = "other"
+  module {
+    source = "./examples/other"
+  }
+  variables {
+    default_branch = "stg"
+  }
+}
+
 run "no_template" {
   command   = apply
   state_key = "no_template"
