@@ -342,12 +342,16 @@ No modules.
 | [github_repository_webhook.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_webhook) | resource |
 | [github_team_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/team_repository) | resource |
 
+
+
+
+
 We used best effort to make sure that default values match provider's defaults to avoid confusions.  
 Instead of using variable prefixes, we use nested objects: e.g. `branch -> branch protection, environment -> environment protection`. This naturally leads to more readable code, which is one of the goals of this module.
 When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
 
 
-`auto_init` is always true for other resources to work.
+`auto_init` is always true for other resources to work.  
 `default_branch` is always set to `prod` when not using template. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
 ➡️ Scroll right ➡️ to see Default values.
 ## Inputs
