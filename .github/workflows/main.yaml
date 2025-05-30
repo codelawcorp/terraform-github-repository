@@ -120,6 +120,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.ref }} # checkout the latest commit on the brabch (terraform-docs), not the current's event ommit
       - name: Setup Node.js for semantic-release
         uses: actions/setup-node@v4
         with:
@@ -127,5 +128,6 @@ jobs:
       - name: Create a semanitc git tag
         run: |
           set -x
-          npx semantic-release
+          npx semantic-release --debug
+          echo $?
           echo "#### Created a git tag ${{ needs.next-version.outputs.semver_tag }} 🐙" | tee -a $GITHUB_STEP_SUMMARY
