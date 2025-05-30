@@ -24,6 +24,33 @@ module "another_repo" {
   ]
 
   allow_merge_commit = false
+  allow_squash_merge = true
+  allow_rebase_merge = true
+  allow_auto_merge   = true
+
+
+  visibility = "public"
+
+  homepage_url = "https://registry.terraform.io/modules/codelawcorp/repository/github/latest"
+
+  # The following are valid combinations for the squash commit title and message: PR_TITLE and PR_BODY, PR_TITLE and BLANK, PR_TITLE and COMMIT_MESSAGES, COMMIT_OR_PR_TITLE and COMMIT_MESSAGES
+
+  delete_branch_on_merge = true
+
+  web_commit_signoff_required = true
+
+
+
+
+  template = {
+    owner                = "codelawcorp"
+    repository           = "template"
+    include_all_branches = true
+  }
+
+
+
+
 
   # Explicitly disable Dependabot security updates
   enable_dependabot_security_updates = false
