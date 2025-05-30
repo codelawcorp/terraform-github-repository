@@ -93,7 +93,7 @@ module "github_repository_complete" {
     {
       title = "Some CI Key"
       # this is how to generate the key // ssh-keygen -f test
-      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII0kKdZ/vUygOfzycmhqe4JoX6AJFl2XVOXyvbuP9L/0 some-metadata"
+      key       = tls_private_key.this.public_key_openssh
       read_only = false
     }
   ]

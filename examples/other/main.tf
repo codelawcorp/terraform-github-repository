@@ -46,7 +46,7 @@ module "another_repo" {
     {
       title = "Some CI Key"
       # this is how to generate the key // ssh-keygen -f test
-      key       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB/4GlDREJaArBSKACPHpczJGrw2SoDRE4y5MyBN+7+ some-metadata"
+      key       = tls_private_key.this.public_key_openssh
       read_only = false
     }
   ]
@@ -82,6 +82,15 @@ module "another_repo" {
     #   team_id       = "admin-team"
     #   permission = "admin"
     # }
+  ]
+
+  branches = [
+    {
+      name = "prod"
+    },
+    { name = "prod" }, # Testing duplicates
+    { name = "duplicate"},
+    { name = "duplicate"}  # Testing duplicates
   ]
 
   environments = [
@@ -121,4 +130,10 @@ module "another_repo" {
       ]
     }
   ]
+}
+
+
+resource "tls_private_key" "this" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
