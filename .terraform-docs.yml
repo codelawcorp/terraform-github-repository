@@ -43,6 +43,7 @@ content: |
   When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
   
 
+  `auto_init` is always true for other resources to work.
   ➡️ Scroll right ➡️ to see Default values.
   {{ .Inputs }}
 
