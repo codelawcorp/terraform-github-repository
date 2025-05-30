@@ -130,6 +130,8 @@ module "other_repo" {
       ]
     }
   ]
+
+  template = var.template
 }
 
 

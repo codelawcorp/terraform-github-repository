@@ -28,7 +28,7 @@ variable "template" {
   type = object({
     owner                = string
     repository           = string
-    include_all_branches = bool
+    include_all_branches = optional(bool, false)
   })
   default  = null
   nullable = true

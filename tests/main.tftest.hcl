@@ -49,11 +49,19 @@ run "complete" {
 
 
 
-run "other" {
+run "other_template" {
   command   = apply
   state_key = "other"
   module {
     source = "./examples/other"
+  }
+
+  variables {
+    template = {
+    owner = "codelawcorp"
+    repository = "template"
+    include_all_branches = true # TODO / make test with `false`
+  }
   }
 }
 

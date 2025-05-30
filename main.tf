@@ -106,6 +106,7 @@ resource "github_repository" "this" {
 # }
 
 resource "github_branch_default" "this" { # TODO / test changing default branch after the initial repository creation, especially if branch is defined in branches list.
+  # condition `var.default_branch != "main" ` prevents '422 Validation Failed [{Resource: Field: Code: Message:New branch cannot be the same as the current branch}]'
   count = var.template == null && var.default_branch != "main" ? 1 : 0
 
   repository = github_repository.this.name
@@ -114,6 +115,10 @@ resource "github_branch_default" "this" { # TODO / test changing default branch 
   # depends_on = [github_branch.this]
 
   # TODO add pre condition
+
+  lifecycle {
+    ignore_changes = [branch, rename]
+  }
 }
 
 resource "github_branch" "this" {

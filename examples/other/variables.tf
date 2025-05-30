@@ -3,3 +3,13 @@ variable "default_branch" {
   type        = string
   default     = "prod"
 }
+
+variable "template" {
+  description = "The template repository to use for the repository."
+  type        = object({
+    owner = string
+    repository = string
+    include_all_branches = optional(bool, false)
+  })
+  default     = null
+}
