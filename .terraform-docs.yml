@@ -44,6 +44,7 @@ content: |
   
 
   `auto_init` is always true for other resources to work.
+  `default_branch` is always set to `prod` when not using template.
   ➡️ Scroll right ➡️ to see Default values.
   {{ .Inputs }}
 
