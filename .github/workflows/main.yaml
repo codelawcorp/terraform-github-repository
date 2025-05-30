@@ -11,7 +11,7 @@ on:
     - cron: "0 8 * * 1" # every day at 8am UTC Monday # https://crontab.guru/#0_8_*_*_*
   workflow_dispatch: {}
 env:
-  APP_NAME: ${{ vars.APP_NAME }}        # Set via GitHub Secrets and variables on a repo level
+  APP_NAME: ${{ vars.APP_NAME }} # Set via GitHub Secrets and variables on a repo level
   # AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
   # AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}  # Set via GitHub Secrets and variables on a org level
 #   ROLE_ARN: ${{ secrets.ROLE_ARN }}     # Set via GitHub Secrets on a repo level
@@ -37,17 +37,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-      - name: Check if the commit message is properly formatted
+      - name: Check if the last commit message is properly formatted
         run: |
           npm install -g @commitlint/config-conventional
-          npx commitlint --config ".githooks/.commitlintrc.yml" --last --verbose
+          npx commitlint --config ".githooks/.commitlintrc.yml"  --verbose
 
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.12.1" # "1.9.5"
       - name: Check if terraform is well formatted
         run: terraform fmt -recursive  -check
-      
+
       - name: Run Terraform init
         run: terraform init
       - name: Run Terraform tests
@@ -107,7 +107,6 @@ jobs:
             echo "#### No features, no fixes. Skipping Build job :police_car:" | tee -a $GITHUB_STEP_SUMMARY
           fi
 
-
   git-tag-release:
     name: Create ${{ needs.next-version.outputs.semver_tag }} git tag
     runs-on: ubuntu-latest
@@ -125,7 +124,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-      - name: Create a semanitc git tag  
+      - name: Create a semanitc git tag
         run: |
+          set -x
           npx semantic-release
           echo "#### Created a git tag ${{ needs.next-version.outputs.semver_tag }} 🐙" | tee -a $GITHUB_STEP_SUMMARY
