@@ -1,4 +1,4 @@
-module "another_repo" {
+module "other_repo" {
   source = "../../"
 
   name               = "test-${basename(path.root)}"
