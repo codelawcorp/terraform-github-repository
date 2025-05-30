@@ -4,7 +4,7 @@ module "another_repo" {
   name               = "test-${basename(path.root)}"
   archive_on_destroy = false
 
-  default_branch = "prod"
+  default_branch = var.default_branch
 
   github_actions_variables = [
     {
@@ -86,11 +86,11 @@ module "another_repo" {
 
   branches = [
     {
+      name = "main"
+    },
+    {
       name = "prod"
     },
-    { name = "prod" }, # Testing duplicates
-    { name = "duplicate"},
-    { name = "duplicate"}  # Testing duplicates
   ]
 
   environments = [
