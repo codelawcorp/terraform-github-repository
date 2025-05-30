@@ -358,7 +358,6 @@ When variable is an object, there is a comment with a link to the provider's doc
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input__merge_commit_validation"></a> [\_merge\_commit\_validation](#input\_\_merge\_commit\_validation) | Do not use this variable. It is used for validation of the merge\_commit\_title and merge\_commit\_message variables. | `string` | `"_placeholder_for_validation"` | no |
 | <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Set to true to allow auto-merging pull requests on the repository | `bool` | `false` | no |
 | <a name="input_allow_merge_commit"></a> [allow\_merge\_commit](#input\_allow\_merge\_commit) | Set to false to disable merge commits on the repository | `bool` | `true` | no |
 | <a name="input_allow_rebase_merge"></a> [allow\_rebase\_merge](#input\_allow\_rebase\_merge) | Set to false to disable rebase merges on the repository | `bool` | `true` | no |
@@ -387,8 +386,8 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_is_template"></a> [is\_template](#input\_is\_template) | Set to true to tell GitHub that this is a template repository | `bool` | `false` | no |
 | <a name="input_issue_label"></a> [issue\_label](#input\_issue\_label) | A list of issue label | <pre>list(object({<br/>    name        = string<br/>    color       = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
 | <a name="input_license_template"></a> [license\_template](#input\_license\_template) | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0' | `string` | `null` | no |
-| <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"PR_BODY"` | no |
-| <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `"PR_TITLE"` | no |
+| <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `null` | no |
+| <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the GitHub repository | `string` | n/a | yes |
 | <a name="input_pages"></a> [pages](#input\_pages) | GitHub Pages configuration for the repository. ⚠️ Note: Requires a paid GitHub plan and ⚠️ the source branch must exist before applying this configuration - the first apply always fails - disable on the first apply. ⚠️ | <pre>object({<br/>    build_type = optional(string, "legacy")<br/>    cname      = optional(string, null)<br/>    source = object({<br/>      branch = string<br/>      path   = string<br/>    })<br/>  })</pre> | `null` | no |
 | <a name="input_security_and_analysis"></a> [security\_and\_analysis](#input\_security\_and\_analysis) | Security and analysis features for the repository | <pre>object({<br/>    advanced_security = object({<br/>      status = string<br/>    })<br/>    secret_scanning = object({<br/>      status = string<br/>    })<br/>    secret_scanning_push_protection = object({<br/>      status = string<br/>    })<br/>  })</pre> | `null` | no |
