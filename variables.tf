@@ -83,44 +83,6 @@ variable "has_downloads" {
   nullable    = false
 }
 
-variable "allow_merge_commit" {
-  description = "Set to false to disable merge commits on the repository"
-  type        = bool
-  default     = true
-  nullable    = false
-
-  # validation { # Additional validation
-  #   condition = var.allow_merge_commit == false || (var.merge_commit_title == null && var.merge_commit_message == null ) || contains([
-  #     "PR_TITLE:PR_BODY",
-  #     "PR_TITLE:BLANK",
-  #     "MERGE_MESSAGE:PR_TITLE"
-  #   ], "${var.merge_commit_title}:${var.merge_commit_message}")
-  #   error_message = "Invalid combination of merge_commit_title and merge_commit_message. Valid combinations are: PR_TITLE and PR_BODY, PR_TITLE and BLANK, MERGE_MESSAGE and PR_TITLE"
-  # }
-}
-
-variable "merge_commit_title" {
-  description = "The format of the commit message when using merge commit. Can be one of: PR_TITLE, MERGE_MESSAGE"
-  type        = string
-  default     = null
-  nullable    = true
-  validation {
-    condition     = var.merge_commit_title == null || var.allow_merge_commit == true && contains(["PR_TITLE", "MERGE_MESSAGE"], var.merge_commit_title)
-    error_message = "allow_merge_commit must be enabled, merge_commit_title must be one of: PR_TITLE, MERGE_MESSAGE"
-  }
-}
-
-variable "merge_commit_message" {
-  description = "The format of the commit message body when using merge commit. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
-  type        = string
-  default     = null
-  nullable    = true
-  validation {
-    condition     = var.merge_commit_message == null || var.allow_merge_commit == true && contains(["PR_BODY", "COMMIT_MESSAGES", "BLANK"], var.merge_commit_message)
-    error_message = "allow_merge_commit must be enabled, merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
-  }
-
-}
 
 
 
@@ -159,6 +121,32 @@ variable "squash_merge_commit_message" {
     error_message = "allow_squash_merge must be enabled, squash_merge_commit_message must be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
   }
 }
+
+variable "allow_merge_commit" {
+  description = "Set to false to disable merge commits on the repository"
+  type        = bool
+  default     = true
+  nullable    = false
+
+}
+
+variable "merge_commit_title" {
+  description = "The format of the commit message when using merge commit. Can be one of: PR_TITLE, MERGE_MESSAGE"
+  type        = string
+  default     = null
+  nullable    = true
+
+}
+
+variable "merge_commit_message" {
+  description = "The format of the commit message body when using merge commit. Can be one of: PR_BODY, COMMIT_MESSAGES, BLANK"
+  type        = string
+  default     = null
+  nullable    = true
+
+
+}
+
 
 variable "allow_rebase_merge" {
   description = "Set to false to disable rebase merges on the repository"
