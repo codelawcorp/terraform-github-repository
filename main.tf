@@ -20,18 +20,18 @@ resource "github_repository" "this" {
   has_discussions = var.has_discussions
   has_downloads   = var.has_downloads
 
-  allow_auto_merge            = var.allow_auto_merge
-  allow_rebase_merge          = var.allow_rebase_merge
-  delete_branch_on_merge      = var.delete_branch_on_merge
+  allow_auto_merge       = var.allow_auto_merge
+  allow_rebase_merge     = var.allow_rebase_merge
+  delete_branch_on_merge = var.delete_branch_on_merge
 
   allow_merge_commit   = var.allow_merge_commit
-  merge_commit_title   = var.allow_merge_commit == true ?  var.merge_commit_title : null # Only apply if allow_merge_commit is true
-  merge_commit_message = var.allow_merge_commit == true ?  var.merge_commit_message : null # Only apply if allow_merge_commit is true
+  merge_commit_title   = var.allow_merge_commit == true ? var.merge_commit_title : null   # Only apply if allow_merge_commit is true
+  merge_commit_message = var.allow_merge_commit == true ? var.merge_commit_message : null # Only apply if allow_merge_commit is true
 
 
   allow_squash_merge          = var.allow_squash_merge
-  squash_merge_commit_title   = var.allow_squash_merge == true ?  var.squash_merge_commit_title : null # Only apply if allow_squash_merge is true
-  squash_merge_commit_message = var.allow_squash_merge == true ?  var.squash_merge_commit_message : null # Only apply if allow_squash_merge is true
+  squash_merge_commit_title   = var.allow_squash_merge == true ? var.squash_merge_commit_title : null   # Only apply if allow_squash_merge is true
+  squash_merge_commit_message = var.allow_squash_merge == true ? var.squash_merge_commit_message : null # Only apply if allow_squash_merge is true
 
 
 
