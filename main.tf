@@ -2,7 +2,7 @@
 #   value = github_repository.this
 # }
 
-locals{
+locals {
   default_branch = "prod"
 }
 
