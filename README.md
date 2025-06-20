@@ -320,27 +320,27 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [github_actions_environment_secret.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_environment_secret) | resource |
-| [github_actions_environment_variable.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_environment_variable) | resource |
-| [github_actions_repository_permissions.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_repository_permissions) | resource |
-| [github_actions_secret.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_secret) | resource |
-| [github_actions_variable.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/actions_variable) | resource |
-| [github_branch.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch) | resource |
-| [github_branch_default.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch_default) | resource |
-| [github_branch_protection.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/branch_protection) | resource |
-| [github_issue_label.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/issue_label) | resource |
-| [github_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository) | resource |
-| [github_repository_autolink_reference.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_autolink_reference) | resource |
-| [github_repository_collaborator.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_collaborator) | resource |
-| [github_repository_custom_property.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_custom_property) | resource |
-| [github_repository_dependabot_security_updates.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_dependabot_security_updates) | resource |
-| [github_repository_deploy_key.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_deploy_key) | resource |
-| [github_repository_environment.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment) | resource |
-| [github_repository_environment_deployment_policy.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_environment_deployment_policy) | resource |
-| [github_repository_file.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_topics.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_topics) | resource |
-| [github_repository_webhook.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/repository_webhook) | resource |
-| [github_team_repository.this](https://registry.terraform.io/providers/hashicorp/github/latest/docs/resources/team_repository) | resource |
+| [github_actions_environment_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_secret) | resource |
+| [github_actions_environment_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_variable) | resource |
+| [github_actions_repository_permissions.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_permissions) | resource |
+| [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
+| [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
+| [github_branch.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch) | resource |
+| [github_branch_default.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
+| [github_branch_protection.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection) | resource |
+| [github_issue_label.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label) | resource |
+| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
+| [github_repository_autolink_reference.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference) | resource |
+| [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
+| [github_repository_custom_property.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_custom_property) | resource |
+| [github_repository_dependabot_security_updates.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_dependabot_security_updates) | resource |
+| [github_repository_deploy_key.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
+| [github_repository_environment.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment) | resource |
+| [github_repository_environment_deployment_policy.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment_deployment_policy) | resource |
+| [github_repository_file.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
+| [github_repository_webhook.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_webhook) | resource |
+| [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
 
 
 
