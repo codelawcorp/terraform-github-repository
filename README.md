@@ -7,6 +7,7 @@ The latest version is published to the official [Terraform registry](https://reg
 
 This is the most complete GitHub repo module out there.  
 It bundles all resources related to `github_repository` and abstract complexities of github provider.
+It uses GitHub credentials saved by the `gh auth login` command. 
 
 <!-- BEGIN_TF_DOCS -->
 
