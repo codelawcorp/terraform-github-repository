@@ -4,7 +4,7 @@ module "github_repository_complete" {
   source = "../../" 
   # version = "~> 2.0.0" # It is always recommended to pin version
 
-  name        = "test-${basename(path.root)}" # Any repository name.
+  name        = "test-${basename(abspath(path.root))}" # Any repository name.
   description = "An example repository created using Terraform"
   visibility  = "public"
 

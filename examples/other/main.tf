@@ -1,7 +1,7 @@
 module "another_repo" {
   source = "../../"
 
-  name               = "test-${basename(path.root)}"
+  name               = "test-${basename(abspath(path.root))}"
   archive_on_destroy = false
 
 

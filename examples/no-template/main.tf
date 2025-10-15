@@ -2,7 +2,7 @@ module "no_default_branch" {
   source = "../../"
 
 
-  name        = "test-${basename(path.root)}"
+  name        = "test-${basename(abspath(path.root))}"
   description = "Test repository without a default branch."
   topics      = ["any", "deployment", "devops", "gitops"]
 
