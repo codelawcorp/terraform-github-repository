@@ -7,7 +7,6 @@ The latest version is published to the official [Terraform registry](https://reg
 
 This is the most complete GitHub repo module out there.  
 It bundles all resources related to `github_repository` and abstract complexities of github provider.
-It uses GitHub credentials saved by the `gh auth login` command. 
 
 <!-- BEGIN_TF_DOCS -->
 
@@ -450,6 +449,10 @@ When variable is an object, there is a comment with a link to the provider's doc
 
 
 <!-- END_TF_DOCS -->
+
+## Troubleshooting
+
+- Refer to [GitHub provider](https://registry.terraform.io/providers/integrations/github/6.6.0/docs) documentation to see all available ways to pass GitHub credentials. If your `gh auth login` is configured, that is sufficient. Make sure you've logged in into the right account.
 
 ## Issues
 
