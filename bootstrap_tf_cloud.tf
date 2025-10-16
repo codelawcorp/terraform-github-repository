@@ -1,99 +1,99 @@
 
 # ---
 resource "github_repository_file" "backend" {
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository                      = github_repository.this.name
-  file                            = "backend.tf"
-  content                         = templatefile("${path.module}/assets/backend.tf.tpl", {
+  count      = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository = github_repository.this.name
+  file       = "backend.tf"
+  content = templatefile("${path.module}/assets/backend.tf.tpl", {
     tf_cloud_organization = try(var.bootstrap_tf_cloud.tf_cloud_organization, null)
-    tf_cloud_workspace = try(var.bootstrap_tf_cloud.tf_cloud_workspace, null)
+    tf_cloud_workspace    = try(var.bootstrap_tf_cloud.tf_cloud_workspace, null)
   })
-  branch                          = local.default_branch
-  commit_message                  = "feat: added tf backend"
-  overwrite_on_create             = false
+  branch              = local.default_branch
+  commit_message      = "feat: added tf backend"
+  overwrite_on_create = false
 
-  depends_on = [github_branch.this] 
+  depends_on = [github_branch.this]
 }
 
 resource "github_repository_file" "gha" {
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository                      = github_repository.this.name
-  file                            = ".github/workflows/main.yaml"
-  content                         = file("${path.module}/assets/gha.yaml")
-  branch                          = local.default_branch
-  commit_message                  = "ci: configured gha"
-  overwrite_on_create             = false
+  count               = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository          = github_repository.this.name
+  file                = ".github/workflows/main.yaml"
+  content             = file("${path.module}/assets/gha.yaml")
+  branch              = local.default_branch
+  commit_message      = "ci: configured gha"
+  overwrite_on_create = false
 
   depends_on = [
-      github_branch.this,
-      github_repository_file.backend
-    ] 
-lifecycle {
+    github_branch.this,
+    github_repository_file.backend
+  ]
+  lifecycle {
     ignore_changes = [content] # Allows user to modify the file after the inital bootstrapping.
   }
 }
 resource "github_repository_file" "release_rc" {
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository                      = github_repository.this.name
-  file                            = ".releaserc.yaml"
-  content                         = file("${path.module}/assets/.releaserc.yaml")
-  branch                          = local.default_branch
-  commit_message                  = "ci: configured semantic-release tool"
-  overwrite_on_create             = false
+  count               = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository          = github_repository.this.name
+  file                = ".releaserc.yaml"
+  content             = file("${path.module}/assets/.releaserc.yaml")
+  branch              = local.default_branch
+  commit_message      = "ci: configured semantic-release tool"
+  overwrite_on_create = false
 
   depends_on = [
-      github_branch.this,
-      github_repository_file.backend
-    ] 
-lifecycle {
+    github_branch.this,
+    github_repository_file.backend
+  ]
+  lifecycle {
     ignore_changes = [content] # Allows user to modify the file after the inital bootstrapping.
   }
 }
 
 resource "github_repository_file" "gitignore" {
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository                      = github_repository.this.name
-  file                            = ".gitignore"
-  content                         = file("${path.module}/assets/.gitignore")
-  branch                          = local.default_branch
-  commit_message                  = "chore: configured .gitignore"
-  overwrite_on_create             = false
+  count               = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository          = github_repository.this.name
+  file                = ".gitignore"
+  content             = file("${path.module}/assets/.gitignore")
+  branch              = local.default_branch
+  commit_message      = "chore: configured .gitignore"
+  overwrite_on_create = false
 
   depends_on = [
-      github_branch.this
-    ] 
+    github_branch.this
+  ]
 
-lifecycle {
+  lifecycle {
     ignore_changes = [content] # Allows user to modify the file after the inital bootstrapping.
   }
 }
 
 resource "github_repository_file" "tf_version" { # This file is used by tfenv
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository                      = github_repository.this.name
-  file                            = ".terraform-version"
-  content                         = try(var.bootstrap_tf_cloud.terraform_version, "latest")
-  branch                          = local.default_branch
-  commit_message                  = "chore: specified terraform version"
-  overwrite_on_create             = false
+  count               = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository          = github_repository.this.name
+  file                = ".terraform-version"
+  content             = try(var.bootstrap_tf_cloud.terraform_version, "latest")
+  branch              = local.default_branch
+  commit_message      = "chore: specified terraform version"
+  overwrite_on_create = false
 
   depends_on = [
-      github_branch.this
-    ] 
+    github_branch.this
+  ]
 }
 
 resource "github_actions_variable" "tf_version" {
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository       = github_repository.this.name
-  variable_name    = "TERRAFORM_VERSION"
-  value            = try(var.bootstrap_tf_cloud.terraform_version, "latest")
+  count         = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository    = github_repository.this.name
+  variable_name = "TERRAFORM_VERSION"
+  value         = try(var.bootstrap_tf_cloud.terraform_version, "latest")
 }
 
 resource "github_actions_secret" "tf_cloud_token" {
-  count = var.bootstrap_tf_cloud != null ? 1 : 0
-  repository       = github_repository.this.name
-  secret_name      = "TF_TOKEN_APP_TERRAFORM_IO"
-  plaintext_value  = var.bootstrap_tf_cloud.tf_cloud_token
+  count           = var.bootstrap_tf_cloud != null ? 1 : 0
+  repository      = github_repository.this.name
+  secret_name     = "TF_TOKEN_APP_TERRAFORM_IO"
+  plaintext_value = var.bootstrap_tf_cloud.tf_cloud_token
   lifecycle {
     ignore_changes = [plaintext_value] # Prevents leaking the secret value in plan
   }
@@ -113,21 +113,21 @@ resource "github_actions_secret" "tf_cloud_token" {
 
 
 resource "terraform_data" "this" {
-    count = var.bootstrap_tf_cloud != null ? 1 : 0
-    input = github_repository.this.http_clone_url
-    # triggers_replace = [github_repository.this.http_clone_url]
+  count = var.bootstrap_tf_cloud != null ? 1 : 0
+  input = github_repository.this.http_clone_url
+  # triggers_replace = [github_repository.this.http_clone_url]
 
-    lifecycle {
-      replace_triggered_by = [ 
-        github_repository.this.http_clone_url,
-       ]
-    }
-    provisioner "local-exec" {
-        when        = create
-        on_failure  = fail
-        interpreter = ["bash", "-c"]
-        command     = "cd ${abspath(path.root)} && git init && git remote add origin ${self.input} && git branch -M ${local.default_branch} && git fetch origin && git pull origin ${local.default_branch} && git push --set-upstream origin ${local.default_branch} "
-    }
+  lifecycle {
+    replace_triggered_by = [
+      github_repository.this.http_clone_url,
+    ]
+  }
+  provisioner "local-exec" {
+    when        = create
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+    command     = "cd ${abspath(path.root)} && git init && git remote add origin ${self.input} && git branch -M ${local.default_branch} && git fetch origin && git pull origin ${local.default_branch} && git push --set-upstream origin ${local.default_branch} "
+  }
 
-  
+
 }

@@ -4,7 +4,7 @@ module "github_repository_minimal" {
   source = "../../"
   # version = "~> 2.0.0"  # It is always recommended to pin version
 
-  name   = "test-${basename(abspath(path.root))}"
+  name = "test-${basename(abspath(path.root))}"
 
 
   archive_on_destroy = false # Not a critical repo

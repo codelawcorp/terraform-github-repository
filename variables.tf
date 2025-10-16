@@ -539,11 +539,11 @@ variable "github_actions_repository_permissions" {
 
 variable "bootstrap_tf_cloud" {
   description = "When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED."
-  type  = object({
+  type = object({
     tf_cloud_organization = optional(string)
-    tf_cloud_workspace = optional(string)
-    terraform_version = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs
-    tf_cloud_token = optional(string) # After the first apply, all further changes are ignored.
+    tf_cloud_workspace    = optional(string)
+    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs
+    tf_cloud_token        = optional(string)           # After the first apply, all further changes are ignored.
   })
   default  = null
   nullable = true
