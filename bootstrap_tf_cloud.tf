@@ -126,9 +126,15 @@ resource "terraform_data" "this" {
     when        = create
     on_failure  = fail
     interpreter = ["bash", "-c"]
-    command     = " cd ${abspath(path.root)} && git init &&  git remote add origin ${self.input} && git branch -m main ${local.default_branch} &&  git fetch origin && (git branch -u origin/${local.default_branch} ${local.default_branch} || git reset --hard origin/${local.default_branch}) && git remote set-head origin -a"
+    command     = " cd ${abspath(path.root)} && git init &&  git remote add origin ${self.input} && git branch -m main ${local.default_branch} &&  git fetch origin && (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch} && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} )) && git remote set-head origin -a"
   }
-  depends_on = [github_repository_file.backend] # Just to be sure that repo is initialized, branch is updated
+  depends_on = [
+    github_repository_file.backend,
+    github_repository_file.gitignore,
+    github_repository_file.gha,
+    github_repository_file.release_rc,
+    github_repository_file.tf_version
+  ] # Just to be sure that repo is initialized, branch is updated
 
 
 }
