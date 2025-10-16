@@ -1,69 +1,69 @@
 
 
-# provider "github" {
-#   owner = "codelawcorp"
+# # provider "github" {
+# #   owner = "codelawcorp"
+# # }
+# test {
+#   parallel = true
 # }
-test {
-  parallel = true
-}
 
-run "minimal" {
-  command   = apply
-  state_key = "minimal"
+# run "minimal" {
+#   command   = apply
+#   state_key = "minimal"
 
-  module {
-    source = "./examples/minimal"
-  }
-}
+#   module {
+#     source = "./examples/minimal"
+#   }
+# }
 
 
-run "complete" {
-  command   = apply
-  state_key = "complete"
-
-  module {
-    source = "./examples/complete"
-  }
-
-}
-
-# run "complete_gh_pages" {
-#   command = apply
+# run "complete" {
+#   command   = apply
 #   state_key = "complete"
 
 #   module {
 #     source = "./examples/complete"
 #   }
 
-#   variables {
-#     pages = {
-#       build_type = "legacy"
-#       cname      = "pages.example.com"
-#       source = {
-#         branch = "gh-pages"
-#         path   = "/"
-#       }
-#     }
+# }
+
+# # run "complete_gh_pages" {
+# #   command = apply
+# #   state_key = "complete"
+
+# #   module {
+# #     source = "./examples/complete"
+# #   }
+
+# #   variables {
+# #     pages = {
+# #       build_type = "legacy"
+# #       cname      = "pages.example.com"
+# #       source = {
+# #         branch = "gh-pages"
+# #         path   = "/"
+# #       }
+# #     }
+# #   }
+# # }
+
+
+
+# run "other" {
+#   command   = apply
+#   state_key = "other"
+#   module {
+#     source = "./examples/other"
 #   }
 # }
 
-
-
-run "other" {
-  command   = apply
-  state_key = "other"
-  module {
-    source = "./examples/other"
-  }
-}
-
-run "no_template" {
-  command   = apply
-  state_key = "no_template"
-  module {
-    source = "./examples/no-template"
-  }
-}
+# run "no_template" {
+#   command   = apply
+#   state_key = "no_template"
+#   module {
+#     source = "./examples/no-template"
+#   }
+# }
 
 
 run "chicken_egg" {

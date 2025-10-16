@@ -133,7 +133,7 @@ resource "terraform_data" "this" {
     when        = destroy
     on_failure  = fail
     interpreter = ["bash", "-c"]
-    command     = " cd ${abspath(path.root)} rm -rf .git" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+    command     = " cd ${abspath(path.root)} && rm -rf .git" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
   }
   depends_on = [
     github_repository_file.backend,

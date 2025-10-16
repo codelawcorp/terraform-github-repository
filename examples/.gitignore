@@ -1,0 +1,5 @@
+chicken-egg/.github
+chicken-egg/.gitignore
+chicken-egg/.releaserc.yaml
+chicken-egg/backend.tf
+chicken-egg/README.md
