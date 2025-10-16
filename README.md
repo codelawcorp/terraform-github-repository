@@ -27,45 +27,6 @@ module "github_repository_minimal" {
 
 ```
 
-
-### Chicken-egg example
-When github repo with this module manages itself.  
-**Prerequisite**: Create Terraform Cloud organization -> Create a workspace 
-  -> Run `terraform login`
-  -> create an API token (Team token) to paste as input variable
-```hcl
-# main.tf
-module "this" {
-  source = "codelawcorp/repository/github"
-  # version = "~> 3.0.0"  # It is always recommended to pin the version
-
-  name = basename(abspath(path.root)) # Evaluates to the current directory name
-  # name   = "${basename(abspath(path.root))}" # Evaluates to the current directory name
-  description = "This repository manages itself as code. Also it will manage other repositories in the future."
-
-  archive_on_destroy = false
-
-  bootstrap_tf_cloud = {
-    tf_cloud_organization = "magzim21"
-    tf_cloud_workspace    = "github"
-    terraform_version     = try(file("${path.root}/.terraform-version"), "latest")
-    tf_cloud_token        = var.tf_cloud_token
-  }
-}
-
-variable "tf_cloud_token" {
-  description = "Terraform Cloud token"
-  type        = string
-  sensitive   = true
-  # default = null # uncomment after the first apply
-  nullable = true
-}
-
-output "help_message" {
-  description = "Help message"
-  value       = "After the first apply run `terraform init` again. Answer 'yes' to the prompt about migrating the existing state."
-}
-```
 ### Complete example
 ```hcl
 module "github_repository_complete" {
