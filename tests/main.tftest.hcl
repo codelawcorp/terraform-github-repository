@@ -65,3 +65,16 @@ run "no_template" {
   }
 }
 
+
+run "chicken_egg" {
+  command   = apply
+  state_key = "chicken_egg"
+
+  module {
+    source = "./examples/chicken-egg"
+
+  }
+  variables {
+    tf_cloud_token = null
+  }
+}
