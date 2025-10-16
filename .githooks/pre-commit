@@ -13,7 +13,7 @@ terraform fmt -check -recursive || { terraform fmt -write=true -recursive && exi
 
 terraform validate
 
-# GITHUB_OWNER=codelawcorp-test terraform test
+# GITHUB_OWNER=codela   wcorp-test terraform test
 
 gitleaks git --staged
 

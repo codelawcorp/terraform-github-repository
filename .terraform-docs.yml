@@ -25,6 +25,11 @@ content: |
   {{ include "examples/minimal/main.tf" }}
   ```
 
+  ### Chicken-egg example - manage the repository where this module is used
+    ```hcl
+  {{ include "examples/chicken-egg/main.tf" }}
+  ```
+
   ### Complete example
   ```hcl
   {{ include "examples/complete/main.tf" }}
