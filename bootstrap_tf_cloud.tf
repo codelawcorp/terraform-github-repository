@@ -128,6 +128,13 @@ resource "terraform_data" "this" {
     interpreter = ["bash", "-c"]
     command     = " cd ${abspath(path.root)} && git init &&  git remote add origin ${self.input} && git branch -m main ${local.default_branch} &&  git fetch origin && (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch} && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} )) && git remote set-head origin -a"
   }
+
+  provisioner "local-exec" {
+    when        = destroy
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+    command     = " cd ${abspath(path.root)} rm -rf .git" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+  }
   depends_on = [
     github_repository_file.backend,
     github_repository_file.gitignore,
