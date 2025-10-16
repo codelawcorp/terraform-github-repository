@@ -1,5 +1,5 @@
 #!/bin/sh
-# set -x
+set -e
 
 # npm install -g @commitlint/config-conventional @commitlint/cli
 export NODE_PATH=/opt/homebrew/lib/node_modules/ # make sure that this matches to your global node_modules path
