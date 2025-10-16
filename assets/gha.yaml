@@ -10,7 +10,7 @@ on:
   schedule: # A regular sync to prevent drifts.
     - cron: "0 8 * * 1" # every day at 8am UTC Monday # https://crontab.guru/#0_8_*_*_*
   workflow_dispatch: {}
-env:
+# env:
   # APP_NAME: ${{ vars.APP_NAME }} # Set via GitHub Secrets and variables on a repo level
   # AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
   # AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}  # Set via GitHub Secrets and variables on a org level
@@ -20,59 +20,17 @@ jobs:
     name: Run Tests
     permissions:
       contents: read
-      id-token: write # This is required for requesting the JWT
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # fetching all history to scan for secrets
 
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
-          GITLEAKS_VERSION: 8.24.3
-
-      - name: Setup Node.js for commitlint
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts/*"
-      - name: Check if the last commit message is properly formatted
-        run: |
-          npm install -g @commitlint/config-conventional
-          npx commitlint --config ".githooks/.commitlintrc.yml" --last  --verbose
-
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.12.1" # "1.9.5"
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
       - name: Check if terraform is well formatted
         run: terraform fmt -recursive  -check
-
-      - name: Run Terraform init
-        run: terraform init
-      - name: Run Terraform tests
-        # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
-        run: GITHUB_TOKEN=${{ secrets.PAT_TOKEN }} GITHUB_OWNER=codelawcorp-test terraform test
-
-  terraform-docs: # https://github.com/terraform-docs/gh-actions
-    name: Generate Terraform Docs
-    needs: tests
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Render terraform docs inside the README.md and push changes
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: .
-          git-push: "true"
-          git-commit-message: "docs(terraform): automated update of terraform docs"
-          # git-push-sign-off: "true"
-          # fail-on-diff: "true"
 
   next-version:
     name: Determine the next version
@@ -107,12 +65,44 @@ jobs:
             echo "#### No features, no fixes. Skipping Build job :police_car:" | tee -a $GITHUB_STEP_SUMMARY
           fi
 
+
+  tf-apply: # This is safe to apply because critical resources `prevent_destroy = true` or `archive_on_destroy = true`
+    name: Terraform apply
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'prod'
+    needs: 
+      - next-version
+    # if: needs.git-tag-release.outputs.should-run-build == 'True'
+    concurrency: ${{ github.ref_name }}
+    timeout-minutes: 30
+    environment: # https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment
+      name: ${{ github.ref_name }}
+      # url: ${{ vars.ENV_URL }}
+    # defaults:
+    #   run:
+    #     working-directory: ./terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
+          cli_config_credentials_token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
+      - name: Run Terraform init
+        run: terraform init -input=false
+      - name: Check if terraform configuration is valid
+        run: terraform validate
+      - name: Run Terraform apply
+        run: |
+          terraform apply -auto-approve
+          echo "#### Successfully applied organization" >> $GITHUB_STEP_SUMMARY
+
+
   git-tag-release:
     name: Create ${{ needs.next-version.outputs.semver_tag }} git tag
     runs-on: ubuntu-latest
     needs:
       - next-version
-      - terraform-docs
+      - tf-apply
     permissions:
       contents: write # to be able to publish a GitHub release
     steps:

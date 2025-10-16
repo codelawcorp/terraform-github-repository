@@ -1,0 +1,5 @@
+branches:
+  - name: prod
+tagFormat: "${version}"
+plugins:
+  - "@semantic-release/commit-analyzer"
