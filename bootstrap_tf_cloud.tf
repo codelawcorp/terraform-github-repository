@@ -126,7 +126,7 @@ resource "terraform_data" "this" {
     when        = create
     on_failure  = fail
     interpreter = ["bash", "-c"]
-    command     = " cd ${abspath(path.root)} && git init &&  git remote add origin ${self.input} && git branch -m main ${local.default_branch} &&  git fetch origin && (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch} && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} )) && git remote set-head origin -a"
+    command     = " cd ${abspath(path.root)} && git init --initial-branch ${local.default_branch}  &&  git remote add origin ${self.input}  &&  git fetch origin && (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch} && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} )) && git remote set-head origin -a"
   }
 
   provisioner "local-exec" {
