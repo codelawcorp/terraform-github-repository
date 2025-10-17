@@ -44,6 +44,7 @@ module "github_repository_complete" {
     include_all_branches = true # TODO / try without this
   }
 
+  default_branch = "prod"
   branches = [
     {
       name = "gh-pages"

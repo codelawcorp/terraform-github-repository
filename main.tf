@@ -107,8 +107,13 @@ resource "github_repository" "this" {
 #   source_branch = "main"
 # }
 
+data "github_repository" "template" {
+  count     = var.template == null ? 0 : 1
+  full_name = "${var.template.owner}/${var.template.repository}"
+}
+
 resource "github_branch_default" "this" { # TODO / test changing default branch after the initial repository creation, especially if branch is defined in branches list.
-  count = var.template == null && local.default_branch != "main" ? 1 : 0
+  count = try(data.github_repository.template[0].default_branch, "no template used") != local.default_branch ? 1 : 0
 
   repository = github_repository.this.name
   branch     = local.default_branch

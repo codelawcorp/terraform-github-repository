@@ -81,3 +81,12 @@ run "bootsrap" {
     # github_token          = "placeholder" # This is sensitive. Pass via TF_VAR_github_token
   }
 }
+run "branch_variations" {
+  command   = apply
+  state_key = "branch-variations"
+
+  module {
+    source = "./examples/branch-variations"
+
+  }
+}
