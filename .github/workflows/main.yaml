@@ -52,6 +52,7 @@ jobs:
         run: terraform init
       - name: Run Terraform tests
         env:
+          TFE_TOKEN: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }} # todo / change rename secret TF_TOKEN_APP_TERRAFORM_IO - this name might not make sense
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           GITHUB_OWNER: codelawcorp-test
           TF_VAR_tf_cloud_token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
