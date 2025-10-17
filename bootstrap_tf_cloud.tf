@@ -173,6 +173,7 @@ resource "tfe_variable" "github_token_env" {
   value        = var.bootstrap_tf_cloud.github_token
   category     = "env"
   workspace_id = data.tfe_workspace.this[0].id
+  sensitive    = true
   description  = "A token with repo permissions"
 }
 
@@ -182,6 +183,7 @@ resource "tfe_variable" "github_token" {
   value        = var.bootstrap_tf_cloud.github_token
   category     = "terraform"
   workspace_id = data.tfe_workspace.this[0].id
+  sensitive    = true
   description  = "A token with repo permissions"
 }
 
