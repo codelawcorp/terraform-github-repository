@@ -1,5 +1,9 @@
 #!/bin/sh
 set -e
+# On exit, print a message if the hook failed (non-zero exit) and preserve the exit code
+trap 'ret=$?; if [ $ret -ne 0 ]; then echo "pre-commit hook failed (exit code $ret)"; fi; exit $ret' EXIT
+
+
 echo "Running commit-msg hooks"
 
 # npm install -g @commitlint/config-conventional @commitlint/cli

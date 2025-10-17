@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+# # Track the currently executing command for better debug output
+# trap 'last_cmd=$cur_cmd; cur_cmd=$BASH_COMMAND' DEBUG
+
+
+
 echo "Running pre-commit hooks"
 
 npx validate-branch-name -r '^(prod|stg|dev)$|^(feature|fix|hotfix)/.+$'
