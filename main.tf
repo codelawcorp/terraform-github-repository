@@ -467,37 +467,38 @@ resource "github_actions_repository_permissions" "this" {
 # }
 
 #  If the same rule is defined in different ways across the aggregated rulesets, the most restrictive version of the rule applies.
-resource "github_repository_ruleset" "this" {
-  for_each    = toset(var.ruleset)
-  repository  = github_repository.this.name
-  name        = each.value.name
-  target      = each.value.target
-  enforcement = each.value.enforcement
+# resource "github_repository_ruleset" "this" {
+#   for_each    = toset(var.ruleset)
+#   repository  = github_repository.this.name
+#   name        = each.value.name
+#   target      = each.value.target
+#   enforcement = each.value.enforcement
 
-  conditions {
-    ref_name {
-      include = ["~ALL"]
-      exclude = []
-    }
-  }
+#   dynamic "conditions" {
+#     for_each = try([var.ruleset.conditions], [])
+#     content {
+#       ref_name {
+#         exclude = try(conditions.value.ref_name.exclude, null)
+#         include = try(conditions.value.ref_name.include, null)
+#       }
+#       repository_name { exclude = try(conditions.value.repository_name.exclude, null) }
+#       # …repeat for the *known* nested blocks only
+#     }
+#   }
 
-  bypass_actors {
-    actor_id    = 13473
-    actor_type  = "Integration"
-    bypass_mode = "always"
-  }
+#   dynamic "rules" {
+#     for_each = try([var.ruleset.rules], [])
+#     content {
+#       # enumerate known rule blocks (e.g., "pull_request", "required_status_checks", etc.)
+#     }
+#   }
 
-  rules {
-    creation                = true
-    update                  = true
-    deletion                = true
-    required_linear_history = true
-    required_signatures     = true
-
-    required_deployments {
-      required_deployment_environments = ["test"]
-    }
-
-
-  }
-}
+#   dynamic "bypass_actors" {
+#     for_each = try(var.ruleset.bypass_actors, [])
+#     content {
+#       actor_id    = try(bypass_actors.value.actor_id, null)
+#       actor_type  = try(bypass_actors.value.actor_type, null)
+#       bypass_mode = try(bypass_actors.value.bypass_mode, null)
+#     }
+#   }
+# }
