@@ -140,13 +140,6 @@ cd ${abspath(path.root)}
   (git add main.tf  && git commit -m 'feat: bootstrap bootstrap commit' && git push || true ) 
 EOL
   }
-
-  provisioner "local-exec" { # This does not work as expected with remote runner
-    when        = destroy
-    on_failure  = fail
-    interpreter = ["bash", "-c"]
-    command     = " cd ${abspath(path.root)} && rm -rf .git" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
-  }
   depends_on = [
     github_repository_file.backend,
     github_repository_file.gitignore,
@@ -154,7 +147,17 @@ EOL
     github_repository_file.release_rc,
     github_repository_file.tf_version
   ] # Just to be sure that repo is initialized, branch is updated
+}
 
+resource "terraform_data" "this_destroy" { # This should be a separate resouce in case another one fails to be created
+  count = var.bootstrap_tf_cloud != null ? 1 : 0
+  input = github_repository.this.http_clone_url
+  provisioner "local-exec" { # This does not work as expected with remote runner
+    when        = destroy
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+    command     = "cd ${abspath(path.root)} && rm -rf .git ;" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+  }
 
 }
 
