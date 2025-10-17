@@ -10,20 +10,36 @@ module "this" {
 
   archive_on_destroy = false
 
-  bootstrap_tf_cloud = {
-    tf_cloud_organization = "magzim21" # This is example. Replace with your organization name.
-    tf_cloud_workspace    = "github"   # This is example. Replace with your workspace name.
+  bootstrap_tf_cloud = { # This is example. Replace with your own valued
+    tf_cloud_organization = var.tf_cloud_organization
+    tf_cloud_workspace    = var.tf_cloud_workspace
     terraform_version     = try(file("${abspath(path.root)}/.terraform-version"), "latest")
     tf_cloud_token        = var.tf_cloud_token
+    github_token          = var.github_token
   }
 }
 
+variable "tf_cloud_organization" {
+  description = "Terraform Cloud Organization name. Create it manually first."
+  type        = string
+}
+
+variable "tf_cloud_workspace" {
+  description = "Terraform Cloud Workspace name. Create it manually first."
+  type        = string
+}
+
+
 variable "tf_cloud_token" {
-  description = "Terraform Cloud token"
+  description = "Terraform Cloud token. Create it manually first."
   type        = string
   sensitive   = true
-  # default = null # uncomment after the first apply
-  nullable = true
+}
+
+variable "github_token" {
+  description = "GitHub token. Create it manually first."
+  type        = string
+  sensitive   = true
 }
 
 output "help_message" {

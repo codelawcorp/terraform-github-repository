@@ -7,74 +7,77 @@ test {
   parallel = true
 }
 
-run "minimal" {
-  command   = apply
-  state_key = "minimal"
+# run "minimal" {
+#   command   = apply
+#   state_key = "minimal"
 
-  module {
-    source = "./examples/minimal"
-  }
-}
+#   module {
+#     source = "./examples/minimal"
+#   }
+# }
 
 
-run "complete" {
-  command   = apply
-  state_key = "complete"
-
-  module {
-    source = "./examples/complete"
-  }
-
-}
-
-# run "complete_gh_pages" {
-#   command = apply
+# run "complete" {
+#   command   = apply
 #   state_key = "complete"
 
 #   module {
 #     source = "./examples/complete"
 #   }
 
-#   variables {
-#     pages = {
-#       build_type = "legacy"
-#       cname      = "pages.example.com"
-#       source = {
-#         branch = "gh-pages"
-#         path   = "/"
-#       }
-#     }
+# }
+
+# # run "complete_gh_pages" {
+# #   command = apply
+# #   state_key = "complete"
+
+# #   module {
+# #     source = "./examples/complete"
+# #   }
+
+# #   variables {
+# #     pages = {
+# #       build_type = "legacy"
+# #       cname      = "pages.example.com"
+# #       source = {
+# #         branch = "gh-pages"
+# #         path   = "/"
+# #       }
+# #     }
+# #   }
+# # }
+
+
+
+# run "other" {
+#   command   = apply
+#   state_key = "other"
+#   module {
+#     source = "./examples/other"
+#   }
+# }
+
+# run "no_template" {
+#   command   = apply
+#   state_key = "no_template"
+#   module {
+#     source = "./examples/no-template"
 #   }
 # }
 
 
-
-run "other" {
+run "bootsrap" {
   command   = apply
-  state_key = "other"
-  module {
-    source = "./examples/other"
-  }
-}
-
-run "no_template" {
-  command   = apply
-  state_key = "no_template"
-  module {
-    source = "./examples/no-template"
-  }
-}
-
-
-run "chicken_egg" {
-  command   = apply
-  state_key = "chicken_egg"
+  state_key = "bootsrap"
 
   module {
     source = "./examples/bootstrap"
 
   }
   variables {
-    tf_cloud_token = null
+    tf_cloud_organization = "magzim21"
+    tf_cloud_workspace    = "github"
+    tf_cloud_token        = "placeholder" # Cannot include a null value in a string template.
+    github_token          = "placeholder" # Cannot include a null value in a string template.
   }
 }

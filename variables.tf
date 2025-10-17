@@ -536,6 +536,7 @@ variable "bootstrap_tf_cloud" {
     tf_cloud_workspace    = optional(string)
     terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs
     tf_cloud_token        = optional(string)           # After the first apply, all further changes are ignored.
+    github_token          = optional(string)           # After the first apply, all further changes are ignored.
   })
   default  = null
   nullable = true
