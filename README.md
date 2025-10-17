@@ -129,6 +129,7 @@ module "github_repository_complete" {
     include_all_branches = true # TODO / try without this
   }
 
+  default_branch = "prod"
   branches = [
     {
       name = "gh-pages"
@@ -449,6 +450,7 @@ No modules.
 | [tfe_variable.github_token_env](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
 | [tfe_variable.tfe_token](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
 | [tfe_variable.tfe_token_env](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
+| [github_repository.template](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
 | [tfe_workspace.this](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/workspace) | data source |
 
 
