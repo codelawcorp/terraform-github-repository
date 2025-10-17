@@ -550,6 +550,7 @@ When variable is an object, there is a comment with a link to the provider's doc
 - Terraform destroy and authenticated via `gh` cli requires a token with elevated permissions `gh auth refresh  --scopes delete_repo`. Otherwise you would get error like this:
 `│ Error: DELETE https://api.github.com/repos/USERNAME/repo-as-a-code: 403 Must have admin rights to Repository. []`. The default `gh auth login` a token with a minimum set of scopes.  
 - Refer to [GitHub provider](https://registry.terraform.io/providers/integrations/github/6.6.0/docs) documentation to see all available ways to pass GitHub credentials. If you have used `gh` cli, make sure you've logged in into the right account.
+- CHANGING default branch to "main" does not work. This is expected behaviour as a tradoff for the sum of all workarounds the buggy GitHub provider requried.
 
 
 ## Issues

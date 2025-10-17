@@ -181,10 +181,10 @@ variable "default_branch" {
   default     = "prod"
   nullable    = false
 
-  validation {
-    condition     = var.default_branch != "main"
-    error_message = "default_branch cannot be 'main'. Use any other name. Default is `prod` "
-  }
+  # validation {
+  #   condition     = var.default_branch != "main"
+  #   error_message = "default_branch cannot be 'main'. Use any other name. Default is `prod` "
+  # }
   # validation {
   #   condition     = (var.template == null && var.default_branch != null) || (var.template != null && var.default_branch == null)
   #   error_message = "Default branch can be set only if template is not used"
