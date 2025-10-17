@@ -71,7 +71,7 @@ run "chicken_egg" {
   state_key = "chicken_egg"
 
   module {
-    source = "./examples/chicken-egg"
+    source = "./examples/bootstrap"
 
   }
   variables {

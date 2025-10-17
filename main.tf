@@ -61,7 +61,7 @@ resource "github_repository" "this" {
     ignore_changes = [template] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
   }
 
-  dynamic "pages" { #  GitHub provider issue: pages branch must exist at apply time / chicken-egg problem
+  dynamic "pages" { #  GitHub provider issue: pages branch must exist at apply time / bootstrap problem
     for_each = var.pages != null ? [var.pages] : []
     content {
       build_type = pages.value.build_type

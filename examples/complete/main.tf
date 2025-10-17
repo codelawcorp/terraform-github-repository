@@ -101,7 +101,7 @@ module "github_repository_complete" {
   ]
 
   # #   # GitHub Pages configuration (optional)
-  # pages = { // GitHub provider issue: pages branch must exist at applytime / chicken-egg problem
+  # pages = { // GitHub provider issue: pages branch must exist at applytime / bootstrap problem
   #   source = {
   #     branch = "gh-pages"
   #     path   = "/"
