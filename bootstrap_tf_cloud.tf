@@ -36,7 +36,7 @@ resource "github_repository_file" "release_rc" {
   count               = var.bootstrap_tf_cloud != null ? 1 : 0
   repository          = github_repository.this.name
   file                = ".releaserc.yaml"
-  content             = file("${path.module}/assets/.releaserc.yaml")
+  content             = file("${path.module}/assets/releaserc.yaml")
   branch              = local.default_branch
   commit_message      = "ci: configured semantic-release tool"
   overwrite_on_create = false
@@ -54,7 +54,7 @@ resource "github_repository_file" "gitignore" {
   count               = var.bootstrap_tf_cloud != null ? 1 : 0
   repository          = github_repository.this.name
   file                = ".gitignore"
-  content             = file("${path.module}/assets/.gitignore")
+  content             = file("${(path.module)}/assets/gitignore")
   branch              = local.default_branch
   commit_message      = "chore: configured .gitignore"
   overwrite_on_create = false
