@@ -3,7 +3,7 @@
 # }
 
 locals {
-  default_branch = "prod"
+  default_branch = var.default_branch # Reserved for future logic
 }
 
 resource "github_repository" "this" {
