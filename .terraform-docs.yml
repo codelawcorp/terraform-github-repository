@@ -35,6 +35,26 @@ content: |
   {{ include "examples/complete/main.tf" }}
   ```
 
+
+  ### Importing existing repository example
+  ```hcl
+  import {
+    to = module.quick_ops.github_repository.this
+    id = "quick-ops"
+  }
+  module "quick_ops" {
+    source = "codelawcorp/repository/github"
+    # version = "~> 2.0.0"  # It is always recommended to pin the version
+
+    name        = "quick_ops"
+    description = "Scripting magic. Like Ansible ad-hoc but with iterm2"
+    visibility  = "public"
+
+    archive_on_destroy = true
+  }
+
+  ```
+
   {{ .Requirements }}
 
   {{ .Providers }}
