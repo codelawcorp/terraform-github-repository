@@ -56,7 +56,7 @@ jobs:
           GITHUB_OWNER: codelawcorp-test
         # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
         run: |
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_OWNER}".insteadOf "https://github.com/${{ GITHUB_OWNER }}"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_OWNER}".insteadOf "https://github.com/${GITHUB_OWNER}"
           terraform test
 
   terraform-docs: # https://github.com/terraform-docs/gh-actions
