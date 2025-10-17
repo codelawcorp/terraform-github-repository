@@ -526,16 +526,16 @@ variable "github_actions_repository_permissions" {
 
 
 
-# variable "ruleset" {
-#   description = "add later"
-#   type = list(object({
-#     name = string
-#     target = string # TODO / add validation branch or tag
-#     enforcement = string # TODO / add validation for values: disabled, active, evaluate
-#   }))
-#   default = []
+variable "ruleset" {
+  description = "add later"
+  type = list(object({
+    name        = string
+    target      = string # TODO / add validation branch or tag
+    enforcement = string # TODO / add validation for values: disabled, active, evaluate
+  }))
+  default = []
 
-# }
+}
 
 variable "bootstrap_tf_cloud" {
   description = "When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED."

@@ -466,38 +466,38 @@ resource "github_actions_repository_permissions" "this" {
 #   }
 # }
 
+#  If the same rule is defined in different ways across the aggregated rulesets, the most restrictive version of the rule applies.
+resource "github_repository_ruleset" "this" {
+  for_each    = toset(var.ruleset)
+  repository  = github_repository.this.name
+  name        = each.value.name
+  target      = each.value.target
+  enforcement = each.value.enforcement
 
-# resource "github_repository_ruleset" "this" {
-#   for_each = toset(var.ruleset)
-#   repository  = github_repository.this.name
-#   name        = each.value.name
-#   target      = each.value.target
-#   enforcement = each.value.enforcement
+  conditions {
+    ref_name {
+      include = ["~ALL"]
+      exclude = []
+    }
+  }
 
-#   conditions {
-#     ref_name {
-#       include = ["~ALL"]
-#       exclude = []
-#     }
-#   }
+  bypass_actors {
+    actor_id    = 13473
+    actor_type  = "Integration"
+    bypass_mode = "always"
+  }
 
-#   bypass_actors {
-#     actor_id    = 13473
-#     actor_type  = "Integration"
-#     bypass_mode = "always"
-#   }
+  rules {
+    creation                = true
+    update                  = true
+    deletion                = true
+    required_linear_history = true
+    required_signatures     = true
 
-#   rules {
-#     creation                = true
-#     update                  = true
-#     deletion                = true
-#     required_linear_history = true
-#     required_signatures     = true
-
-#     required_deployments {
-#       required_deployment_environments = ["test"]
-#     }
+    required_deployments {
+      required_deployment_environments = ["test"]
+    }
 
 
-#   }
-# }
+  }
+}
