@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -e
-
-# # Track the currently executing command for better debug output
-# trap 'last_cmd=$cur_cmd; cur_cmd=$BASH_COMMAND' DEBUG
-
+# On exit, print a message if the hook failed (non-zero exit) and preserve the exit code
+trap 'ret=$?; if [ $ret -ne 0 ]; then echo "pre-commit hook failed (exit code $ret)"; fi; exit $ret' EXIT
 
 
 echo "Running pre-commit hooks"
