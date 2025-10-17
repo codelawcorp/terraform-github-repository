@@ -36,7 +36,7 @@ module "this" {
   source = "../../"
   # version = "~> 2.0.0"  # It is always recommended to pin the version
 
-  name        = basename(abspath(path.root)) # Evaluates to the current directory name
+  name        = "bootstrap" # Evaluates to the current directory name
   description = "This repository manages itself as code. Also it will manage other repositories in the future."
 
   archive_on_destroy = false
@@ -45,7 +45,7 @@ module "this" {
     tf_cloud_organization = var.tf_cloud_organization
     tf_cloud_workspace    = var.tf_cloud_workspace
     terraform_version     = try(file("${abspath(path.root)}/.terraform-version"), "latest")
-    tf_cloud_token        = var.tf_cloud_token
+    tfe_token             = var.tfe_token
     github_token          = var.github_token
   }
 }
@@ -61,7 +61,7 @@ variable "tf_cloud_workspace" {
 }
 
 
-variable "tf_cloud_token" {
+variable "tfe_token" {
   description = "Terraform Cloud token. Create it manually first."
   type        = string
   sensitive   = true
@@ -425,7 +425,9 @@ No modules.
 | [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
 | [terraform_data.this](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [tfe_variable.github_token](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
+| [tfe_variable.github_token_env](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
 | [tfe_variable.tfe_token](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
+| [tfe_variable.tfe_token_env](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
 | [tfe_workspace.this](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/workspace) | data source |
 
 
@@ -451,11 +453,7 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_archive_on_destroy"></a> [archive\_on\_destroy](#input\_archive\_on\_destroy) | Set to true to archive the repository instead of deleting it when the resource is destroyed | `bool` | `true` | no |
 | <a name="input_archived"></a> [archived](#input\_archived) | Specifies if the repository should be archived | `bool` | `false` | no |
 | <a name="input_autolink_references"></a> [autolink\_references](#input\_autolink\_references) | A list of autolink references to create for the repository | <pre>list(object({<br/>    key_prefix          = string<br/>    target_url_template = string<br/>    is_alphanumeric     = optional(bool)<br/>  }))</pre> | `[]` | no |
-<<<<<<< HEAD
-| <a name="input_bootstrap_tf_cloud"></a> [bootstrap\_tf\_cloud](#input\_bootstrap\_tf\_cloud) | When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED. | <pre>object({<br/>    tf_cloud_organization = optional(string)<br/>    tf_cloud_workspace    = optional(string)<br/>    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs<br/>    tf_cloud_token        = optional(string)           # After the first apply, all further changes are ignored.<br/>    github_token          = optional(string)           # After the first apply, all further changes are ignored.<br/>  })</pre> | `null` | no |
-=======
-| <a name="input_bootstrap_tf_cloud"></a> [bootstrap\_tf\_cloud](#input\_bootstrap\_tf\_cloud) | When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED. | <pre>object({<br/>    tf_cloud_organization = optional(string)<br/>    tf_cloud_workspace    = optional(string)<br/>    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs<br/>    tfe_token        = optional(string)           # After the first apply, all further changes are ignored.<br/>  })</pre> | `null` | no |
->>>>>>> f75694f (fix: prev)
+| <a name="input_bootstrap_tf_cloud"></a> [bootstrap\_tf\_cloud](#input\_bootstrap\_tf\_cloud) | When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED. | <pre>object({<br/>    tf_cloud_organization = optional(string)<br/>    tf_cloud_workspace    = optional(string)<br/>    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs<br/>    tfe_token             = optional(string)           # After the first apply, all further changes are ignored.<br/>    github_token          = optional(string)           # After the first apply, all further changes are ignored.<br/>  })</pre> | `null` | no |
 | <a name="input_branches"></a> [branches](#input\_branches) | List of branch configurations to create | <pre>list(object({<br/>    name          = string<br/>    source_branch = optional(string) # By default, the source branch is the default branch.<br/>    source_sha    = optional(string)<br/>    # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection<br/>    protection = optional(object({ # Empty object means to protect with defaults<br/>      # `pattern` is always name of the branch. This is how this module works.<br/>      enforce_admins                  = optional(bool)<br/>      require_signed_commits          = optional(bool)<br/>      required_linear_history         = optional(bool)<br/>      require_conversation_resolution = optional(bool)<br/>      allows_deletions                = optional(bool)<br/>      allows_force_pushes             = optional(bool)<br/>      force_push_bypassers            = optional(list(string))<br/>      lock_branch                     = optional(bool)<br/>      required_status_checks = optional(object({<br/>        strict   = optional(bool)<br/>        contexts = optional(list(string))<br/>      }))<br/>      required_pull_request_reviews = optional(object({<br/>        dismiss_stale_reviews           = optional(bool)<br/>        restrict_dismissals             = optional(bool)<br/>        dismissal_restrictions          = optional(list(string))<br/>        pull_request_bypassers          = optional(list(string))<br/>        require_code_owner_reviews      = optional(bool)<br/>        required_approving_review_count = optional(number)<br/>        require_last_push_approval      = optional(bool)<br/>      }))<br/>      restrict_pushes = optional(object({<br/>        blocks_creations = optional(bool)<br/>        push_allowances  = optional(list(string))<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_custom_properties"></a> [custom\_properties](#input\_custom\_properties) | Custom properties to set on the repository. Must be defined on the organization level first. | <pre>list(object({<br/>    property_name  = string<br/>    property_value = string<br/>    property_type  = optional(string, "string")<br/>  }))</pre> | `[]` | no |
 | <a name="input_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#input\_delete\_branch\_on\_merge) | Automatically delete head branch after a pull request is merged | `bool` | `false` | no |
