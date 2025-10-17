@@ -53,7 +53,7 @@ jobs:
       - name: Run Terraform tests
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-          GITHUB_OWNER: "codelawcorp-test"
+          GITHUB_OWNER: codelawcorp-test
         # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
         run: |
 
