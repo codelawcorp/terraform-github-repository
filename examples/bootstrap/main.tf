@@ -14,7 +14,7 @@ module "this" {
     tf_cloud_organization = var.tf_cloud_organization
     tf_cloud_workspace    = var.tf_cloud_workspace
     terraform_version     = try(file("${abspath(path.root)}/.terraform-version"), "latest")
-    tfe_token        = var.tfe_token
+    tfe_token             = var.tfe_token
     github_token          = var.github_token
   }
 }
