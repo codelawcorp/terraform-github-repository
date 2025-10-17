@@ -77,7 +77,7 @@ run "bootsrap" {
   variables {
     tf_cloud_organization = "magzim21"
     tf_cloud_workspace    = "github"
-    tf_cloud_token        = "placeholder" # Cannot include a null value in a string template.
-    github_token          = "placeholder" # Cannot include a null value in a string template.
+    # tf_cloud_token        = "placeholder" # This is sensitive. Pass via TF_VAR_tf_cloud_token
+    # github_token          = "placeholder" # This is sensitive. Pass via TF_VAR_github_token
   }
 }

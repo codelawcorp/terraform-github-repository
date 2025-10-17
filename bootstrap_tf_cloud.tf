@@ -128,13 +128,15 @@ resource "terraform_data" "this" {
     interpreter = ["bash", "-c"]
     # This is required for terraform tests to work properly and also is an appropriate destroy action often.
     command = <<EOL
-git config --global url."https://x-access-token:${var.bootstrap_tf_cloud.github_token}@github.com/${github_repository.this.full_name}".insteadOf "https://github.com/${github_repository.this.full_name}"
-cd ${abspath(path.root)} && 
-  git init --initial-branch ${local.default_branch} &&  
-  git remote add origin ${self.input}  && 
-  git fetch origin && 
-  (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch} && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} )) && 
-  git remote set-head origin -a && 
+set -e
+cd ${abspath(path.root)} 
+ 
+  git init --initial-branch ${local.default_branch} 
+  git config url."https://x-access-token:${var.bootstrap_tf_cloud.github_token}@github.com/${github_repository.this.full_name}".insteadOf "https://github.com/${github_repository.this.full_name}" 
+  git remote add origin ${self.input}  
+  git fetch origin 
+  (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch}  && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} )) 
+  git remote set-head origin -a 
   (git add main.tf  && git commit -m 'feat: bootstrap bootstrap commit' && git push || true ) 
 EOL
   }
@@ -178,10 +180,6 @@ resource "tfe_variable" "tfe_token" {
   workspace_id = data.tfe_workspace.this[0].id
   sensitive    = true
   description  = "This token is to be used by tfe runner, this should have elevated privileges to manage this tfe organization. "
-  lifecycle {
-    ignore_changes  = [value] # suppose to be set manually in UI
-    prevent_destroy = true
-  }
 }
 
 
