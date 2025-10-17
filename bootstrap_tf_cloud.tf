@@ -183,6 +183,7 @@ resource "tfe_variable" "github_token" {
 }
 
 resource "tfe_variable" "tfe_token_env" {
+  count        = var.bootstrap_tf_cloud != null ? 1 : 0
   key          = "TFE_TOKEN"
   value        = var.bootstrap_tf_cloud.tfe_token
   category     = "env"
@@ -193,6 +194,7 @@ resource "tfe_variable" "tfe_token_env" {
 
 
 resource "tfe_variable" "tfe_token" {
+  count        = var.bootstrap_tf_cloud != null ? 1 : 0
   key          = "tfe_token"
   value        = var.bootstrap_tf_cloud.tfe_token
   category     = "terraform"
