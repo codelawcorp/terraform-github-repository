@@ -93,7 +93,7 @@ jobs:
         run: terraform validate
       - name: Run Terraform apply
         run: |
-          terraform apply -auto-approve -var tf_cloud_token=${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
+          terraform apply -auto-approve -var tfe_token=${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
           echo "#### Successfully applied organization" >> $GITHUB_STEP_SUMMARY
 
 

@@ -5,7 +5,7 @@ module "this" {
   source = "../../"
   # version = "~> 2.0.0"  # It is always recommended to pin the version
 
-  name        = basename(abspath(path.root)) # Evaluates to the current directory name
+  name        = "bootstrap" # Evaluates to the current directory name
   description = "This repository manages itself as code. Also it will manage other repositories in the future."
 
   archive_on_destroy = false
@@ -14,7 +14,7 @@ module "this" {
     tf_cloud_organization = var.tf_cloud_organization
     tf_cloud_workspace    = var.tf_cloud_workspace
     terraform_version     = try(file("${abspath(path.root)}/.terraform-version"), "latest")
-    tf_cloud_token        = var.tf_cloud_token
+    tfe_token        = var.tfe_token
     github_token          = var.github_token
   }
 }
@@ -30,7 +30,7 @@ variable "tf_cloud_workspace" {
 }
 
 
-variable "tf_cloud_token" {
+variable "tfe_token" {
   description = "Terraform Cloud token. Create it manually first."
   type        = string
   sensitive   = true

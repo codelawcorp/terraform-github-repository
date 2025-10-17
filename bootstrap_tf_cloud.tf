@@ -89,11 +89,11 @@ resource "github_actions_variable" "tf_version" {
   value         = try(var.bootstrap_tf_cloud.terraform_version, "latest")
 }
 
-resource "github_actions_secret" "tf_cloud_token" {
+resource "github_actions_secret" "tfe_token" {
   count           = var.bootstrap_tf_cloud != null ? 1 : 0
   repository      = github_repository.this.name
   secret_name     = "TF_TOKEN_APP_TERRAFORM_IO"
-  plaintext_value = var.bootstrap_tf_cloud.tf_cloud_token
+  plaintext_value = var.bootstrap_tf_cloud.tfe_token
   lifecycle {
     ignore_changes = [plaintext_value] # Prevents leaking the secret value in plan
   }
@@ -141,7 +141,7 @@ cd ${abspath(path.root)}
 EOL
   }
 
-  provisioner "local-exec" {
+  provisioner "local-exec" { # This does not work as expected with remote runner
     when        = destroy
     on_failure  = fail
     interpreter = ["bash", "-c"]
@@ -164,19 +164,38 @@ data "tfe_workspace" "this" {
   organization = var.bootstrap_tf_cloud.tf_cloud_organization
 }
 
-resource "tfe_variable" "github_token" {
+resource "tfe_variable" "github_token_env" {
   count        = var.bootstrap_tf_cloud != null ? 1 : 0
   key          = "GITHUB_TOKEN"
+  value        = var.bootstrap_tf_cloud.github_token
+  category     = "env"
+  workspace_id = data.tfe_workspace.this[0].id
+  description  = "A token with repo permissions"
+}
+
+resource "tfe_variable" "github_token" {
+  count        = var.bootstrap_tf_cloud != null ? 1 : 0
+  key          = "github_token"
   value        = var.bootstrap_tf_cloud.github_token
   category     = "terraform"
   workspace_id = data.tfe_workspace.this[0].id
   description  = "A token with repo permissions"
 }
 
-resource "tfe_variable" "tfe_token" {
+resource "tfe_variable" "tfe_token_env" {
   key          = "TFE_TOKEN"
-  value        = var.bootstrap_tf_cloud.tf_cloud_token
+  value        = var.bootstrap_tf_cloud.tfe_token
   category     = "env"
+  workspace_id = data.tfe_workspace.this[0].id
+  sensitive    = true
+  description  = "This token is to be used by tfe runner, this should have elevated privileges to manage this tfe organization. "
+}
+
+
+resource "tfe_variable" "tfe_token" {
+  key          = "tfe_token"
+  value        = var.bootstrap_tf_cloud.tfe_token
+  category     = "terraform"
   workspace_id = data.tfe_workspace.this[0].id
   sensitive    = true
   description  = "This token is to be used by tfe runner, this should have elevated privileges to manage this tfe organization. "

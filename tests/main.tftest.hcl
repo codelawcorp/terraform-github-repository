@@ -76,8 +76,8 @@ run "bootsrap" {
   }
   variables {
     tf_cloud_organization = "magzim21"
-    tf_cloud_workspace    = "github"
-    # tf_cloud_token        = "placeholder" # This is sensitive. Pass via TF_VAR_tf_cloud_token
+    tf_cloud_workspace    = "github-test"
+    # tfe_token        = "placeholder" # This is sensitive. Pass via TF_VAR_tfe_token
     # github_token          = "placeholder" # This is sensitive. Pass via TF_VAR_github_token
   }
 }
