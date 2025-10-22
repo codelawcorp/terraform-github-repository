@@ -52,10 +52,8 @@ jobs:
         run: terraform init
       - name: Run Terraform tests
         env:
-          TFE_TOKEN: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }} # todo / change rename secret TF_TOKEN_APP_TERRAFORM_IO - this name might not make sense
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           GITHUB_OWNER: codelawcorp-test
-          TF_VAR_tfe_token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
           TF_VAR_github_token: ${{ secrets.PAT_TOKEN }}
         # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
         run: |

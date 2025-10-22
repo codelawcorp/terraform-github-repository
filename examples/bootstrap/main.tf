@@ -14,7 +14,6 @@ module "this" {
     tf_cloud_organization = var.tf_cloud_organization
     tf_cloud_workspace    = var.tf_cloud_workspace
     terraform_version     = try(file("${abspath(path.root)}/.terraform-version"), "latest")
-    tfe_token             = var.tfe_token
     github_token          = var.github_token
   }
 }
@@ -22,18 +21,6 @@ module "this" {
 variable "tf_cloud_organization" {
   description = "Terraform Cloud Organization name. Create it manually first."
   type        = string
-}
-
-variable "tf_cloud_workspace" {
-  description = "Terraform Cloud Workspace name. Create it manually first."
-  type        = string
-}
-
-
-variable "tfe_token" {
-  description = "Terraform Cloud token. Create it manually first."
-  type        = string
-  sensitive   = true
 }
 
 variable "github_token" {
@@ -46,5 +33,3 @@ output "help_message" {
   description = "Help message"
   value       = "After the first apply run `terraform init` again. Answer 'yes' to the prompt about migrating the existing state."
 }
-
-
