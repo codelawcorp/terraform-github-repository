@@ -66,21 +66,6 @@ run "no_template" {
 }
 
 
-run "bootsrap" {
-  command   = apply
-  state_key = "bootsrap"
-
-  module {
-    source = "./examples/bootstrap"
-
-  }
-  variables {
-    tf_cloud_organization = "magzim21"
-    tf_cloud_workspace    = "github-test"
-    # tfe_token        = "placeholder" # This is sensitive. Pass via TF_VAR_tfe_token
-    # github_token          = "placeholder" # This is sensitive. Pass via TF_VAR_github_token
-  }
-}
 run "branch_variations" {
   command   = apply
   state_key = "branch-variations"

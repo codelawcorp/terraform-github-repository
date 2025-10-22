@@ -189,7 +189,7 @@ variable "default_branch" {
   #   condition     = (var.template == null && var.default_branch != null) || (var.template != null && var.default_branch == null)
   #   error_message = "Default branch can be set only if template is not used"
   # }
-  # validation { 
+  # validation {
   #   # condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
   #   condition     = var.default_branch != null && var.template != null
   #   error_message = "Default branch can not be set if the template is used. You can set default branch later, after the repository is created and template attribute is removed."
@@ -527,17 +527,4 @@ variable "ruleset" {
   }))
   default = []
 
-}
-
-variable "bootstrap_tf_cloud" {
-  description = "When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED."
-  type = object({
-    tf_cloud_organization = optional(string)
-    tf_cloud_workspace    = optional(string)
-    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs
-    tfe_token             = optional(string)           # After the first apply, all further changes are ignored.
-    github_token          = optional(string)           # After the first apply, all further changes are ignored.
-  })
-  default  = null
-  nullable = true
 }
