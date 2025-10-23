@@ -3,7 +3,7 @@
 # }
 
 locals {
-  default_branch = var.default_branch # Reserved for future logic
+  default_branch = coalesce(try(github_branch_default.this[0].branch, null), try(data.github_repository.template[0].default_branch, null), "main")
 }
 
 resource "github_repository" "this" {
@@ -103,7 +103,7 @@ resource "github_repository" "this" {
 # resource "github_branch" "default_branch" {
 #   count = var.template == null ? 1 : 0
 #   repository    = github_repository.this.name
-#   branch        = local.default_branch
+#   branch        = var.default_branch
 #   source_branch = "main"
 # }
 
@@ -111,24 +111,37 @@ data "github_repository" "template" {
   count     = var.template == null ? 0 : 1
   full_name = "${var.template.owner}/${var.template.repository}"
 }
+data "github_repository" "this" {
+  name = var.name
+}
 
-resource "github_branch_default" "this" { # TODO / test changing default branch after the initial repository creation, especially if branch is defined in branches list.
-  count = try(data.github_repository.template[0].default_branch, "no template used") != local.default_branch && local.default_branch != "main" ? 1 : 0
+# output "github_repository" {
+#   value = data.github_repository.this
+# }
+
+# TODO / try this https://developer.hashicorp.com/terraform/language/meta-arguments#lifecycle
+# TODO / try this https://developer.hashicorp.com/terraform/language/block/removed#complete-configuration
+resource "github_branch_default" "this" {
+  # if  `data.github_repository.this.default_branc` means the repo was just created
+  count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && coalesce(data.github_repository.this.default_branch, "main") != "main" ? 1 : 0
+  # count = try(data.github_repository.template[0].default_branch, "no template used") != var.default_branch &&coalesce(data.github_repository.this.default_branch, "main") != "main"  ? 1 : 0 # if  `data.github_repository.this.default_branc` means the repo was just created
 
   repository = github_repository.this.name
-  branch     = local.default_branch
-  rename     = true # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
+  branch     = var.default_branch
+  # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
+  # `false` does not create a branch, but expects the branch to exist.
+  rename = true
   # depends_on = [github_branch.this]
 
   # TODO add pre condition
 }
 
 resource "github_branch" "this" {
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != local.default_branch }
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch }
 
   repository    = github_repository.this.name
   branch        = each.value.name
-  source_branch = coalesce(each.value.source_branch, local.default_branch)
+  source_branch = local.default_branch
   source_sha    = each.value.source_sha
 
   depends_on = [github_branch_default.this]

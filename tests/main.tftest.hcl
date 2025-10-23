@@ -4,7 +4,7 @@
 #   owner = "codelawcorp"
 # }
 test {
-  parallel = true
+  parallel = true # This is ignored for some reason
 }
 
 run "minimal" {
@@ -81,12 +81,41 @@ run "bootsrap" {
     # github_token          = "placeholder" # This is sensitive. Pass via TF_VAR_github_token
   }
 }
-run "branch_variations" {
+run "branch_variations_main" {
   command   = apply
   state_key = "branch-variations"
+  variables {
+    default_branch = "main"
+  }
 
   module {
     source = "./examples/branch-variations"
 
   }
 }
+run "branch_variations_rename_to_prod" {
+  command   = apply
+  state_key = "branch-variations"
+  variables {
+    default_branch = "prod"
+  }
+
+  module {
+    source = "./examples/branch-variations"
+
+  }
+}
+
+run "branch_variations_rename_to_main" {
+  command   = apply
+  state_key = "branch-variations"
+  variables {
+    default_branch = "main"
+  }
+
+  module {
+    source = "./examples/branch-variations"
+
+  }
+}
+
