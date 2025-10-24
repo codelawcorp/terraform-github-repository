@@ -260,11 +260,10 @@ module "github_repository_complete" {
     }
   ]
 
+  vulnerability_alerts = true
   # This also automatically enables vulnerability_alerts
   enable_dependabot_security_updates = true
 
-  # Use the dedicated repository_topics resource for topic management
-  use_repository_topics_resource = true
 
   # Configure webhooks for the repository
   webhooks = [
@@ -327,7 +326,7 @@ module "github_repository_complete" {
   }
 
   # Add issue labels
-  issue_label = [
+  issue_labels = [
     {
       name        = "critical"
       color       = "ff0000"
@@ -485,7 +484,7 @@ When a variable is an object, there is a comment with a link to the provider's d
 | <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed. | `string` | `"prod"` | no |
 | <a name="input_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#input\_delete\_branch\_on\_merge) | Automatically delete head branch after a pull request is merged | `bool` | `false` | no |
 | <a name="input_deploy_keys"></a> [deploy\_keys](#input\_deploy\_keys) | List of SSH deploy keys to add to the repository. Must be allowed on the org level. | <pre>list(object({<br/>    title     = string<br/>    key       = string<br/>    read_only = optional(bool, true)<br/>  }))</pre> | `[]` | no |
-| <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `""` | no |
+| <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `null` | no |
 | <a name="input_enable_dependabot_security_updates"></a> [enable\_dependabot\_security\_updates](#input\_enable\_dependabot\_security\_updates) | Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well. | `bool` | `true` | no |
 | <a name="input_environments"></a> [environments](#input\_environments) | GitHub repository environments to create | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment<br/>    name                = string<br/>    wait_timer          = optional(number, null)<br/>    can_admins_bypass   = optional(bool, null)<br/>    prevent_self_review = optional(bool, null)<br/>    reviewers = optional(object({<br/>      teams = optional(list(string), []) # This is a team id, not a team name<br/>      users = optional(list(string), []) # This is a user id, not a username<br/>    }))<br/>    protected = optional(bool, false) # This is instead of deployment_branch_policy block. This module enforces 1:1 environment and branch name. Open a PR or issue if you disagree.<br/>    variables = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    secrets = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>  }))</pre> | `[]` | no |
 | <a name="input_gitignore_template"></a> [gitignore\_template](#input\_gitignore\_template) | Use the name of the template without the extension. For example, 'Haskell' | `string` | `null` | no |
@@ -496,7 +495,7 @@ When a variable is an object, there is a comment with a link to the provider's d
 | <a name="input_has_wiki"></a> [has\_wiki](#input\_has\_wiki) | Set to true to enable the GitHub Wiki features on the repository | `bool` | `false` | no |
 | <a name="input_homepage_url"></a> [homepage\_url](#input\_homepage\_url) | URL of a page describing the project. | `string` | `null` | no |
 | <a name="input_is_template"></a> [is\_template](#input\_is\_template) | Set to true to tell GitHub that this is a template repository | `bool` | `false` | no |
-| <a name="input_issue_label"></a> [issue\_label](#input\_issue\_label) | A list of issue label | <pre>list(object({<br/>    name        = string<br/>    color       = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
+| <a name="input_issue_labels"></a> [issue\_labels](#input\_issue\_labels) | A list of issue label | <pre>list(object({<br/>    name        = string<br/>    color       = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
 | <a name="input_license_template"></a> [license\_template](#input\_license\_template) | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0' | `string` | `null` | no |
 | <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `null` | no |
 | <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `null` | no |
@@ -509,8 +508,7 @@ When a variable is an object, there is a comment with a link to the provider's d
 | <a name="input_squash_merge_commit_title"></a> [squash\_merge\_commit\_title](#input\_squash\_merge\_commit\_title) | The format of the commit message when using squash merge. Can be one of: PR\_TITLE, COMMIT\_OR\_PR\_TITLE | `string` | `"COMMIT_OR_PR_TITLE"` | no |
 | <a name="input_teams"></a> [teams](#input\_teams) | List of repository teams to add to the repository | <pre>list(object({<br/>    team_id    = string<br/>    permission = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_template"></a> [template](#input\_template) | A repo to use as a template for the new repository. ⚠️ Removing this block changes default branch to 'prod'. ⚠️ | <pre>object({<br/>    owner                = string<br/>    repository           = string<br/>    include_all_branches = bool<br/>  })</pre> | `null` | no |
-| <a name="input_topics"></a> [topics](#input\_topics) | List of topics to add to the repository | `list(string)` | `[]` | no |
-| <a name="input_use_repository_topics_resource"></a> [use\_repository\_topics\_resource](#input\_use\_repository\_topics\_resource) | Whether to use github\_repository\_topics resource instead of setting topics in the github\_repository resource. This is useful for managing topics separately. | `bool` | `false` | no |
+| <a name="input_topics"></a> [topics](#input\_topics) | List of topics to add to the repository | `list(string)` | `null` | no |
 | <a name="input_users"></a> [users](#input\_users) | List of repository collaborators to add to the repository | <pre>list(object({<br/>    username   = string<br/>    permission = string # pull, push, admin, maintain, triage<br/>  }))</pre> | `[]` | no |
 | <a name="input_visibility"></a> [visibility](#input\_visibility) | Visibility of the GitHub repository (public, private, or internal) | `string` | `"private"` | no |
 | <a name="input_vulnerability_alerts"></a> [vulnerability\_alerts](#input\_vulnerability\_alerts) | Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable\_dependabot\_security\_updates is true. | `bool` | `false` | no |
