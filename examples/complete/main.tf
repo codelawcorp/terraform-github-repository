@@ -161,14 +161,14 @@ module "github_repository_complete" {
     },
   ]
 
-  github_actions_variables = [
+  actions_variables = [
     {
       name  = "TEST_VAR"
       value = "true"
     }
   ]
 
-  github_actions_secrets = [
+  actions_secrets = [
     {
       name  = "DEPLOY_TOKEN"
       value = "secret-token-value"
@@ -178,7 +178,7 @@ module "github_repository_complete" {
   # This also automatically enables vulnerability_alerts
   enable_dependabot_security_updates = true
 
-  # Use the dedicated github_repository_topics resource for topic management
+  # Use the dedicated repository_topics resource for topic management
   use_repository_topics_resource = true
 
   # Configure webhooks for the repository
@@ -220,7 +220,7 @@ module "github_repository_complete" {
   ]
 
   # Add GitHub repository files
-  github_repository_files = {
+  repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
       branch         = "some-new-branch" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
@@ -261,7 +261,7 @@ module "github_repository_complete" {
   gitignore_template = "Python"
   license_template   = "mit"
 
-  github_actions_repository_permissions = {
+  actions_repository_permissions = {
     allowed_actions = "selected"
     enabled         = true
     allowed_actions_config = {

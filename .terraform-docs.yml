@@ -65,15 +65,14 @@ content: |
 
 
 
-
-
-  We used best effort to make sure that default values match provider's defaults to avoid confusions.  
-  Instead of using variable prefixes, we use nested objects: e.g. `branch -> branch protection, environment -> environment protection`. This naturally leads to more readable code, which is one of the goals of this module.
-  When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
+  The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
+  The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
+  Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
+  When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
   
 
   `auto_init` is always true for other resources to work.  
-  `default_branch` is always set to `prod` when not using template. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
+  `default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
   ➡️ Scroll right ➡️ to see Default values.
   {{ .Inputs }}
 

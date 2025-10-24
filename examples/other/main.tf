@@ -5,14 +5,14 @@ module "another_repo" {
   archive_on_destroy = false
 
 
-  github_actions_variables = [
+  actions_variables = [
     {
       name  = "TEST_VARIABLE"
       value = "test-value"
     }
   ]
 
-  github_actions_secrets = [
+  actions_secrets = [
     {
       name  = "API_KEY"
       value = "some-api-key-value"

@@ -192,7 +192,7 @@ resource "github_branch_protection" "this" {
 }
 
 resource "github_actions_variable" "this" {
-  for_each      = { for k, v in var.github_actions_variables : v.name => v }
+  for_each      = { for k, v in var.actions_variables : v.name => v }
   repository    = github_repository.this.name
   variable_name = each.key
   value         = each.value.value
@@ -273,7 +273,7 @@ resource "github_repository_deploy_key" "this" {
 }
 
 resource "github_actions_secret" "this" {
-  for_each        = { for k, v in var.github_actions_secrets : v.name => v }
+  for_each        = { for k, v in var.actions_secrets : v.name => v }
   repository      = github_repository.this.name
   secret_name     = each.key
   plaintext_value = each.value.value
@@ -363,7 +363,7 @@ resource "github_actions_environment_secret" "this" {
 }
 
 resource "github_repository_file" "this" {
-  for_each = var.github_repository_files
+  for_each = var.repository_files
 
   repository                      = github_repository.this.name
   file                            = each.key
@@ -382,7 +382,7 @@ resource "github_repository_file" "this" {
 
 # If repository is empty (not initialized) it does not work.
 # resource "github_repository_file" "initial_commit" {
-#   # count = var.template != null || var.github_repository_files != {} || var.gitignore_template != null || var.license_template  != null  ? 0 : 1
+#   # count = var.template != null || var.repository_files != {} || var.gitignore_template != null || var.license_template  != null  ? 0 : 1
 #   count =  1
 
 #   repository                      = github_repository.this.name
@@ -414,15 +414,15 @@ resource "github_repository_autolink_reference" "this" {
 }
 
 resource "github_actions_repository_permissions" "this" {
-  count = var.github_actions_repository_permissions != null ? 1 : 0
+  count = var.actions_repository_permissions != null ? 1 : 0
 
   repository = github_repository.this.name
 
-  allowed_actions = var.github_actions_repository_permissions.allowed_actions
-  enabled         = var.github_actions_repository_permissions.enabled
+  allowed_actions = var.actions_repository_permissions.allowed_actions
+  enabled         = var.actions_repository_permissions.enabled
 
   dynamic "allowed_actions_config" {
-    for_each = var.github_actions_repository_permissions.allowed_actions_config != null ? [var.github_actions_repository_permissions.allowed_actions_config] : []
+    for_each = var.actions_repository_permissions.allowed_actions_config != null ? [var.actions_repository_permissions.allowed_actions_config] : []
     content {
       github_owned_allowed = try(allowed_actions_config.value.github_owned_allowed, null)
       patterns_allowed     = try(allowed_actions_config.value.patterns_allowed, [])

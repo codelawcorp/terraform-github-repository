@@ -41,6 +41,13 @@ variable "homepage_url" {
   nullable    = true
 }
 
+variable "use_repository_topics_resource" {
+  description = "Whether to use github_repository_topics resource instead of setting topics in the github_repository resource. This is useful for managing topics separately."
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
 variable "topics" {
   description = "List of topics to add to the repository"
   type        = list(string)
@@ -327,7 +334,7 @@ variable "branches" {
   nullable = false
 }
 
-variable "github_actions_variables" {
+variable "actions_variables" {
   type = list(object({
     name  = string
     value = string
@@ -337,7 +344,7 @@ variable "github_actions_variables" {
   description = "GitHub Actions variables to set on the repository"
 }
 
-variable "github_actions_secrets" {
+variable "actions_secrets" {
   type = list(object({
     name  = string
     value = string
@@ -425,12 +432,7 @@ variable "enable_dependabot_security_updates" {
   nullable    = false
 }
 
-variable "use_repository_topics_resource" {
-  description = "Whether to use github_repository_topics resource instead of setting topics in the github_repository resource. This is useful for managing topics separately."
-  type        = bool
-  default     = false
-  nullable    = false
-}
+
 
 variable "webhooks" {
   description = "List of webhook configurations to create for the repository"
@@ -457,7 +459,7 @@ variable "deploy_keys" {
   nullable = false
 }
 
-variable "github_repository_files" {
+variable "repository_files" {
   description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties."
   type = map(object({
     content                         = string
@@ -497,7 +499,7 @@ variable "autolink_references" {
 
 }
 
-variable "github_actions_repository_permissions" {
+variable "actions_repository_permissions" {
   description = "GitHub Actions repository permissions configuration"
   type        = any # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
   default     = null
