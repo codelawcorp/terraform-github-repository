@@ -246,14 +246,14 @@ module "github_repository_complete" {
     },
   ]
 
-  github_actions_variables = [
+  actions_variables = [
     {
       name  = "TEST_VAR"
       value = "true"
     }
   ]
 
-  github_actions_secrets = [
+  actions_secrets = [
     {
       name  = "DEPLOY_TOKEN"
       value = "secret-token-value"
@@ -263,7 +263,7 @@ module "github_repository_complete" {
   # This also automatically enables vulnerability_alerts
   enable_dependabot_security_updates = true
 
-  # Use the dedicated github_repository_topics resource for topic management
+  # Use the dedicated repository_topics resource for topic management
   use_repository_topics_resource = true
 
   # Configure webhooks for the repository
@@ -305,7 +305,7 @@ module "github_repository_complete" {
   ]
 
   # Add GitHub repository files
-  github_repository_files = {
+  repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
       branch         = "some-new-branch" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
@@ -346,7 +346,7 @@ module "github_repository_complete" {
   gitignore_template = "Python"
   license_template   = "mit"
 
-  github_actions_repository_permissions = {
+  actions_repository_permissions = {
     allowed_actions = "selected"
     enabled         = true
     allowed_actions_config = {
@@ -456,20 +456,22 @@ No modules.
 
 
 
-
-
-We used best effort to make sure that default values match provider's defaults to avoid confusions.  
-Instead of using variable prefixes, we use nested objects: e.g. `branch -> branch protection, environment -> environment protection`. This naturally leads to more readable code, which is one of the goals of this module.
-When variable is an object, there is a comment with a link to the provider's documentation for the related resource.
+The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
+The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
+Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
+When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
 
 
 `auto_init` is always true for other resources to work.  
-`default_branch` is always set to `prod` when not using template. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
+`default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
 ➡️ Scroll right ➡️ to see Default values.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_actions_repository_permissions"></a> [actions\_repository\_permissions](#input\_actions\_repository\_permissions) | GitHub Actions repository permissions configuration | `any` | `null` | no |
+| <a name="input_actions_secrets"></a> [actions\_secrets](#input\_actions\_secrets) | GitHub Actions secrets to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_actions_variables"></a> [actions\_variables](#input\_actions\_variables) | GitHub Actions variables to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Set to true to allow auto-merging pull requests on the repository | `bool` | `false` | no |
 | <a name="input_allow_merge_commit"></a> [allow\_merge\_commit](#input\_allow\_merge\_commit) | Set to false to disable merge commits on the repository | `bool` | `true` | no |
 | <a name="input_allow_rebase_merge"></a> [allow\_rebase\_merge](#input\_allow\_rebase\_merge) | Set to false to disable rebase merges on the repository | `bool` | `true` | no |
@@ -486,10 +488,6 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `""` | no |
 | <a name="input_enable_dependabot_security_updates"></a> [enable\_dependabot\_security\_updates](#input\_enable\_dependabot\_security\_updates) | Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well. | `bool` | `true` | no |
 | <a name="input_environments"></a> [environments](#input\_environments) | GitHub repository environments to create | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment<br/>    name                = string<br/>    wait_timer          = optional(number, null)<br/>    can_admins_bypass   = optional(bool, null)<br/>    prevent_self_review = optional(bool, null)<br/>    reviewers = optional(object({<br/>      teams = optional(list(string), []) # This is a team id, not a team name<br/>      users = optional(list(string), []) # This is a user id, not a username<br/>    }))<br/>    protected = optional(bool, false) # This is instead of deployment_branch_policy block. This module enforces 1:1 environment and branch name. Open a PR or issue if you disagree.<br/>    variables = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    secrets = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>  }))</pre> | `[]` | no |
-| <a name="input_github_actions_repository_permissions"></a> [github\_actions\_repository\_permissions](#input\_github\_actions\_repository\_permissions) | GitHub Actions repository permissions configuration | `any` | `null` | no |
-| <a name="input_github_actions_secrets"></a> [github\_actions\_secrets](#input\_github\_actions\_secrets) | GitHub Actions secrets to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_github_actions_variables"></a> [github\_actions\_variables](#input\_github\_actions\_variables) | GitHub Actions variables to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_github_repository_files"></a> [github\_repository\_files](#input\_github\_repository\_files) | A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. | <pre>map(object({<br/>    content                         = string<br/>    branch                          = optional(string, null)<br/>    commit_sha                      = optional(string, null)<br/>    commit_message                  = optional(string, "Managed by Terraform")<br/>    commit_author                   = optional(string, null)<br/>    commit_email                    = optional(string, null)<br/>    overwrite_on_create             = optional(bool, false)<br/>    autocreate_branch               = optional(bool, true)<br/>    autocreate_branch_source_branch = optional(string, null)<br/>    autocreate_branch_source_sha    = optional(string, null)<br/>  }))</pre> | `{}` | no |
 | <a name="input_gitignore_template"></a> [gitignore\_template](#input\_gitignore\_template) | Use the name of the template without the extension. For example, 'Haskell' | `string` | `null` | no |
 | <a name="input_has_discussions"></a> [has\_discussions](#input\_has\_discussions) | Set to true to enable GitHub Discussions on the repository | `bool` | `false` | no |
 | <a name="input_has_downloads"></a> [has\_downloads](#input\_has\_downloads) | Set to true to enable the GitHub Downloads features on the repository (deprecated) | `bool` | `false` | no |
@@ -504,6 +502,7 @@ When variable is an object, there is a comment with a link to the provider's doc
 | <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the GitHub repository | `string` | n/a | yes |
 | <a name="input_pages"></a> [pages](#input\_pages) | GitHub Pages configuration for the repository. ⚠️ Note: Requires a paid GitHub plan and ⚠️ the source branch must exist before applying this configuration - the first apply always fails - disable on the first apply. ⚠️ | <pre>object({<br/>    build_type = optional(string, "legacy")<br/>    cname      = optional(string, null)<br/>    source = object({<br/>      branch = string<br/>      path   = string<br/>    })<br/>  })</pre> | `null` | no |
+| <a name="input_repository_files"></a> [repository\_files](#input\_repository\_files) | A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. | <pre>map(object({<br/>    content                         = string<br/>    branch                          = optional(string, null)<br/>    commit_sha                      = optional(string, null)<br/>    commit_message                  = optional(string, "Managed by Terraform")<br/>    commit_author                   = optional(string, null)<br/>    commit_email                    = optional(string, null)<br/>    overwrite_on_create             = optional(bool, false)<br/>    autocreate_branch               = optional(bool, true)<br/>    autocreate_branch_source_branch = optional(string, null)<br/>    autocreate_branch_source_sha    = optional(string, null)<br/>  }))</pre> | `{}` | no |
 | <a name="input_ruleset"></a> [ruleset](#input\_ruleset) | add later | <pre>list(object({<br/>    name        = string<br/>    target      = string # TODO / add validation branch or tag<br/>    enforcement = string # TODO / add validation for values: disabled, active, evaluate<br/>  }))</pre> | `[]` | no |
 | <a name="input_security_and_analysis"></a> [security\_and\_analysis](#input\_security\_and\_analysis) | Security and analysis features for the repository | <pre>object({<br/>    advanced_security = object({<br/>      status = string<br/>    })<br/>    secret_scanning = object({<br/>      status = string<br/>    })<br/>    secret_scanning_push_protection = object({<br/>      status = string<br/>    })<br/>  })</pre> | `null` | no |
 | <a name="input_squash_merge_commit_message"></a> [squash\_merge\_commit\_message](#input\_squash\_merge\_commit\_message) | The format of the commit message body when using squash merge. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"COMMIT_MESSAGES"` | no |
