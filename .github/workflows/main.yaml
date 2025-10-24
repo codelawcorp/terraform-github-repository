@@ -121,6 +121,7 @@ jobs:
     needs:
       - next-version
       - terraform-docs
+    if: needs.next-version.outputs.should-run-build == 'True'
     permissions:
       contents: write # to be able to publish a GitHub release
     steps:
