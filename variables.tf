@@ -6,16 +6,16 @@ variable "name" {
 
 variable "description" {
   description = "Description of the GitHub repository"
+  default     = null
   type        = string
-  default     = ""
-  nullable    = false
+  nullable    = true
 }
 
 variable "visibility" {
   description = "Visibility of the GitHub repository (public, private, or internal)"
   type        = string
   default     = "private"
-  nullable    = false
+  nullable    = true
 
   validation {
     condition     = contains(["public", "private", "internal"], var.visibility)
@@ -41,18 +41,12 @@ variable "homepage_url" {
   nullable    = true
 }
 
-variable "use_repository_topics_resource" {
-  description = "Whether to use github_repository_topics resource instead of setting topics in the github_repository resource. This is useful for managing topics separately."
-  type        = bool
-  default     = false
-  nullable    = false
-}
 
 variable "topics" {
   description = "List of topics to add to the repository"
   type        = list(string)
-  default     = []
-  nullable    = false
+  default     = null
+  nullable    = true
 }
 
 variable "has_issues" {
@@ -478,7 +472,7 @@ variable "repository_files" {
 
 }
 
-variable "issue_label" {
+variable "issue_labels" {
   description = "A list of issue label"
   type = list(object({
     name        = string

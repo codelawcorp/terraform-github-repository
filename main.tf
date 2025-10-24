@@ -12,7 +12,7 @@ resource "github_repository" "this" {
   visibility  = var.visibility
 
   homepage_url = var.homepage_url
-  # topics       = var.use_repository_topics_resource ? null : var.topics # Using a dedicated resource for topics.
+  # topics       = # Using github_repository_topics instead
 
   has_issues      = var.has_issues
   has_projects    = var.has_projects
@@ -40,7 +40,7 @@ resource "github_repository" "this" {
   archived    = var.archived
 
   web_commit_signoff_required = var.web_commit_signoff_required
-  vulnerability_alerts        = var.vulnerability_alerts || var.enable_dependabot_security_updates
+  vulnerability_alerts        = !var.archived && (var.vulnerability_alerts || var.enable_dependabot_security_updates)
   auto_init                   = true # TODO / explain why it is true
   gitignore_template          = var.gitignore_template
   license_template            = var.license_template
@@ -232,15 +232,13 @@ resource "github_repository_custom_property" "this" {
 
 # Then enable Dependabot security updates
 resource "github_repository_dependabot_security_updates" "this" {
-  count      = var.enable_dependabot_security_updates ? 1 : 0
   repository = github_repository.this.name
-  enabled    = true
+  enabled    = var.enable_dependabot_security_updates
 }
 
-# Manage topics separately with github_repository_topics if use_repository_topics_resource is true
 # Otherwise topics are managed by the github_repository resource
 resource "github_repository_topics" "this" {
-  count      = var.topics != [] ? 1 : 0
+  count      = var.topics != null ? 1 : 0
   repository = github_repository.this.name
   topics     = var.topics
 }
@@ -396,7 +394,7 @@ resource "github_repository_file" "this" {
 # }
 
 resource "github_issue_label" "this" {
-  for_each = { for label in var.issue_label : label.name => label }
+  for_each = { for label in var.issue_labels : label.name => label }
 
   repository  = github_repository.this.name
   name        = each.value.name

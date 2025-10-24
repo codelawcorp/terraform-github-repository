@@ -175,11 +175,10 @@ module "github_repository_complete" {
     }
   ]
 
+  vulnerability_alerts = true
   # This also automatically enables vulnerability_alerts
   enable_dependabot_security_updates = true
 
-  # Use the dedicated repository_topics resource for topic management
-  use_repository_topics_resource = true
 
   # Configure webhooks for the repository
   webhooks = [
@@ -242,7 +241,7 @@ module "github_repository_complete" {
   }
 
   # Add issue labels
-  issue_label = [
+  issue_labels = [
     {
       name        = "critical"
       color       = "ff0000"

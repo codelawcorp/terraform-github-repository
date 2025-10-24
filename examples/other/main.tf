@@ -58,8 +58,6 @@ module "another_repo" {
   # But still enable vulnerability alerts
   vulnerability_alerts = true
 
-  # Use built-in topics on the repository resource (default)
-  use_repository_topics_resource = false
 
   # Configure a simple webhook
   webhooks = [
