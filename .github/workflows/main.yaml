@@ -62,26 +62,6 @@ jobs:
           git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_OWNER}".insteadOf "https://github.com/${GITHUB_OWNER}"
           terraform test
 
-  terraform-docs: # https://github.com/terraform-docs/gh-actions
-    name: Generate Terraform Docs
-    needs: tests
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Render terraform docs inside the README.md and push changes
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: .
-          git-push: "true"
-          git-commit-message: "docs(terraform): automated update of terraform docs"
-          # git-push-sign-off: "true"
-          # fail-on-diff: "true"
-
   next-version:
     name: Determine the next version
     runs-on: ubuntu-latest
@@ -115,11 +95,32 @@ jobs:
             echo "#### No features, no fixes. Skipping Build job :police_car:" | tee -a $GITHUB_STEP_SUMMARY
           fi
 
+
+  terraform-docs: # https://github.com/terraform-docs/gh-actions
+    name: Generate Terraform Docs
+    needs:
+      - next-version
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Render terraform docs inside the README.md and push changes
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: .
+          git-push: "true"
+          git-commit-message: "docs(terraform): automated update of terraform docs"
+          # git-push-sign-off: "true"
+          # fail-on-diff: "true"
+
   git-tag-release:
     name: Create ${{ needs.next-version.outputs.semver_tag }} git tag
     runs-on: ubuntu-latest
     needs:
-      - next-version
       - terraform-docs
     if: needs.next-version.outputs.should-run-build == 'True'
     permissions:
