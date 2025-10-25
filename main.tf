@@ -47,7 +47,7 @@ resource "github_repository" "this" {
   archive_on_destroy          = var.archive_on_destroy
 
   # TODO / add allow_update_branch
-  # TODO / add ignore_vulnerability_alerts_during_read 
+  # TODO / add ignore_vulnerability_alerts_during_read
 
   dynamic "template" {
     for_each = var.template != null ? [var.template] : []
@@ -280,7 +280,7 @@ resource "github_repository_environment" "this" {
     for_each = each.value.protected == true ? [each.value.protected] : []
     content {
       protected_branches     = false //  Ignoring this setting.  Just the fact that a branch is protected is not a green light for deployment to this environment.
-      custom_branch_policies = true  // This means that the branch allows attaching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
+      custom_branch_policies = true  // This means that the branch allows attaching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform
     }
   }
 
@@ -479,7 +479,7 @@ resource "github_repository_ruleset" "this" {
   target      = each.value.target
   enforcement = each.value.enforcement
 
-  rules {} # Bypassing this annoying error: `At least one "rules" block is required`. This errors seems to be a bug in the provider, because it is being thrown even if no github_repository_ruleset are passed. 
+  rules {} # Bypassing this annoying error: `At least one "rules" block is required`. This errors seems to be a bug in the provider, because it is being thrown even if no github_repository_ruleset are passed.
   dynamic "rules" {
     for_each = try([var.ruleset.rules], [])
     content {
@@ -617,4 +617,53 @@ resource "github_repository_ruleset" "this" {
       bypass_mode = try(bypass_actors.value.bypass_mode, null)
     }
   }
+}
+
+resource "terraform_data" "this" {
+  count = var.bootstrap_me != null ? 1 : 0
+  input = github_repository.this.http_clone_url
+  # triggers_replace = [github_repository.this.http_clone_url]
+
+  lifecycle {
+    replace_triggered_by = [
+      github_repository.this.http_clone_url,
+    ]
+  }
+  provisioner "local-exec" {
+    when        = create
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+    # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+    command = <<EOL
+set -e
+cd ${abspath(path.root)}
+
+  git init --initial-branch ${local.default_branch}
+  git config url."https://x-access-token:${var.bootstrap_tf_cloud.github_token}@github.com/${github_repository.this.full_name}".insteadOf "https://github.com/${github_repository.this.full_name}"
+  git remote add origin ${self.input}
+  git fetch origin
+  (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch}  && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} ))
+  git remote set-head origin -a
+  (git add main.tf  && git commit -m 'feat: bootstrap bootstrap commit' && git push || true )
+EOL
+  }
+  depends_on = [
+    github_repository_file.backend,
+    github_repository_file.gitignore,
+    github_repository_file.gha,
+    github_repository_file.release_rc,
+    github_repository_file.tf_version
+  ] # Just to be sure that repo is initialized, branch is updated
+}
+
+resource "terraform_data" "this_destroy" { # This should be a separate resource in case another one fails to be created
+  count = var.bootstrap_me != null ? 1 : 0
+  input = github_repository.this.http_clone_url
+  provisioner "local-exec" { # This does not work as expected with remote runner
+    when        = destroy
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+    command     = "cd ${abspath(path.root)} && rm -rf .git ;" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+  }
+
 }
