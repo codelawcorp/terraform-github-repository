@@ -65,6 +65,7 @@ content: |
 
 
   ### Importing existing repository example
+  The best part about importing existing resources is that provider does not treat existing configurations as existing resources, but simply overwrites them. You only have to import `github_repository` resource.  
   ```hcl
   import {
     to = module.quick_ops.github_repository.this

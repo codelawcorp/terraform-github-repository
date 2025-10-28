@@ -558,7 +558,7 @@ If you face some issues, try another combination of parameters and report an iss
 
 Nonetheless, having the opportunity to spin up new projects in seconds and control configurations in a single place is a great advantage.
 
-- Error: `New branch cannot be the same as the current branch` - When imporing an existing repo with a non-default-branch. This is 
+- Error: `New branch cannot be the same as the current branch` - When imporing an existing repo with a non-default-branch. This can be addressed by importing the default branch too [link](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default#import).
 
 ## Contributing 🐙
 
