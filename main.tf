@@ -46,8 +46,8 @@ resource "github_repository" "this" {
   license_template            = var.license_template
   archive_on_destroy          = var.archive_on_destroy
 
-  # TODO / add allow_update_branch
-  # TODO / add ignore_vulnerability_alerts_during_read
+  allow_update_branch                     = var.allow_update_branch
+  ignore_vulnerability_alerts_during_read = var.ignore_vulnerability_alerts_during_read
 
   dynamic "template" {
     for_each = var.template != null ? [var.template] : []

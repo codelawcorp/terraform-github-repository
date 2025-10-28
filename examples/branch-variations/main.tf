@@ -15,7 +15,7 @@ module "branch_variation_with_template_not_listed_default_branch" {
   template = {
     owner                = "codelawcorp"
     repository           = "template"
-    include_all_branches = true # TODO / try without this
+    include_all_branches = false
   }
 
   default_branch = "not-from-the-branches-list"

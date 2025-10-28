@@ -175,7 +175,6 @@ variable "is_template" {
   }
 }
 
-# TODO / remove this variable. Use default attribute on the branches list or pick the first branch in the list.
 variable "default_branch" {
   description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed."
   type        = string
@@ -209,6 +208,20 @@ variable "archive_on_destroy" {
   type        = bool
   default     = true
   nullable    = false
+}
+
+variable "allow_update_branch" {
+  description = "Set to true to allow updating the default branch of the repository"
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
+variable "ignore_vulnerability_alerts_during_read" {
+
+  type     = bool
+  default  = false
+  nullable = false
 }
 
 variable "web_commit_signoff_required" {
