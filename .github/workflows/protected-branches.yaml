@@ -17,7 +17,7 @@ on:
 #   ROLE_ARN: ${{ secrets.ROLE_ARN }}     # Set via GitHub Secrets on a repo level
 jobs:
   tests:
-    uses: ./.github/workflows/reusable/tests.yaml
+    uses: ./.github/workflows/reusable-tests.yaml
     secrets: inherit
 
   next-version:
