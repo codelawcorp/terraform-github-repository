@@ -104,3 +104,13 @@ run "branch_variations_rename_to_main" {
   }
 }
 
+
+run "bootsrap" {
+  command   = apply
+  state_key = "bootsrap"
+
+  module {
+    source = "./examples/bootstrap"
+
+  }
+}

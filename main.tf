@@ -631,7 +631,7 @@ resource "github_repository_ruleset" "this" {
 }
 
 resource "terraform_data" "this" {
-  count = var.bootstrap_me != null ? 1 : 0
+  count = var.bootstrap_me == true ? 1 : 0
   input = github_repository.this.http_clone_url
   # triggers_replace = [github_repository.this.http_clone_url]
 
@@ -644,13 +644,13 @@ resource "terraform_data" "this" {
     when        = create
     on_failure  = fail
     interpreter = ["bash", "-c"]
-    # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+
+    # git config url."https://x-access-token:${var.bootstrap_tf_cloud.github_token}@github.com/${github_repository.this.full_name}".insteadOf "https://github.com/${github_repository.this.full_name}" # this line is for when running tests in a remote runner.
     command = <<EOL
 set -e
 cd ${abspath(path.root)}
 
   git init --initial-branch ${local.default_branch}
-  git config url."https://x-access-token:${var.bootstrap_tf_cloud.github_token}@github.com/${github_repository.this.full_name}".insteadOf "https://github.com/${github_repository.this.full_name}"
   git remote add origin ${self.input}
   git fetch origin
   (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch}  && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} ))
@@ -658,17 +658,10 @@ cd ${abspath(path.root)}
   (git add main.tf  && git commit -m 'feat: bootstrap bootstrap commit' && git push || true )
 EOL
   }
-  depends_on = [
-    github_repository_file.backend,
-    github_repository_file.gitignore,
-    github_repository_file.gha,
-    github_repository_file.release_rc,
-    github_repository_file.tf_version
-  ] # Just to be sure that repo is initialized, branch is updated
 }
 
 resource "terraform_data" "this_destroy" { # This should be a separate resource in case another one fails to be created
-  count = var.bootstrap_me != null ? 1 : 0
+  count = var.bootstrap_me == true ? 1 : 0
   input = github_repository.this.http_clone_url
   provisioner "local-exec" { # This does not work as expected with remote runner
     when        = destroy
