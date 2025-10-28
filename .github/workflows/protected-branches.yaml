@@ -18,6 +18,7 @@ on:
 jobs:
   tests:
     uses: ./.github/workflows/reusable-tests.yaml
+  secrets: inherit
 
   next-version:
     name: Determine the next version
