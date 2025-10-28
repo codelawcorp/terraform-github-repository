@@ -25,7 +25,35 @@ content: |
   {{ include "examples/minimal/main.tf" }}
   ```
 
-  ### bootstrap aka chicken-egg example - manage the repository where this module is used
+  For more examples, scroll to the button below.  
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Modules }}
+
+  {{ .Resources }}
+
+
+
+  The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
+  The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
+  Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
+  When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
+  
+
+  `auto_init` is always true for other resources to work.  
+  `default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
+  ➡️ Scroll right ➡️ to see Default values.
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+  {{ .Footer }}
+
+  ## More examples
+  ### Bootstrap aka chicken-egg example - manage the repository where this module is used
     ```hcl
   {{ include "examples/bootstrap/main.tf" }}
   ```
@@ -54,31 +82,6 @@ content: |
   }
 
   ```
-
-  {{ .Requirements }}
-
-  {{ .Providers }}
-
-  {{ .Modules }}
-
-  {{ .Resources }}
-
-
-
-  The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
-  The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
-  Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
-  When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
-  
-
-  `auto_init` is always true for other resources to work.  
-  `default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
-  ➡️ Scroll right ➡️ to see Default values.
-  {{ .Inputs }}
-
-  {{ .Outputs }}
-
-  {{ .Footer }}
 
 output:
   file: ""
