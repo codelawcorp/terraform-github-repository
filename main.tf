@@ -271,7 +271,8 @@ resource "github_repository_deploy_key" "this" {
 }
 
 resource "github_actions_secret" "this" {
-  for_each        = { for k, v in var.actions_secrets : v.name => v }
+  for_each = { for k, v in var.actions_secrets : v.name => v }
+  # TODO / add https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret#encrypted_value-1
   repository      = github_repository.this.name
   secret_name     = each.key
   plaintext_value = each.value.value
@@ -441,50 +442,9 @@ resource "github_actions_repository_permissions" "this" {
 # }
 
 
-
-# resource "github_repository_ruleset" "this" {
-#   repository  = github_repository.this.name
-#   name        = var.ruelset.name
-#   target      = var.target
-#   enforcement = var.enforcement
-
-#   dynamic "conditions" {
-#     for_each = length(var.include_ref_name) > 0 || length(var.exclude_ref_name) > 0 ? [1] : []
-#     content {
-#       ref_name {
-#         include = var.include_ref_name
-#         exclude = var.exclude_ref_name
-#       }
-#     }
-#   }
-
-#   dynamic "bypass_actors" {
-#     for_each = var.bypass_actors == null ? [] : [var.bypass_actors]
-#     content {
-#       actor_id    = bypass_actors.value.actor_id
-#       actor_type  = bypass_actors.value.actor_type
-#       bypass_mode = bypass_actors.value.bypass_mode
-#       }
-#     }
-#   rules {
-#     creation = var.creation
-#     deletion = var.deletion
-#     update = var.update
-#     non_fast_forward = var.non_fast_forward
-#     dynamic "pull_request" {
-#       for_each = var.pull_request_rules != null ? [1] : []
-#       content {
-#         dismiss_stale_reviews_on_push   = var.pull_request_rules.dismiss_stale_reviews
-#         require_code_owner_review       = var.pull_request_rules.require_code_owner_reviews
-#         required_approving_review_count = var.pull_request_rules.required_approving_review_count
-#       }
-#     }
-#   }
-# }
-
 #  If the same rule is defined in different ways across the aggregated rulesets, the most restrictive version of the rule applies.
 resource "github_repository_ruleset" "this" {
-  for_each    = toset(var.ruleset)
+  for_each    = toset(var.rulesets)
   repository  = github_repository.this.name
   name        = each.value.name
   target      = each.value.target
@@ -492,12 +452,13 @@ resource "github_repository_ruleset" "this" {
 
   rules {} # Bypassing this annoying error: `At least one "rules" block is required`. This errors seems to be a bug in the provider, because it is being thrown even if no github_repository_ruleset are passed.
   dynamic "rules" {
-    for_each = try([var.ruleset.rules], [])
+    for_each = try([each.value.rules], [])
+    iterator = rule
     content {
       # enumerate known rule blocks (e.g., "pull_request", "required_status_checks", etc.)
       # branch_name_pattern= try(rules.value.branch _name_pattern, null)
       dynamic "branch_name_pattern" {
-        for_each = try([rules.value.branch_name_pattern], [])
+        for_each = try([rule.value.branch_name_pattern], [])
         content {
           operator = try(branch_name_pattern.value.operator, null)
           pattern  = try(branch_name_pattern.value.pattern, null)
@@ -507,7 +468,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "commit_author_email_pattern" {
-        for_each = try([rules.value.commit_author_email_pattern], [])
+        for_each = try([rule.value.commit_author_email_pattern], [])
         content {
           operator = try(commit_author_email_pattern.value.operator, null)
           pattern  = try(commit_author_email_pattern.value.pattern, null)
@@ -518,7 +479,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "commit_message_pattern" {
-        for_each = try([rules.value.commit_message_pattern], [])
+        for_each = try([rule.value.commit_message_pattern], [])
         content {
           operator = try(commit_message_pattern.value.operator, null)
           pattern  = try(commit_message_pattern.value.pattern, null)
@@ -529,7 +490,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "committer_email_pattern" {
-        for_each = try([rules.value.committer_email_pattern], [])
+        for_each = try([rule.value.committer_email_pattern], [])
         content {
           operator = try(committer_email_pattern.value.operator, null)
           pattern  = try(committer_email_pattern.value.pattern, null)
@@ -539,7 +500,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "merge_queue" {
-        for_each = try(rules.value.merge_queue, [])
+        for_each = try(rule.value.merge_queue, [])
         content {
           check_response_timeout_minutes    = try(merge_queue.value.check_response_timeout_minutes, null)
           grouping_strategy                 = try(merge_queue.value.grouping_strategy, null)
@@ -552,7 +513,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "pull_request" {
-        for_each = try(rules.value.pull_request, [])
+        for_each = try(rule.value.pull_request, [])
         content {
           dismiss_stale_reviews_on_push     = try(pull_request.value.dismiss_stale_reviews_on_push, null)
           require_code_owner_review         = try(pull_request.value.require_code_owner_review, null)
@@ -563,17 +524,17 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "required_deployments" {
-        for_each = try(rules.value.required_deployments, [])
+        for_each = try(rule.value.required_deployments, [])
         content {
           required_deployment_environments = try(required_deployments.value.required_deployment_environments, [])
         }
       }
 
       dynamic "required_status_checks" {
-        for_each = try(rules.value.required_status_checks, [])
+        for_each = try(rule.value.required_status_checks, [])
         content {
           dynamic "required_check" {
-            for_each = try(rules.value.required_check, [])
+            for_each = try(rule.value.required_check, [])
             content {
               context        = try(required_check.value.context, null)
               integration_id = try(required_check.value.integration_id, null)
@@ -587,7 +548,7 @@ resource "github_repository_ruleset" "this" {
 
 
       dynamic "tag_name_pattern" {
-        for_each = try([rules.value.tag_name_pattern], [])
+        for_each = try([rule.value.tag_name_pattern], [])
         content {
           operator = try(tag_name_pattern.value.operator, null)
           pattern  = try(tag_name_pattern.value.pattern, null)
@@ -597,31 +558,35 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "required_code_scanning" {
-        for_each = try([rules.value.required_code_scanning], [])
+        for_each = try([rule.value.required_code_scanning], [])
         content {
-          alerts_threshold          = try(required_code_scanning.value.alerts_threshold, null)
-          security_alerts_threshold = try(required_code_scanning.value.security_alerts_threshold, null)
-          tool                      = try(required_code_scanning.value.tool, null)
+
+          dynamic "required_code_scanning_tool" {
+            for_each = try([required_code_scanning.value.required_code_scanning_tool], [])
+            content {
+              alerts_threshold          = try(required_code_scanning_tool.value.alerts_threshold, null)
+              security_alerts_threshold = try(required_code_scanning_tool.value.security_alerts_threshold, null)
+              tool                      = try(required_code_scanning_tool.value.tool, null)
+            }
+          }
         }
       }
     }
   }
   dynamic "conditions" {
-    for_each = try([var.ruleset.conditions], [])
+    for_each = try([each.value.conditions], [])
     content {
       ref_name {
         exclude = try(conditions.value.ref_name.exclude, null)
         include = try(conditions.value.ref_name.include, null)
       }
-      repository_name { exclude = try(conditions.value.repository_name.exclude, null) }
-      # …repeat for the *known* nested blocks only
     }
   }
 
 
 
   dynamic "bypass_actors" {
-    for_each = try(var.ruleset.bypass_actors, [])
+    for_each = try(each.value.bypass_actors, [])
     content {
       actor_id    = try(bypass_actors.value.actor_id, null)
       actor_type  = try(bypass_actors.value.actor_type, null)

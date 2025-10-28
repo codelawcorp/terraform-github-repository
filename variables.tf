@@ -383,9 +383,9 @@ variable "users" {
   nullable = false
 }
 
-variable "teams" {
+variable "teams" { #
   description = "List of repository teams to add to the repository"
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator
     team_id    = string
     permission = string
   }))
@@ -410,7 +410,7 @@ variable "teams" {
 
 variable "custom_properties" {
   description = "Custom properties to set on the repository. Must be defined on the organization level first."
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_custom_property
     property_name  = string
     property_value = string
     property_type  = optional(string, "string")
@@ -444,7 +444,7 @@ variable "webhooks" {
 
 variable "deploy_keys" {
   description = "List of SSH deploy keys to add to the repository. Must be allowed on the org level."
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key
     title     = string
     key       = string
     read_only = optional(bool, true)
@@ -455,7 +455,7 @@ variable "deploy_keys" {
 
 variable "repository_files" {
   description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties."
-  type = map(object({
+  type = map(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file
     content                         = string
     branch                          = optional(string, null)
     commit_sha                      = optional(string, null)
@@ -474,7 +474,7 @@ variable "repository_files" {
 
 variable "issue_labels" {
   description = "A list of issue label"
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label
     name        = string
     color       = string
     description = optional(string, "")
@@ -484,7 +484,7 @@ variable "issue_labels" {
 
 variable "autolink_references" {
   description = "A list of autolink references to create for the repository"
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference
     key_prefix          = string
     target_url_template = string
     is_alphanumeric     = optional(bool)
@@ -495,9 +495,10 @@ variable "autolink_references" {
 
 variable "actions_repository_permissions" {
   description = "GitHub Actions repository permissions configuration"
-  type        = any # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
-  default     = null
-  nullable    = true
+  # TODO / adjust type / should not be any
+  type     = any # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
+  default  = null
+  nullable = true
 }
 
 
@@ -513,14 +514,10 @@ variable "actions_repository_permissions" {
 # }
 
 
-
-variable "ruleset" {
-  description = "add later"
-  type = list(object({
-    name        = string
-    target      = string # TODO / add validation branch or tag
-    enforcement = string # TODO / add validation for values: disabled, active, evaluate
-  }))
+variable "rulesets" {
+  description = "List of GitHub repository ruleset configurations"
+  # TODO / fix type
+  type    = any # # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
   default = []
 
 }

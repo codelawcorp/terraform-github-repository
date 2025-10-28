@@ -574,6 +574,6 @@ Apache 2 Licensed. See [LICENSE](https://github.com/codelawcorp/terraform-github
 
 ## Need Help?
 
-[CodeLaw.pro](https://codelaw.pro) — helping to structure Terraform code for maintanability and scalability - no frameworks, no subscriptions, no vendor lock-in.
+[CodeLaw.pro](https://codelaw.pro) — helping to structure Terraform code for maintanability, scalability, security. 
 
-Reach out for **Internal Development Platform** built for your needs that you actually own in just 3 days (+ migrations).
+Reach out for **Internal Development Platform** built for your needs that you actually own in just 3 days (+ migrations).  
