@@ -13,6 +13,7 @@ jobs:
       contents: read
       id-token: write # This is required for requesting the JWT
     runs-on: ubuntu-latest
+    concurrency: tests # can not run terraform tests on the same org simultaneously
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,7 +43,6 @@ jobs:
       - name: Run Terraform init
         run: terraform init
       - name: Run Terraform tests
-        concurrency: tests
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           GITHUB_OWNER: codelawcorp-test
