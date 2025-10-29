@@ -25,35 +25,7 @@ content: |
   {{ include "examples/minimal/main.tf" }}
   ```
 
-  ### bootstrap aka chicken-egg example - manage the repository where this module is used
-    ```hcl
-  {{ include "examples/bootstrap/main.tf" }}
-  ```
-
-  ### Complete example
-  ```hcl
-  {{ include "examples/complete/main.tf" }}
-  ```
-
-
-  ### Importing existing repository example
-  ```hcl
-  import {
-    to = module.quick_ops.github_repository.this
-    id = "quick-ops"
-  }
-  module "quick_ops" {
-    source = "codelawcorp/repository/github"
-    # version = "~> 2.0.0"  # It is always recommended to pin the version
-
-    name        = "quick_ops"
-    description = "Scripting magic. Like Ansible ad-hoc but with iterm2"
-    visibility  = "public"
-
-    archive_on_destroy = true
-  }
-
-  ```
+  For more examples, scroll to the button below.  
 
   {{ .Requirements }}
 
@@ -79,6 +51,38 @@ content: |
   {{ .Outputs }}
 
   {{ .Footer }}
+
+  ## More examples
+  ### Bootstrap aka chicken-egg example - manage the repository where this module is used
+    ```hcl
+  {{ include "examples/bootstrap/main.tf" }}
+  ```
+
+  ### Complete example
+  ```hcl
+  {{ include "examples/complete/main.tf" }}
+  ```
+
+
+  ### Importing existing repository example
+  The best part about importing existing resources is that provider does not treat existing configurations as existing resources, but simply overwrites them. You only have to import `github_repository` resource.  
+  ```hcl
+  import {
+    to = module.quick_ops.github_repository.this
+    id = "quick-ops"
+  }
+  module "quick_ops" {
+    source = "codelawcorp/repository/github"
+    # version = "~> 2.0.0"  # It is always recommended to pin the version
+
+    name        = "quick_ops"
+    description = "Scripting magic. Like Ansible ad-hoc but with iterm2"
+    visibility  = "public"
+
+    archive_on_destroy = true
+  }
+
+  ```
 
 output:
   file: ""

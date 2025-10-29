@@ -1,5 +1,5 @@
 ---
-name: main
+name: protected-branches
 run-name: ${{ github.actor }} - ${{ github.event.head_commit.message }} 🏗️
 on:
   push:
@@ -17,50 +17,8 @@ on:
 #   ROLE_ARN: ${{ secrets.ROLE_ARN }}     # Set via GitHub Secrets on a repo level
 jobs:
   tests:
-    name: Run Tests
-    permissions:
-      contents: read
-      id-token: write # This is required for requesting the JWT
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # fetching all history to scan for secrets
-
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
-          GITLEAKS_VERSION: 8.24.3
-
-      - name: Setup Node.js for commitlint
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts/*"
-      - name: Check if the last commit message is properly formatted
-        run: |
-          npm install -g @commitlint/config-conventional
-          npx commitlint --config ".githooks/.commitlintrc.yml" --last  --verbose
-
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.12.1" # "1.9.5"
-      - name: Check if terraform is well formatted
-        run: terraform fmt -recursive  -check
-
-      - name: Run Terraform init
-        run: terraform init
-      - name: Run Terraform tests
-        env:
-          TFE_TOKEN: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }} # todo / change rename secret TF_TOKEN_APP_TERRAFORM_IO - this name might not make sense
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-          GITHUB_OWNER: codelawcorp-test
-          TF_VAR_tfe_token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
-          TF_VAR_github_token: ${{ secrets.PAT_TOKEN }}
-        # USE PAT_TOKEN instead of GITHUB_TOKEN, to get admin access to the test org.
-        run: |
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_OWNER}".insteadOf "https://github.com/${GITHUB_OWNER}"
-          terraform test
+    uses: ./.github/workflows/reusable-tests.yaml
+    secrets: inherit
 
   next-version:
     name: Determine the next version

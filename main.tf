@@ -46,8 +46,8 @@ resource "github_repository" "this" {
   license_template            = var.license_template
   archive_on_destroy          = var.archive_on_destroy
 
-  # TODO / add allow_update_branch
-  # TODO / add ignore_vulnerability_alerts_during_read 
+  allow_update_branch                     = var.allow_update_branch
+  ignore_vulnerability_alerts_during_read = var.ignore_vulnerability_alerts_during_read
 
   dynamic "template" {
     for_each = var.template != null ? [var.template] : []
@@ -274,7 +274,7 @@ resource "github_actions_secret" "this" {
   for_each        = { for k, v in var.actions_secrets : v.name => v }
   repository      = github_repository.this.name
   secret_name     = each.key
-  plaintext_value = each.value.value
+  encrypted_value = base64encode(each.value.value)
 }
 
 resource "github_repository_environment" "this" {
@@ -291,7 +291,7 @@ resource "github_repository_environment" "this" {
     for_each = each.value.protected == true ? [each.value.protected] : []
     content {
       protected_branches     = false //  Ignoring this setting.  Just the fact that a branch is protected is not a green light for deployment to this environment.
-      custom_branch_policies = true  // This means that the branch allows attaching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform 
+      custom_branch_policies = true  // This means that the branch allows attaching github_repository_environment_deployment_policy. Yes, weird.  https://stackoverflow.com/questions/76653139/having-issue-with-environment-deployment-branches-on-github-using-terraform
     }
   }
 
@@ -441,63 +441,23 @@ resource "github_actions_repository_permissions" "this" {
 # }
 
 
-
-# resource "github_repository_ruleset" "this" {
-#   repository  = github_repository.this.name
-#   name        = var.ruelset.name
-#   target      = var.target
-#   enforcement = var.enforcement
-
-#   dynamic "conditions" {
-#     for_each = length(var.include_ref_name) > 0 || length(var.exclude_ref_name) > 0 ? [1] : []
-#     content {
-#       ref_name {
-#         include = var.include_ref_name
-#         exclude = var.exclude_ref_name
-#       }
-#     }
-#   }
-
-#   dynamic "bypass_actors" {
-#     for_each = var.bypass_actors == null ? [] : [var.bypass_actors]
-#     content {
-#       actor_id    = bypass_actors.value.actor_id
-#       actor_type  = bypass_actors.value.actor_type
-#       bypass_mode = bypass_actors.value.bypass_mode
-#       }
-#     }
-#   rules {
-#     creation = var.creation
-#     deletion = var.deletion
-#     update = var.update
-#     non_fast_forward = var.non_fast_forward
-#     dynamic "pull_request" {
-#       for_each = var.pull_request_rules != null ? [1] : []
-#       content {
-#         dismiss_stale_reviews_on_push   = var.pull_request_rules.dismiss_stale_reviews
-#         require_code_owner_review       = var.pull_request_rules.require_code_owner_reviews
-#         required_approving_review_count = var.pull_request_rules.required_approving_review_count
-#       }
-#     }
-#   }
-# }
-
 #  If the same rule is defined in different ways across the aggregated rulesets, the most restrictive version of the rule applies.
 resource "github_repository_ruleset" "this" {
-  for_each    = toset(var.ruleset)
+  for_each    = toset(var.rulesets)
   repository  = github_repository.this.name
   name        = each.value.name
   target      = each.value.target
   enforcement = each.value.enforcement
 
-  rules {} # Bypassing this annoying error: `At least one "rules" block is required`. This errors seems to be a bug in the provider, because it is being thrown even if no github_repository_ruleset are passed. 
+  rules {} # Bypassing this annoying error: `At least one "rules" block is required`. This errors seems to be a bug in the provider, because it is being thrown even if no github_repository_ruleset are passed.
   dynamic "rules" {
-    for_each = try([var.ruleset.rules], [])
+    for_each = try([each.value.rules], [])
+    iterator = rule
     content {
       # enumerate known rule blocks (e.g., "pull_request", "required_status_checks", etc.)
       # branch_name_pattern= try(rules.value.branch _name_pattern, null)
       dynamic "branch_name_pattern" {
-        for_each = try([rules.value.branch_name_pattern], [])
+        for_each = try([rule.value.branch_name_pattern], [])
         content {
           operator = try(branch_name_pattern.value.operator, null)
           pattern  = try(branch_name_pattern.value.pattern, null)
@@ -507,7 +467,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "commit_author_email_pattern" {
-        for_each = try([rules.value.commit_author_email_pattern], [])
+        for_each = try([rule.value.commit_author_email_pattern], [])
         content {
           operator = try(commit_author_email_pattern.value.operator, null)
           pattern  = try(commit_author_email_pattern.value.pattern, null)
@@ -518,7 +478,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "commit_message_pattern" {
-        for_each = try([rules.value.commit_message_pattern], [])
+        for_each = try([rule.value.commit_message_pattern], [])
         content {
           operator = try(commit_message_pattern.value.operator, null)
           pattern  = try(commit_message_pattern.value.pattern, null)
@@ -529,7 +489,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "committer_email_pattern" {
-        for_each = try([rules.value.committer_email_pattern], [])
+        for_each = try([rule.value.committer_email_pattern], [])
         content {
           operator = try(committer_email_pattern.value.operator, null)
           pattern  = try(committer_email_pattern.value.pattern, null)
@@ -539,7 +499,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "merge_queue" {
-        for_each = try(rules.value.merge_queue, [])
+        for_each = try(rule.value.merge_queue, [])
         content {
           check_response_timeout_minutes    = try(merge_queue.value.check_response_timeout_minutes, null)
           grouping_strategy                 = try(merge_queue.value.grouping_strategy, null)
@@ -552,7 +512,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "pull_request" {
-        for_each = try(rules.value.pull_request, [])
+        for_each = try(rule.value.pull_request, [])
         content {
           dismiss_stale_reviews_on_push     = try(pull_request.value.dismiss_stale_reviews_on_push, null)
           require_code_owner_review         = try(pull_request.value.require_code_owner_review, null)
@@ -563,17 +523,17 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "required_deployments" {
-        for_each = try(rules.value.required_deployments, [])
+        for_each = try(rule.value.required_deployments, [])
         content {
           required_deployment_environments = try(required_deployments.value.required_deployment_environments, [])
         }
       }
 
       dynamic "required_status_checks" {
-        for_each = try(rules.value.required_status_checks, [])
+        for_each = try(rule.value.required_status_checks, [])
         content {
           dynamic "required_check" {
-            for_each = try(rules.value.required_check, [])
+            for_each = try(rule.value.required_check, [])
             content {
               context        = try(required_check.value.context, null)
               integration_id = try(required_check.value.integration_id, null)
@@ -587,7 +547,7 @@ resource "github_repository_ruleset" "this" {
 
 
       dynamic "tag_name_pattern" {
-        for_each = try([rules.value.tag_name_pattern], [])
+        for_each = try([rule.value.tag_name_pattern], [])
         content {
           operator = try(tag_name_pattern.value.operator, null)
           pattern  = try(tag_name_pattern.value.pattern, null)
@@ -597,35 +557,81 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "required_code_scanning" {
-        for_each = try([rules.value.required_code_scanning], [])
+        for_each = try([rule.value.required_code_scanning], [])
         content {
-          alerts_threshold          = try(required_code_scanning.value.alerts_threshold, null)
-          security_alerts_threshold = try(required_code_scanning.value.security_alerts_threshold, null)
-          tool                      = try(required_code_scanning.value.tool, null)
+
+          dynamic "required_code_scanning_tool" {
+            for_each = try([required_code_scanning.value.required_code_scanning_tool], [])
+            content {
+              alerts_threshold          = try(required_code_scanning_tool.value.alerts_threshold, null)
+              security_alerts_threshold = try(required_code_scanning_tool.value.security_alerts_threshold, null)
+              tool                      = try(required_code_scanning_tool.value.tool, null)
+            }
+          }
         }
       }
     }
   }
   dynamic "conditions" {
-    for_each = try([var.ruleset.conditions], [])
+    for_each = try([each.value.conditions], [])
     content {
       ref_name {
         exclude = try(conditions.value.ref_name.exclude, null)
         include = try(conditions.value.ref_name.include, null)
       }
-      repository_name { exclude = try(conditions.value.repository_name.exclude, null) }
-      # …repeat for the *known* nested blocks only
     }
   }
 
 
 
   dynamic "bypass_actors" {
-    for_each = try(var.ruleset.bypass_actors, [])
+    for_each = try(each.value.bypass_actors, [])
     content {
       actor_id    = try(bypass_actors.value.actor_id, null)
       actor_type  = try(bypass_actors.value.actor_type, null)
       bypass_mode = try(bypass_actors.value.bypass_mode, null)
     }
   }
+}
+
+resource "terraform_data" "this" {
+  count = var.bootstrap_me == true ? 1 : 0
+  input = github_repository.this.http_clone_url
+  # triggers_replace = [github_repository.this.http_clone_url]
+
+  lifecycle {
+    replace_triggered_by = [
+      github_repository.this.http_clone_url,
+    ]
+  }
+  provisioner "local-exec" {
+    when        = create
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+
+    # git config url."https://x-access-token:${var.bootstrap_tf_cloud.github_token}@github.com/${github_repository.this.full_name}".insteadOf "https://github.com/${github_repository.this.full_name}" # this line is for when running tests in a remote runner.
+    command = <<EOL
+set -e
+cd ${abspath(path.root)}
+
+  git init --initial-branch ${local.default_branch}
+  git remote add origin ${self.input}
+  git fetch origin
+  (git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} || (git reset --hard origin/${local.default_branch}  && git branch --set-upstream-to origin/${local.default_branch} ${local.default_branch} ))
+  git remote set-head origin -a
+  (git add main.tf  && git commit -m 'feat: bootstrap bootstrap commit' && git push || true )
+EOL
+  }
+}
+
+resource "terraform_data" "this_destroy" { # This should be a separate resource in case another one fails to be created
+  count = var.bootstrap_me == true ? 1 : 0
+  input = github_repository.this.http_clone_url
+  provisioner "local-exec" { # This does not work as expected with remote runner
+    when        = destroy
+    on_failure  = fail
+    interpreter = ["bash", "-c"]
+    command     = "cd ${abspath(path.root)} && rm -rf .git ;" # This is required for terraform tests to work properly and also is an appropriate destroy action often.
+  }
+
 }

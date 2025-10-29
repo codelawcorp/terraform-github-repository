@@ -175,7 +175,6 @@ variable "is_template" {
   }
 }
 
-# TODO / remove this variable. Use default attribute on the branches list or pick the first branch in the list.
 variable "default_branch" {
   description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed."
   type        = string
@@ -190,7 +189,7 @@ variable "default_branch" {
   #   condition     = (var.template == null && var.default_branch != null) || (var.template != null && var.default_branch == null)
   #   error_message = "Default branch can be set only if template is not used"
   # }
-  # validation { 
+  # validation {
   #   # condition     = var.template != null || var.auto_init == true && var.default_branch == "main" || length(var.branches) == 0 || length([for branch in var.branches : branch.name if branch.name == var.default_branch]) > 0
   #   condition     = var.default_branch != null && var.template != null
   #   error_message = "Default branch can not be set if the template is used. You can set default branch later, after the repository is created and template attribute is removed."
@@ -209,6 +208,20 @@ variable "archive_on_destroy" {
   type        = bool
   default     = true
   nullable    = false
+}
+
+variable "allow_update_branch" {
+  description = "Set to true to allow updating the default branch of the repository"
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
+variable "ignore_vulnerability_alerts_during_read" {
+
+  type     = bool
+  default  = false
+  nullable = false
 }
 
 variable "web_commit_signoff_required" {
@@ -383,9 +396,9 @@ variable "users" {
   nullable = false
 }
 
-variable "teams" {
+variable "teams" { #
   description = "List of repository teams to add to the repository"
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator
     team_id    = string
     permission = string
   }))
@@ -410,7 +423,7 @@ variable "teams" {
 
 variable "custom_properties" {
   description = "Custom properties to set on the repository. Must be defined on the organization level first."
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_custom_property
     property_name  = string
     property_value = string
     property_type  = optional(string, "string")
@@ -444,7 +457,7 @@ variable "webhooks" {
 
 variable "deploy_keys" {
   description = "List of SSH deploy keys to add to the repository. Must be allowed on the org level."
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key
     title     = string
     key       = string
     read_only = optional(bool, true)
@@ -455,7 +468,7 @@ variable "deploy_keys" {
 
 variable "repository_files" {
   description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties."
-  type = map(object({
+  type = map(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file
     content                         = string
     branch                          = optional(string, null)
     commit_sha                      = optional(string, null)
@@ -474,7 +487,7 @@ variable "repository_files" {
 
 variable "issue_labels" {
   description = "A list of issue label"
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label
     name        = string
     color       = string
     description = optional(string, "")
@@ -484,7 +497,7 @@ variable "issue_labels" {
 
 variable "autolink_references" {
   description = "A list of autolink references to create for the repository"
-  type = list(object({
+  type = list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference
     key_prefix          = string
     target_url_template = string
     is_alphanumeric     = optional(bool)
@@ -495,9 +508,10 @@ variable "autolink_references" {
 
 variable "actions_repository_permissions" {
   description = "GitHub Actions repository permissions configuration"
-  type        = any # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
-  default     = null
-  nullable    = true
+  # TODO / adjust type / should not be any
+  type     = any # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
+  default  = null
+  nullable = true
 }
 
 
@@ -513,27 +527,17 @@ variable "actions_repository_permissions" {
 # }
 
 
-
-variable "ruleset" {
-  description = "add later"
-  type = list(object({
-    name        = string
-    target      = string # TODO / add validation branch or tag
-    enforcement = string # TODO / add validation for values: disabled, active, evaluate
-  }))
+variable "rulesets" {
+  description = "List of GitHub repository ruleset configurations"
+  # TODO / fix type
+  type    = any # # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
   default = []
 
 }
 
-variable "bootstrap_tf_cloud" {
-  description = "When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED."
-  type = object({
-    tf_cloud_organization = optional(string)
-    tf_cloud_workspace    = optional(string)
-    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs
-    tfe_token             = optional(string)           # After the first apply, all further changes are ignored.
-    github_token          = optional(string)           # After the first apply, all further changes are ignored.
-  })
-  default  = null
-  nullable = true
+variable "bootstrap_me" {
+  description = "Set to `true` to init a git project in the current module directory and to add the newly created repository as an upstream."
+  type        = bool
+  default     = false
+  nullable    = false
 }
