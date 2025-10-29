@@ -272,10 +272,9 @@ resource "github_repository_deploy_key" "this" {
 
 resource "github_actions_secret" "this" {
   for_each = { for k, v in var.actions_secrets : v.name => v }
-  # TODO / add https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret#encrypted_value-1
   repository      = github_repository.this.name
   secret_name     = each.key
-  plaintext_value = each.value.value
+  encrypted_value = base64encode(each.value.value)
 }
 
 resource "github_repository_environment" "this" {
