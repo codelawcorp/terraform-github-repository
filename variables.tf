@@ -536,7 +536,7 @@ variable "rulesets" {
 }
 
 variable "bootstrap_me" {
-  description = "Set to `true` to init a git project in the current modulre directory and to add the newly created repository as an upstream."
+  description = "Set to `true` to init a git project in the current module directory and to add the newly created repository as an upstream."
   type        = bool
   default     = false
   nullable    = false
