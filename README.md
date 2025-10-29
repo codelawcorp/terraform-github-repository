@@ -126,7 +126,7 @@ module "github_repository_complete" {
   template = {
     owner                = "codelawcorp"
     repository           = "template"
-    include_all_branches = true # TODO / try without this
+    include_all_branches = true
   }
 
   default_branch = "prod"

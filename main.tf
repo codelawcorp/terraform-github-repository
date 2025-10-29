@@ -41,7 +41,7 @@ resource "github_repository" "this" {
 
   web_commit_signoff_required = var.web_commit_signoff_required
   vulnerability_alerts        = !var.archived && (var.vulnerability_alerts || var.enable_dependabot_security_updates)
-  auto_init                   = true # TODO / explain why it is true
+  auto_init                   = true # can not create branches when the repo is empty
   gitignore_template          = var.gitignore_template
   license_template            = var.license_template
   archive_on_destroy          = var.archive_on_destroy
@@ -119,8 +119,7 @@ data "github_repository" "this" {
 #   value = data.github_repository.this
 # }
 
-# TODO / try this https://developer.hashicorp.com/terraform/language/meta-arguments#lifecycle
-# TODO / try this https://developer.hashicorp.com/terraform/language/block/removed#complete-configuration
+
 resource "github_branch_default" "this" {
   # if  `data.github_repository.this.default_branc` means the repo was just created
   count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && coalesce(data.github_repository.this.default_branch, "main") != "main" ? 1 : 0
@@ -131,9 +130,6 @@ resource "github_branch_default" "this" {
   # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
   # `false` does not create a branch, but expects the branch to exist.
   rename = true
-  # depends_on = [github_branch.this]
-
-  # TODO add pre condition
 }
 
 resource "github_branch" "this" {

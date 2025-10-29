@@ -34,7 +34,7 @@ module "no_default_branch" {
 
   # auto_init = true
 
-  archived = false # TODO / test different combinations of archived and archive_on_destroy
+  archived = false
 
 
   branches = [
