@@ -508,13 +508,19 @@ variable "autolink_references" {
 
 variable "actions_repository_permissions" {
   description = "GitHub Actions repository permissions configuration"
-  # TODO / adjust type / should not be any
-  type     = any # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
+  type = object({
+    allowed_actions = optional(string)
+    enabled         = optional(bool)
+    allowed_actions_config = optional(object({
+      github_owned_allowed = optional(bool)
+      patterns_allowed     = optional(list(string))
+      verified_allowed     = optional(bool)
+    }))
+  })
+
   default  = null
   nullable = true
 }
-
-
 
 # 410 Projects (classic) has been deprecated in favor of the new Projects experience. []
 # variable "projects" {
@@ -529,10 +535,90 @@ variable "actions_repository_permissions" {
 
 variable "rulesets" {
   description = "List of GitHub repository ruleset configurations"
-  # TODO / fix type
-  type    = any # # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset
-  default = []
 
+  type = list(object({
+    name        = string
+    target      = string
+    enforcement = string
+
+    rules = optional(object({
+      branch_name_pattern = optional(object({
+        operator = optional(string)
+        pattern  = optional(string)
+        name     = optional(string)
+        negate   = optional(bool)
+      }))
+
+      commit_author_email_pattern = optional(object({
+        operator = optional(string)
+        pattern  = optional(string)
+        name     = optional(string)
+        negate   = optional(bool)
+      }))
+
+      commit_message_pattern = optional(object({
+        operator = optional(string)
+        pattern  = optional(string)
+        name     = optional(string)
+        negate   = optional(bool)
+      }))
+
+      committer_email_pattern = optional(object({
+        operator = optional(string)
+        pattern  = optional(string)
+        name     = optional(string)
+        negate   = optional(bool)
+      }))
+
+      merge_queue = optional(list(object({
+        check_response_timeout_minutes    = optional(number)
+        grouping_strategy                 = optional(string)
+        max_entries_to_build              = optional(number)
+        max_entries_to_merge              = optional(number)
+        merge_method                      = optional(string)
+        min_entries_to_merge              = optional(number)
+        min_entries_to_merge_wait_minutes = optional(number)
+      })))
+
+      pull_request = optional(list(object({
+        dismiss_stale_reviews_on_push     = optional(bool)
+        require_code_owner_review         = optional(bool)
+        require_last_push_approval        = optional(bool)
+        required_approving_review_count   = optional(number)
+        required_review_thread_resolution = optional(bool)
+      })))
+
+      required_deployments = optional(list(object({
+        required_deployment_environments = optional(list(string))
+      })))
+
+      required_status_checks = optional(list(object({
+        required_check = optional(list(object({
+          context        = optional(string)
+          integration_id = optional(number)
+        })))
+        strict_required_status_checks_policy = optional(bool)
+        do_not_enforce_on_create             = optional(bool)
+      })))
+
+      tag_name_pattern = optional(object({
+        operator = optional(string)
+        pattern  = optional(string)
+        name     = optional(string)
+        negate   = optional(bool)
+      }))
+
+      required_code_scanning = optional(object({
+        required_code_scanning_tool = optional(object({
+          alerts_threshold          = optional(string)
+          security_alerts_threshold = optional(string)
+          tool                      = optional(string)
+        }))
+      }))
+    }))
+  }))
+
+  default = []
 }
 
 variable "bootstrap_me" {
