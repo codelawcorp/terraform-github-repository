@@ -27,7 +27,150 @@ module "github_repository_minimal" {
 
 ```
 
-### bootstrap aka chicken-egg example - manage the repository where this module is used
+For more examples, scroll to the button below.  
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.7.1 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.7.1 |
+| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [github_actions_environment_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_secret) | resource |
+| [github_actions_environment_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_variable) | resource |
+| [github_actions_repository_permissions.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_permissions) | resource |
+| [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
+| [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
+| [github_branch.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch) | resource |
+| [github_branch_default.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
+| [github_branch_protection.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection) | resource |
+| [github_issue_label.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label) | resource |
+| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
+| [github_repository_autolink_reference.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference) | resource |
+| [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
+| [github_repository_custom_property.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_custom_property) | resource |
+| [github_repository_dependabot_security_updates.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_dependabot_security_updates) | resource |
+| [github_repository_deploy_key.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
+| [github_repository_environment.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment) | resource |
+| [github_repository_environment_deployment_policy.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment_deployment_policy) | resource |
+| [github_repository_file.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [github_repository_ruleset.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset) | resource |
+| [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
+| [github_repository_webhook.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_webhook) | resource |
+| [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
+| [terraform_data.this](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.this_destroy](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [github_repository.template](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
+| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
+
+
+
+The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
+The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
+Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
+When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
+
+
+`auto_init` is always true for other resources to work.  
+`default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
+➡️ Scroll right ➡️ to see Default values.
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_actions_repository_permissions"></a> [actions\_repository\_permissions](#input\_actions\_repository\_permissions) | GitHub Actions repository permissions configuration | `any` | `null` | no |
+| <a name="input_actions_secrets"></a> [actions\_secrets](#input\_actions\_secrets) | GitHub Actions secrets to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_actions_variables"></a> [actions\_variables](#input\_actions\_variables) | GitHub Actions variables to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Set to true to allow auto-merging pull requests on the repository | `bool` | `false` | no |
+| <a name="input_allow_merge_commit"></a> [allow\_merge\_commit](#input\_allow\_merge\_commit) | Set to false to disable merge commits on the repository | `bool` | `true` | no |
+| <a name="input_allow_rebase_merge"></a> [allow\_rebase\_merge](#input\_allow\_rebase\_merge) | Set to false to disable rebase merges on the repository | `bool` | `true` | no |
+| <a name="input_allow_squash_merge"></a> [allow\_squash\_merge](#input\_allow\_squash\_merge) | Set to false to disable squash merges on the repository | `bool` | `true` | no |
+| <a name="input_allow_update_branch"></a> [allow\_update\_branch](#input\_allow\_update\_branch) | Set to true to allow updating the default branch of the repository | `bool` | `false` | no |
+| <a name="input_archive_on_destroy"></a> [archive\_on\_destroy](#input\_archive\_on\_destroy) | Set to true to archive the repository instead of deleting it when the resource is destroyed | `bool` | `true` | no |
+| <a name="input_archived"></a> [archived](#input\_archived) | Specifies if the repository should be archived | `bool` | `false` | no |
+| <a name="input_autolink_references"></a> [autolink\_references](#input\_autolink\_references) | A list of autolink references to create for the repository | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference<br/>    key_prefix          = string<br/>    target_url_template = string<br/>    is_alphanumeric     = optional(bool)<br/>  }))</pre> | `[]` | no |
+| <a name="input_bootstrap_me"></a> [bootstrap\_me](#input\_bootstrap\_me) | Set to `true` to init a git project in the current module directory and to add the newly created repository as an upstream. | `bool` | `false` | no |
+| <a name="input_branches"></a> [branches](#input\_branches) | List of branch configurations to create | <pre>list(object({<br/>    name          = string<br/>    source_branch = optional(string) # By default, the source branch is the default branch.<br/>    source_sha    = optional(string)<br/>    # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection<br/>    protection = optional(object({ # Empty object means to protect with defaults<br/>      # `pattern` is always name of the branch. This is how this module works.<br/>      enforce_admins                  = optional(bool)<br/>      require_signed_commits          = optional(bool)<br/>      required_linear_history         = optional(bool)<br/>      require_conversation_resolution = optional(bool)<br/>      allows_deletions                = optional(bool)<br/>      allows_force_pushes             = optional(bool)<br/>      force_push_bypassers            = optional(list(string))<br/>      lock_branch                     = optional(bool)<br/>      required_status_checks = optional(object({<br/>        strict   = optional(bool)<br/>        contexts = optional(list(string))<br/>      }))<br/>      required_pull_request_reviews = optional(object({<br/>        dismiss_stale_reviews           = optional(bool)<br/>        restrict_dismissals             = optional(bool)<br/>        dismissal_restrictions          = optional(list(string))<br/>        pull_request_bypassers          = optional(list(string))<br/>        require_code_owner_reviews      = optional(bool)<br/>        required_approving_review_count = optional(number)<br/>        require_last_push_approval      = optional(bool)<br/>      }))<br/>      restrict_pushes = optional(object({<br/>        blocks_creations = optional(bool)<br/>        push_allowances  = optional(list(string))<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_custom_properties"></a> [custom\_properties](#input\_custom\_properties) | Custom properties to set on the repository. Must be defined on the organization level first. | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_custom_property<br/>    property_name  = string<br/>    property_value = string<br/>    property_type  = optional(string, "string")<br/>  }))</pre> | `[]` | no |
+| <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed. | `string` | `"prod"` | no |
+| <a name="input_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#input\_delete\_branch\_on\_merge) | Automatically delete head branch after a pull request is merged | `bool` | `false` | no |
+| <a name="input_deploy_keys"></a> [deploy\_keys](#input\_deploy\_keys) | List of SSH deploy keys to add to the repository. Must be allowed on the org level. | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key<br/>    title     = string<br/>    key       = string<br/>    read_only = optional(bool, true)<br/>  }))</pre> | `[]` | no |
+| <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `null` | no |
+| <a name="input_enable_dependabot_security_updates"></a> [enable\_dependabot\_security\_updates](#input\_enable\_dependabot\_security\_updates) | Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well. | `bool` | `true` | no |
+| <a name="input_environments"></a> [environments](#input\_environments) | GitHub repository environments to create | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment<br/>    name                = string<br/>    wait_timer          = optional(number, null)<br/>    can_admins_bypass   = optional(bool, null)<br/>    prevent_self_review = optional(bool, null)<br/>    reviewers = optional(object({<br/>      teams = optional(list(string), []) # This is a team id, not a team name<br/>      users = optional(list(string), []) # This is a user id, not a username<br/>    }))<br/>    protected = optional(bool, false) # This is instead of deployment_branch_policy block. This module enforces 1:1 environment and branch name. Open a PR or issue if you disagree.<br/>    variables = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    secrets = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>  }))</pre> | `[]` | no |
+| <a name="input_gitignore_template"></a> [gitignore\_template](#input\_gitignore\_template) | Use the name of the template without the extension. For example, 'Haskell' | `string` | `null` | no |
+| <a name="input_has_discussions"></a> [has\_discussions](#input\_has\_discussions) | Set to true to enable GitHub Discussions on the repository | `bool` | `false` | no |
+| <a name="input_has_downloads"></a> [has\_downloads](#input\_has\_downloads) | Set to true to enable the GitHub Downloads features on the repository (deprecated) | `bool` | `false` | no |
+| <a name="input_has_issues"></a> [has\_issues](#input\_has\_issues) | Set to true to enable the GitHub Issues features on the repository | `bool` | `false` | no |
+| <a name="input_has_projects"></a> [has\_projects](#input\_has\_projects) | Set to true to enable the GitHub Projects features on the repository | `bool` | `false` | no |
+| <a name="input_has_wiki"></a> [has\_wiki](#input\_has\_wiki) | Set to true to enable the GitHub Wiki features on the repository | `bool` | `false` | no |
+| <a name="input_homepage_url"></a> [homepage\_url](#input\_homepage\_url) | URL of a page describing the project. | `string` | `null` | no |
+| <a name="input_ignore_vulnerability_alerts_during_read"></a> [ignore\_vulnerability\_alerts\_during\_read](#input\_ignore\_vulnerability\_alerts\_during\_read) | n/a | `bool` | `false` | no |
+| <a name="input_is_template"></a> [is\_template](#input\_is\_template) | Set to true to tell GitHub that this is a template repository | `bool` | `false` | no |
+| <a name="input_issue_labels"></a> [issue\_labels](#input\_issue\_labels) | A list of issue label | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label<br/>    name        = string<br/>    color       = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
+| <a name="input_license_template"></a> [license\_template](#input\_license\_template) | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0' | `string` | `null` | no |
+| <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `null` | no |
+| <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `null` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the GitHub repository | `string` | n/a | yes |
+| <a name="input_pages"></a> [pages](#input\_pages) | GitHub Pages configuration for the repository. ⚠️ Note: Requires a paid GitHub plan and ⚠️ the source branch must exist before applying this configuration - the first apply always fails - disable on the first apply. ⚠️ | <pre>object({<br/>    build_type = optional(string, "legacy")<br/>    cname      = optional(string, null)<br/>    source = object({<br/>      branch = string<br/>      path   = string<br/>    })<br/>  })</pre> | `null` | no |
+| <a name="input_repository_files"></a> [repository\_files](#input\_repository\_files) | A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. | <pre>map(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file<br/>    content                         = string<br/>    branch                          = optional(string, null)<br/>    commit_sha                      = optional(string, null)<br/>    commit_message                  = optional(string, "Managed by Terraform")<br/>    commit_author                   = optional(string, null)<br/>    commit_email                    = optional(string, null)<br/>    overwrite_on_create             = optional(bool, false)<br/>    autocreate_branch               = optional(bool, true)<br/>    autocreate_branch_source_branch = optional(string, null)<br/>    autocreate_branch_source_sha    = optional(string, null)<br/>  }))</pre> | `{}` | no |
+| <a name="input_rulesets"></a> [rulesets](#input\_rulesets) | List of GitHub repository ruleset configurations | `any` | `[]` | no |
+| <a name="input_security_and_analysis"></a> [security\_and\_analysis](#input\_security\_and\_analysis) | Security and analysis features for the repository | <pre>object({<br/>    advanced_security = object({<br/>      status = string<br/>    })<br/>    secret_scanning = object({<br/>      status = string<br/>    })<br/>    secret_scanning_push_protection = object({<br/>      status = string<br/>    })<br/>  })</pre> | `null` | no |
+| <a name="input_squash_merge_commit_message"></a> [squash\_merge\_commit\_message](#input\_squash\_merge\_commit\_message) | The format of the commit message body when using squash merge. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"COMMIT_MESSAGES"` | no |
+| <a name="input_squash_merge_commit_title"></a> [squash\_merge\_commit\_title](#input\_squash\_merge\_commit\_title) | The format of the commit message when using squash merge. Can be one of: PR\_TITLE, COMMIT\_OR\_PR\_TITLE | `string` | `"COMMIT_OR_PR_TITLE"` | no |
+| <a name="input_teams"></a> [teams](#input\_teams) | List of repository teams to add to the repository | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator<br/>    team_id    = string<br/>    permission = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_template"></a> [template](#input\_template) | A repo to use as a template for the new repository. ⚠️ Removing this block changes default branch to 'prod'. ⚠️ | <pre>object({<br/>    owner                = string<br/>    repository           = string<br/>    include_all_branches = bool<br/>  })</pre> | `null` | no |
+| <a name="input_topics"></a> [topics](#input\_topics) | List of topics to add to the repository | `list(string)` | `null` | no |
+| <a name="input_users"></a> [users](#input\_users) | List of repository collaborators to add to the repository | <pre>list(object({<br/>    username   = string<br/>    permission = string # pull, push, admin, maintain, triage<br/>  }))</pre> | `[]` | no |
+| <a name="input_visibility"></a> [visibility](#input\_visibility) | Visibility of the GitHub repository (public, private, or internal) | `string` | `"private"` | no |
+| <a name="input_vulnerability_alerts"></a> [vulnerability\_alerts](#input\_vulnerability\_alerts) | Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable\_dependabot\_security\_updates is true. | `bool` | `false` | no |
+| <a name="input_web_commit_signoff_required"></a> [web\_commit\_signoff\_required](#input\_web\_commit\_signoff\_required) | Require contributors to sign off on web-based commits | `bool` | `false` | no |
+| <a name="input_webhooks"></a> [webhooks](#input\_webhooks) | List of webhook configurations to create for the repository | <pre>list(object({<br/>    url          = string<br/>    content_type = string<br/>    secret       = optional(string)<br/>    insecure_ssl = optional(bool, false)<br/>    active       = optional(bool, true)<br/>    events       = list(string)<br/>  }))</pre> | `[]` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_actions_environment_secrets"></a> [actions\_environment\_secrets](#output\_actions\_environment\_secrets) | All available outputs from github\_actions\_environment\_secret.this |
+| <a name="output_actions_environment_variables"></a> [actions\_environment\_variables](#output\_actions\_environment\_variables) | All available outputs from github\_actions\_environment\_variable.this |
+| <a name="output_actions_repository_permissions"></a> [actions\_repository\_permissions](#output\_actions\_repository\_permissions) | All available outputs from github\_actions\_repository\_permissions.this |
+| <a name="output_actions_secrets"></a> [actions\_secrets](#output\_actions\_secrets) | All available outputs from github\_actions\_secret.this |
+| <a name="output_actions_variables"></a> [actions\_variables](#output\_actions\_variables) | All available outputs from github\_actions\_variable.this |
+| <a name="output_branch_default"></a> [branch\_default](#output\_branch\_default) | All available outputs from github\_branch\_default.this |
+| <a name="output_branch_protections"></a> [branch\_protections](#output\_branch\_protections) | All available outputs from github\_branch\_protection.this |
+| <a name="output_branches"></a> [branches](#output\_branches) | All available outputs from github\_branch.this |
+| <a name="output_issue_labels"></a> [issue\_labels](#output\_issue\_labels) | All available outputs from github\_issue\_label.this |
+| <a name="output_repository"></a> [repository](#output\_repository) | All available outputs github\_repository.this |
+| <a name="output_repository_autolink_references"></a> [repository\_autolink\_references](#output\_repository\_autolink\_references) | All available outputs from github\_repository\_autolink\_reference.this |
+| <a name="output_repository_collaborators"></a> [repository\_collaborators](#output\_repository\_collaborators) | All available outputs from github\_repository\_collaborator.this |
+| <a name="output_repository_custom_properties"></a> [repository\_custom\_properties](#output\_repository\_custom\_properties) | All available outputs from github\_repository\_custom\_property.this |
+| <a name="output_repository_dependabot_security_updates"></a> [repository\_dependabot\_security\_updates](#output\_repository\_dependabot\_security\_updates) | All available outputs from github\_repository\_dependabot\_security\_updates.this |
+| <a name="output_repository_deploy_keys"></a> [repository\_deploy\_keys](#output\_repository\_deploy\_keys) | All available outputs from github\_repository\_deploy\_key.this |
+| <a name="output_repository_environment_deployment_policies"></a> [repository\_environment\_deployment\_policies](#output\_repository\_environment\_deployment\_policies) | All available outputs from github\_repository\_environment\_deployment\_policy.this |
+| <a name="output_repository_environments"></a> [repository\_environments](#output\_repository\_environments) | All available outputs from github\_repository\_environment.this |
+| <a name="output_repository_files"></a> [repository\_files](#output\_repository\_files) | All available outputs from github\_repository\_file.this |
+| <a name="output_repository_topics"></a> [repository\_topics](#output\_repository\_topics) | All available outputs from github\_repository\_topics.this |
+| <a name="output_repository_webhooks"></a> [repository\_webhooks](#output\_repository\_webhooks) | All available outputs from github\_repository\_webhook.this |
+| <a name="output_team_repositories"></a> [team\_repositories](#output\_team\_repositories) | All available outputs from github\_team\_repository.this |
+
+
+
+## More examples
+### Bootstrap aka chicken-egg example - manage the repository where this module is used
   ```hcl
 # main.tf
 module "this" {
@@ -41,43 +184,8 @@ module "this" {
 
   archive_on_destroy = false
 
-  bootstrap_tf_cloud = { # This is example. Replace with your own valued
-    tf_cloud_organization = var.tf_cloud_organization
-    tf_cloud_workspace    = var.tf_cloud_workspace
-    terraform_version     = try(file("${abspath(path.root)}/.terraform-version"), "latest")
-    tfe_token             = var.tfe_token
-    github_token          = var.github_token
-  }
+  bootstrap_me = true
 }
-
-variable "tf_cloud_organization" {
-  description = "Terraform Cloud Organization name. Create it manually first."
-  type        = string
-}
-
-variable "tf_cloud_workspace" {
-  description = "Terraform Cloud Workspace name. Create it manually first."
-  type        = string
-}
-
-
-variable "tfe_token" {
-  description = "Terraform Cloud token. Create it manually first."
-  type        = string
-  sensitive   = true
-}
-
-variable "github_token" {
-  description = "GitHub token. Create it manually first."
-  type        = string
-  sensitive   = true
-}
-
-output "help_message" {
-  description = "Help message"
-  value       = "After the first apply run `terraform init` again. Answer 'yes' to the prompt about migrating the existing state."
-}
-
 
 ```
 
@@ -374,6 +482,7 @@ resource "tls_private_key" "this" {
 
 
 ### Importing existing repository example
+The best part about importing existing resources is that provider does not treat existing configurations as existing resources, but simply overwrites them. You only have to import `github_repository` resource.  
 ```hcl
 import {
   to = module.quick_ops.github_repository.this
@@ -391,157 +500,6 @@ module "quick_ops" {
 }
 
 ```
-
-## Requirements
-
-| Name | Version |
-|------|---------|
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.6.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.6.0 |
-| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
-| <a name="provider_tfe"></a> [tfe](#provider\_tfe) | n/a |
-
-## Modules
-
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [github_actions_environment_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_secret) | resource |
-| [github_actions_environment_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_variable) | resource |
-| [github_actions_repository_permissions.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_permissions) | resource |
-| [github_actions_secret.tfe_token](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
-| [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
-| [github_actions_variable.tf_version](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
-| [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
-| [github_branch.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch) | resource |
-| [github_branch_default.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
-| [github_branch_protection.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection) | resource |
-| [github_issue_label.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label) | resource |
-| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
-| [github_repository_autolink_reference.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference) | resource |
-| [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
-| [github_repository_custom_property.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_custom_property) | resource |
-| [github_repository_dependabot_security_updates.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_dependabot_security_updates) | resource |
-| [github_repository_deploy_key.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
-| [github_repository_environment.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment) | resource |
-| [github_repository_environment_deployment_policy.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment_deployment_policy) | resource |
-| [github_repository_file.backend](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_file.gha](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_file.gitignore](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_file.release_rc](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_file.tf_version](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_file.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_ruleset.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset) | resource |
-| [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
-| [github_repository_webhook.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_webhook) | resource |
-| [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
-| [terraform_data.this](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [terraform_data.this_destroy](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [tfe_variable.github_token](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
-| [tfe_variable.github_token_env](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
-| [tfe_variable.tfe_token](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
-| [tfe_variable.tfe_token_env](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/variable) | resource |
-| [github_repository.template](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
-| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
-| [tfe_workspace.this](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/workspace) | data source |
-
-
-
-The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
-The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
-Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
-When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
-
-
-`auto_init` is always true for other resources to work.  
-`default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
-➡️ Scroll right ➡️ to see Default values.
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_actions_repository_permissions"></a> [actions\_repository\_permissions](#input\_actions\_repository\_permissions) | GitHub Actions repository permissions configuration | `any` | `null` | no |
-| <a name="input_actions_secrets"></a> [actions\_secrets](#input\_actions\_secrets) | GitHub Actions secrets to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_actions_variables"></a> [actions\_variables](#input\_actions\_variables) | GitHub Actions variables to set on the repository | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Set to true to allow auto-merging pull requests on the repository | `bool` | `false` | no |
-| <a name="input_allow_merge_commit"></a> [allow\_merge\_commit](#input\_allow\_merge\_commit) | Set to false to disable merge commits on the repository | `bool` | `true` | no |
-| <a name="input_allow_rebase_merge"></a> [allow\_rebase\_merge](#input\_allow\_rebase\_merge) | Set to false to disable rebase merges on the repository | `bool` | `true` | no |
-| <a name="input_allow_squash_merge"></a> [allow\_squash\_merge](#input\_allow\_squash\_merge) | Set to false to disable squash merges on the repository | `bool` | `true` | no |
-| <a name="input_archive_on_destroy"></a> [archive\_on\_destroy](#input\_archive\_on\_destroy) | Set to true to archive the repository instead of deleting it when the resource is destroyed | `bool` | `true` | no |
-| <a name="input_archived"></a> [archived](#input\_archived) | Specifies if the repository should be archived | `bool` | `false` | no |
-| <a name="input_autolink_references"></a> [autolink\_references](#input\_autolink\_references) | A list of autolink references to create for the repository | <pre>list(object({<br/>    key_prefix          = string<br/>    target_url_template = string<br/>    is_alphanumeric     = optional(bool)<br/>  }))</pre> | `[]` | no |
-| <a name="input_bootstrap_tf_cloud"></a> [bootstrap\_tf\_cloud](#input\_bootstrap\_tf\_cloud) | When not empty, congigures Terraform cloud backend and GitHub Aciton. After inital apply most of changes to this block are IGNORED. | <pre>object({<br/>    tf_cloud_organization = optional(string)<br/>    tf_cloud_workspace    = optional(string)<br/>    terraform_version     = optional(string, "latest") # https://github.com/hashicorp/setup-terraform?tab=readme-ov-file#inputs<br/>    tfe_token             = optional(string)           # After the first apply, all further changes are ignored.<br/>    github_token          = optional(string)           # After the first apply, all further changes are ignored.<br/>  })</pre> | `null` | no |
-| <a name="input_branches"></a> [branches](#input\_branches) | List of branch configurations to create | <pre>list(object({<br/>    name          = string<br/>    source_branch = optional(string) # By default, the source branch is the default branch.<br/>    source_sha    = optional(string)<br/>    # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection<br/>    protection = optional(object({ # Empty object means to protect with defaults<br/>      # `pattern` is always name of the branch. This is how this module works.<br/>      enforce_admins                  = optional(bool)<br/>      require_signed_commits          = optional(bool)<br/>      required_linear_history         = optional(bool)<br/>      require_conversation_resolution = optional(bool)<br/>      allows_deletions                = optional(bool)<br/>      allows_force_pushes             = optional(bool)<br/>      force_push_bypassers            = optional(list(string))<br/>      lock_branch                     = optional(bool)<br/>      required_status_checks = optional(object({<br/>        strict   = optional(bool)<br/>        contexts = optional(list(string))<br/>      }))<br/>      required_pull_request_reviews = optional(object({<br/>        dismiss_stale_reviews           = optional(bool)<br/>        restrict_dismissals             = optional(bool)<br/>        dismissal_restrictions          = optional(list(string))<br/>        pull_request_bypassers          = optional(list(string))<br/>        require_code_owner_reviews      = optional(bool)<br/>        required_approving_review_count = optional(number)<br/>        require_last_push_approval      = optional(bool)<br/>      }))<br/>      restrict_pushes = optional(object({<br/>        blocks_creations = optional(bool)<br/>        push_allowances  = optional(list(string))<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
-| <a name="input_custom_properties"></a> [custom\_properties](#input\_custom\_properties) | Custom properties to set on the repository. Must be defined on the organization level first. | <pre>list(object({<br/>    property_name  = string<br/>    property_value = string<br/>    property_type  = optional(string, "string")<br/>  }))</pre> | `[]` | no |
-| <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed. | `string` | `"prod"` | no |
-| <a name="input_delete_branch_on_merge"></a> [delete\_branch\_on\_merge](#input\_delete\_branch\_on\_merge) | Automatically delete head branch after a pull request is merged | `bool` | `false` | no |
-| <a name="input_deploy_keys"></a> [deploy\_keys](#input\_deploy\_keys) | List of SSH deploy keys to add to the repository. Must be allowed on the org level. | <pre>list(object({<br/>    title     = string<br/>    key       = string<br/>    read_only = optional(bool, true)<br/>  }))</pre> | `[]` | no |
-| <a name="input_description"></a> [description](#input\_description) | Description of the GitHub repository | `string` | `null` | no |
-| <a name="input_enable_dependabot_security_updates"></a> [enable\_dependabot\_security\_updates](#input\_enable\_dependabot\_security\_updates) | Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well. | `bool` | `true` | no |
-| <a name="input_environments"></a> [environments](#input\_environments) | GitHub repository environments to create | <pre>list(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_environment<br/>    name                = string<br/>    wait_timer          = optional(number, null)<br/>    can_admins_bypass   = optional(bool, null)<br/>    prevent_self_review = optional(bool, null)<br/>    reviewers = optional(object({<br/>      teams = optional(list(string), []) # This is a team id, not a team name<br/>      users = optional(list(string), []) # This is a user id, not a username<br/>    }))<br/>    protected = optional(bool, false) # This is instead of deployment_branch_policy block. This module enforces 1:1 environment and branch name. Open a PR or issue if you disagree.<br/>    variables = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    secrets = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>  }))</pre> | `[]` | no |
-| <a name="input_gitignore_template"></a> [gitignore\_template](#input\_gitignore\_template) | Use the name of the template without the extension. For example, 'Haskell' | `string` | `null` | no |
-| <a name="input_has_discussions"></a> [has\_discussions](#input\_has\_discussions) | Set to true to enable GitHub Discussions on the repository | `bool` | `false` | no |
-| <a name="input_has_downloads"></a> [has\_downloads](#input\_has\_downloads) | Set to true to enable the GitHub Downloads features on the repository (deprecated) | `bool` | `false` | no |
-| <a name="input_has_issues"></a> [has\_issues](#input\_has\_issues) | Set to true to enable the GitHub Issues features on the repository | `bool` | `false` | no |
-| <a name="input_has_projects"></a> [has\_projects](#input\_has\_projects) | Set to true to enable the GitHub Projects features on the repository | `bool` | `false` | no |
-| <a name="input_has_wiki"></a> [has\_wiki](#input\_has\_wiki) | Set to true to enable the GitHub Wiki features on the repository | `bool` | `false` | no |
-| <a name="input_homepage_url"></a> [homepage\_url](#input\_homepage\_url) | URL of a page describing the project. | `string` | `null` | no |
-| <a name="input_is_template"></a> [is\_template](#input\_is\_template) | Set to true to tell GitHub that this is a template repository | `bool` | `false` | no |
-| <a name="input_issue_labels"></a> [issue\_labels](#input\_issue\_labels) | A list of issue label | <pre>list(object({<br/>    name        = string<br/>    color       = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
-| <a name="input_license_template"></a> [license\_template](#input\_license\_template) | Use the name of the template without the extension. For example, 'mit' or 'mpl-2.0' | `string` | `null` | no |
-| <a name="input_merge_commit_message"></a> [merge\_commit\_message](#input\_merge\_commit\_message) | The format of the commit message body when using merge commit. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `null` | no |
-| <a name="input_merge_commit_title"></a> [merge\_commit\_title](#input\_merge\_commit\_title) | The format of the commit message when using merge commit. Can be one of: PR\_TITLE, MERGE\_MESSAGE | `string` | `null` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of the GitHub repository | `string` | n/a | yes |
-| <a name="input_pages"></a> [pages](#input\_pages) | GitHub Pages configuration for the repository. ⚠️ Note: Requires a paid GitHub plan and ⚠️ the source branch must exist before applying this configuration - the first apply always fails - disable on the first apply. ⚠️ | <pre>object({<br/>    build_type = optional(string, "legacy")<br/>    cname      = optional(string, null)<br/>    source = object({<br/>      branch = string<br/>      path   = string<br/>    })<br/>  })</pre> | `null` | no |
-| <a name="input_repository_files"></a> [repository\_files](#input\_repository\_files) | A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. | <pre>map(object({<br/>    content                         = string<br/>    branch                          = optional(string, null)<br/>    commit_sha                      = optional(string, null)<br/>    commit_message                  = optional(string, "Managed by Terraform")<br/>    commit_author                   = optional(string, null)<br/>    commit_email                    = optional(string, null)<br/>    overwrite_on_create             = optional(bool, false)<br/>    autocreate_branch               = optional(bool, true)<br/>    autocreate_branch_source_branch = optional(string, null)<br/>    autocreate_branch_source_sha    = optional(string, null)<br/>  }))</pre> | `{}` | no |
-| <a name="input_ruleset"></a> [ruleset](#input\_ruleset) | add later | <pre>list(object({<br/>    name        = string<br/>    target      = string # TODO / add validation branch or tag<br/>    enforcement = string # TODO / add validation for values: disabled, active, evaluate<br/>  }))</pre> | `[]` | no |
-| <a name="input_security_and_analysis"></a> [security\_and\_analysis](#input\_security\_and\_analysis) | Security and analysis features for the repository | <pre>object({<br/>    advanced_security = object({<br/>      status = string<br/>    })<br/>    secret_scanning = object({<br/>      status = string<br/>    })<br/>    secret_scanning_push_protection = object({<br/>      status = string<br/>    })<br/>  })</pre> | `null` | no |
-| <a name="input_squash_merge_commit_message"></a> [squash\_merge\_commit\_message](#input\_squash\_merge\_commit\_message) | The format of the commit message body when using squash merge. Can be one of: PR\_BODY, COMMIT\_MESSAGES, BLANK | `string` | `"COMMIT_MESSAGES"` | no |
-| <a name="input_squash_merge_commit_title"></a> [squash\_merge\_commit\_title](#input\_squash\_merge\_commit\_title) | The format of the commit message when using squash merge. Can be one of: PR\_TITLE, COMMIT\_OR\_PR\_TITLE | `string` | `"COMMIT_OR_PR_TITLE"` | no |
-| <a name="input_teams"></a> [teams](#input\_teams) | List of repository teams to add to the repository | <pre>list(object({<br/>    team_id    = string<br/>    permission = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_template"></a> [template](#input\_template) | A repo to use as a template for the new repository. ⚠️ Removing this block changes default branch to 'prod'. ⚠️ | <pre>object({<br/>    owner                = string<br/>    repository           = string<br/>    include_all_branches = bool<br/>  })</pre> | `null` | no |
-| <a name="input_topics"></a> [topics](#input\_topics) | List of topics to add to the repository | `list(string)` | `null` | no |
-| <a name="input_users"></a> [users](#input\_users) | List of repository collaborators to add to the repository | <pre>list(object({<br/>    username   = string<br/>    permission = string # pull, push, admin, maintain, triage<br/>  }))</pre> | `[]` | no |
-| <a name="input_visibility"></a> [visibility](#input\_visibility) | Visibility of the GitHub repository (public, private, or internal) | `string` | `"private"` | no |
-| <a name="input_vulnerability_alerts"></a> [vulnerability\_alerts](#input\_vulnerability\_alerts) | Set to true to enable security alerts for vulnerable dependencies. Will be automatically enabled if enable\_dependabot\_security\_updates is true. | `bool` | `false` | no |
-| <a name="input_web_commit_signoff_required"></a> [web\_commit\_signoff\_required](#input\_web\_commit\_signoff\_required) | Require contributors to sign off on web-based commits | `bool` | `false` | no |
-| <a name="input_webhooks"></a> [webhooks](#input\_webhooks) | List of webhook configurations to create for the repository | <pre>list(object({<br/>    url          = string<br/>    content_type = string<br/>    secret       = optional(string)<br/>    insecure_ssl = optional(bool, false)<br/>    active       = optional(bool, true)<br/>    events       = list(string)<br/>  }))</pre> | `[]` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| <a name="output_actions_environment_secrets"></a> [actions\_environment\_secrets](#output\_actions\_environment\_secrets) | Environment secrets for GitHub Actions |
-| <a name="output_actions_environment_variables"></a> [actions\_environment\_variables](#output\_actions\_environment\_variables) | Environment variables for GitHub Actions |
-| <a name="output_actions_repository_permissions"></a> [actions\_repository\_permissions](#output\_actions\_repository\_permissions) | GitHub Actions permissions configuration |
-| <a name="output_actions_secrets"></a> [actions\_secrets](#output\_actions\_secrets) | GitHub Actions secrets |
-| <a name="output_actions_variables"></a> [actions\_variables](#output\_actions\_variables) | GitHub Actions variables for the repository |
-| <a name="output_branch_default"></a> [branch\_default](#output\_branch\_default) | Default branch configuration |
-| <a name="output_branch_protections"></a> [branch\_protections](#output\_branch\_protections) | Branch protection rules |
-| <a name="output_branches"></a> [branches](#output\_branches) | Repository branches |
-| <a name="output_issue_labels"></a> [issue\_labels](#output\_issue\_labels) | Issue labels |
-| <a name="output_repository"></a> [repository](#output\_repository) | The full repository details |
-| <a name="output_repository_autolink_references"></a> [repository\_autolink\_references](#output\_repository\_autolink\_references) | Repository autolink references |
-| <a name="output_repository_collaborators"></a> [repository\_collaborators](#output\_repository\_collaborators) | Repository collaborators |
-| <a name="output_repository_custom_properties"></a> [repository\_custom\_properties](#output\_repository\_custom\_properties) | Repository custom properties |
-| <a name="output_repository_dependabot_security_updates"></a> [repository\_dependabot\_security\_updates](#output\_repository\_dependabot\_security\_updates) | Dependabot security updates configuration |
-| <a name="output_repository_deploy_keys"></a> [repository\_deploy\_keys](#output\_repository\_deploy\_keys) | Repository deploy keys |
-| <a name="output_repository_environment_deployment_policies"></a> [repository\_environment\_deployment\_policies](#output\_repository\_environment\_deployment\_policies) | Environment deployment policies |
-| <a name="output_repository_environments"></a> [repository\_environments](#output\_repository\_environments) | Repository environments |
-| <a name="output_repository_files"></a> [repository\_files](#output\_repository\_files) | Repository files |
-| <a name="output_repository_topics"></a> [repository\_topics](#output\_repository\_topics) | Repository topics |
-| <a name="output_repository_webhooks"></a> [repository\_webhooks](#output\_repository\_webhooks) | Repository webhooks |
-| <a name="output_team_repositories"></a> [team\_repositories](#output\_team\_repositories) | Team repository permissions |
-
-
 <!-- END_TF_DOCS -->
 
 ## Troubleshooting
