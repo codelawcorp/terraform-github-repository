@@ -132,6 +132,23 @@ module "another_repo" {
         {
           name  = "ENVIRONMENT"
           value = "production"
+        },
+        {
+          rulesets = [
+            {
+              name        = "Protect main branch"
+              target      = "branch"
+              enforcement = "active"
+              rules = {
+                branch_name_pattern = {
+                  operator = "starts_with"
+                  pattern  = "main"
+                  name     = "main-branch-rule"
+                  negate   = false
+                }
+              }
+            }
+          ]
         }
       ]
       secrets = [
