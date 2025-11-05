@@ -157,20 +157,20 @@ module "another_repo" {
     }
   ]
   rulesets = [
-       {
-        name        = "Protect main branch"
-        target      = "branch"
-        enforcement = "active"
-        rules = {
-          branch_name_pattern = {
-            operator = "starts_with"
-            pattern  = "main"
-            name     = "main-branch-rule"
-            negate   = false
-          }
+    {
+      name        = "Protect main branch"
+      target      = "branch"
+      enforcement = "active"
+      rules = {
+        branch_name_pattern = {
+          operator = "starts_with"
+          pattern  = "main"
+          name     = "main-branch-rule"
+          negate   = false
         }
       }
-    ]
+    }
+  ]
 }
 
 
