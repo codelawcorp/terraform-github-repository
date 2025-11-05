@@ -178,7 +178,7 @@ variable "is_template" {
 variable "default_branch" {
   description = "The name of the default branch of the repository. ⚠️ Ignored if template is set. ⚠️. 'main' is not allowed."
   type        = string
-  default     = "prod"
+  default     = "main"
   nullable    = false
 
   # validation {
@@ -435,7 +435,7 @@ variable "custom_properties" {
 variable "enable_dependabot_security_updates" {
   description = "Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well."
   type        = bool
-  default     = true
+  default     = false
   nullable    = false
 }
 

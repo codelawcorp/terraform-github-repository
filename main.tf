@@ -121,7 +121,7 @@ data "github_repository" "this" {
 
 
 resource "github_branch_default" "this" {
-  # if  `data.github_repository.this.default_branc` means the repo was just created
+  # if  `data.github_repository.this.default_branch` is empty means the repo was just created
   count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && coalesce(data.github_repository.this.default_branch, "main") != "main" ? 1 : 0
   # count = try(data.github_repository.template[0].default_branch, "no template used") != var.default_branch &&coalesce(data.github_repository.this.default_branch, "main") != "main"  ? 1 : 0 # if  `data.github_repository.this.default_branc` means the repo was just created
 
@@ -132,8 +132,9 @@ resource "github_branch_default" "this" {
   rename = true
 }
 
-resource "github_branch" "this" {
-  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch }
+# This should not manage the default branch. Otherwise it fails to delete the default branch upon module destroy.
+resource "github_branch" "this" { # seems like it does not fail when the branch exists already, but it fails to delete the default branch upon module destroy
+  for_each = { for branch in var.branches : branch.name => branch if branch.name != var.default_branch && try(data.github_repository.template[0].default_branch, null) != branch.name }
 
   repository    = github_repository.this.name
   branch        = each.value.name
@@ -228,8 +229,9 @@ resource "github_repository_custom_property" "this" {
 
 # Then enable Dependabot security updates
 resource "github_repository_dependabot_security_updates" "this" {
+  count      = var.enable_dependabot_security_updates ? 1 : 0
   repository = github_repository.this.name
-  enabled    = var.enable_dependabot_security_updates
+  enabled    = true # False does not work properly. Getting this error Error: DELETE https://api.github.com/repos/codelawcorp-test/bootstrap/automated-security-fixes: 422 Vulnerability alerts must be enabled to configure automated security fixes. []
 }
 
 # Otherwise topics are managed by the github_repository resource
@@ -390,7 +392,7 @@ resource "github_repository_file" "this" {
 # }
 
 resource "github_issue_label" "this" {
-  for_each = { for label in var.issue_labels : label.name => label }
+  for_each = { for label in try(var.issue_labels, []) : label.name => label }
 
   repository  = github_repository.this.name
   name        = each.value.name
