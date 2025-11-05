@@ -441,7 +441,7 @@ resource "github_actions_repository_permissions" "this" {
 
 #  If the same rule is defined in different ways across the aggregated rulesets, the most restrictive version of the rule applies.
 resource "github_repository_ruleset" "this" {
-  for_each    = toset(var.rulesets)
+  for_each    = { for k, v in var.rulesets : v.name => v }
   repository  = github_repository.this.name
   name        = each.value.name
   target      = each.value.target
