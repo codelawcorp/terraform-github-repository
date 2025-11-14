@@ -447,15 +447,15 @@ resource "github_repository_ruleset" "this" {
   target      = each.value.target
   enforcement = each.value.enforcement
 
-  rules {} # Bypassing this annoying error: `At least one "rules" block is required`. This errors seems to be a bug in the provider, because it is being thrown even if no github_repository_ruleset are passed.
+  # Always create rules block (required by provider), populate when rules are provided
   dynamic "rules" {
-    for_each = try([each.value.rules], [])
+    for_each = [try(each.value.rules, {})]
     iterator = rule
     content {
       # enumerate known rule blocks (e.g., "pull_request", "required_status_checks", etc.)
       # branch_name_pattern= try(rules.value.branch _name_pattern, null)
       dynamic "branch_name_pattern" {
-        for_each = try([rule.value.branch_name_pattern], [])
+        for_each = try(rule.value.branch_name_pattern != null ? [rule.value.branch_name_pattern] : [], [])
         content {
           operator = try(branch_name_pattern.value.operator, null)
           pattern  = try(branch_name_pattern.value.pattern, null)
@@ -465,7 +465,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "commit_author_email_pattern" {
-        for_each = try([rule.value.commit_author_email_pattern], [])
+        for_each = try(rule.value.commit_author_email_pattern != null ? [rule.value.commit_author_email_pattern] : [], [])
         content {
           operator = try(commit_author_email_pattern.value.operator, null)
           pattern  = try(commit_author_email_pattern.value.pattern, null)
@@ -476,7 +476,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "commit_message_pattern" {
-        for_each = try([rule.value.commit_message_pattern], [])
+        for_each = try(rule.value.commit_message_pattern != null ? [rule.value.commit_message_pattern] : [], [])
         content {
           operator = try(commit_message_pattern.value.operator, null)
           pattern  = try(commit_message_pattern.value.pattern, null)
@@ -487,7 +487,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "committer_email_pattern" {
-        for_each = try([rule.value.committer_email_pattern], [])
+        for_each = try(rule.value.committer_email_pattern != null ? [rule.value.committer_email_pattern] : [], [])
         content {
           operator = try(committer_email_pattern.value.operator, null)
           pattern  = try(committer_email_pattern.value.pattern, null)
@@ -497,7 +497,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "merge_queue" {
-        for_each = try(rule.value.merge_queue, [])
+        for_each = try(rule.value.merge_queue != null ? rule.value.merge_queue : [], [])
         content {
           check_response_timeout_minutes    = try(merge_queue.value.check_response_timeout_minutes, null)
           grouping_strategy                 = try(merge_queue.value.grouping_strategy, null)
@@ -510,7 +510,7 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "pull_request" {
-        for_each = try(rule.value.pull_request, [])
+        for_each = try(rule.value.pull_request != null ? rule.value.pull_request : [], [])
         content {
           dismiss_stale_reviews_on_push     = try(pull_request.value.dismiss_stale_reviews_on_push, null)
           require_code_owner_review         = try(pull_request.value.require_code_owner_review, null)
@@ -521,23 +521,23 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "required_deployments" {
-        for_each = try(rule.value.required_deployments, [])
+        for_each = try(rule.value.required_deployments != null ? rule.value.required_deployments : [], [])
         content {
           required_deployment_environments = try(required_deployments.value.required_deployment_environments, [])
         }
       }
 
       dynamic "required_status_checks" {
-        for_each = try(rule.value.required_status_checks, [])
+        for_each = try(rule.value.required_status_checks != null ? rule.value.required_status_checks : [], [])
         content {
           dynamic "required_check" {
-            for_each = try(rule.value.required_check, [])
+            for_each = try(required_status_checks.value.required_check != null ? required_status_checks.value.required_check : [], [])
             content {
               context        = try(required_check.value.context, null)
               integration_id = try(required_check.value.integration_id, null)
             }
           }
-          strict_required_status_checks_policy = try(required_status_checks.value.strict, null)
+          strict_required_status_checks_policy = try(required_status_checks.value.strict_required_status_checks_policy, null)
           do_not_enforce_on_create             = try(required_status_checks.value.do_not_enforce_on_create, null)
         }
       }
@@ -545,7 +545,7 @@ resource "github_repository_ruleset" "this" {
 
 
       dynamic "tag_name_pattern" {
-        for_each = try([rule.value.tag_name_pattern], [])
+        for_each = try(rule.value.tag_name_pattern != null ? [rule.value.tag_name_pattern] : [], [])
         content {
           operator = try(tag_name_pattern.value.operator, null)
           pattern  = try(tag_name_pattern.value.pattern, null)
@@ -555,11 +555,11 @@ resource "github_repository_ruleset" "this" {
       }
 
       dynamic "required_code_scanning" {
-        for_each = try([rule.value.required_code_scanning], [])
+        for_each = try(rule.value.required_code_scanning != null ? [rule.value.required_code_scanning] : [], [])
         content {
-
+          # Only create tool block if tool is provided (required by provider)
           dynamic "required_code_scanning_tool" {
-            for_each = try([required_code_scanning.value.required_code_scanning_tool], [])
+            for_each = try(required_code_scanning.value.required_code_scanning_tool != null ? [required_code_scanning.value.required_code_scanning_tool] : [], [])
             content {
               alerts_threshold          = try(required_code_scanning_tool.value.alerts_threshold, null)
               security_alerts_threshold = try(required_code_scanning_tool.value.security_alerts_threshold, null)
