@@ -158,14 +158,145 @@ module "another_repo" {
   ]
   rulesets = [
     {
-      name        = "Protect main branch"
+      name        = "Comprehensive Ruleset Example"
       target      = "branch"
       enforcement = "active"
+
+      # Conditions to specify which branches this ruleset applies to
+      conditions = {
+        ref_name = {
+          include = ["main", "develop", "release/*"]
+          exclude = ["feature/*", "draft/*"]
+        }
+      }
+
+      # Bypass actors who can bypass this ruleset
+      # Note: actor_id must be a valid user/team/app ID when actor_type is not OrganizationAdmin
+      # bypass_actors = [
+      #   {
+      #     actor_id   = "12345678" # Set to actual actor ID (user/team/app ID) when needed
+      #     actor_type = "Team" # Options: OrganizationAdmin, RepositoryRole, Team, Integration
+      #     bypass_mode = "always" # Options: always, pull_request
+      #   }
+      # ]
+
+      # All available rules
       rules = {
+        # Branch name pattern rule
         branch_name_pattern = {
-          operator = "starts_with"
+          name     = "Branch Name Pattern Rule"
+          operator = "starts_with" # Options: starts_with, ends_with, contains, regex
           pattern  = "main"
-          name     = "main-branch-rule"
+          negate   = false
+        }
+
+        # Commit author email pattern rule
+        commit_author_email_pattern = {
+          name     = "Commit Author Email Pattern"
+          operator = "ends_with" # Options: starts_with, ends_with, contains, regex
+          pattern  = "@company.com"
+          negate   = false
+        }
+
+        # Commit message pattern rule
+        commit_message_pattern = {
+          name     = "Commit Message Pattern"
+          operator = "regex" # Options: starts_with, ends_with, contains, regex
+          pattern  = "^(feat|fix|docs|style|refactor|perf|test|chore)(\\(.+\\))?: .+"
+          negate   = false
+        }
+
+        # Committer email pattern rule
+        committer_email_pattern = {
+          name     = "Committer Email Pattern"
+          operator = "ends_with"
+          pattern  = "@company.com"
+          negate   = false
+        }
+
+        # Note: tag_name_pattern cannot be used with branch_name_pattern in the same ruleset
+        # Use a separate ruleset with target = "tag" for tag name patterns
+
+        # Merge queue configuration
+        # Note: merge_method must match repository's allowed merge types (allow_merge_commit, allow_squash_merge, allow_rebase_merge)
+        merge_queue = [
+          {
+            check_response_timeout_minutes    = 5
+            grouping_strategy                 = "ALLGREEN" # Options: ALLGREEN, HEADGREEN
+            max_entries_to_build              = 10
+            max_entries_to_merge              = 3
+            merge_method                      = "SQUASH" # Options: MERGE, SQUASH, REBASE (must match repository settings)
+            min_entries_to_merge              = 1
+            min_entries_to_merge_wait_minutes = 0
+          }
+        ]
+
+        # Pull request rules
+        pull_request = [
+          {
+            dismiss_stale_reviews_on_push     = true
+            require_code_owner_review         = true
+            require_last_push_approval        = true
+            required_approving_review_count   = 2
+            required_review_thread_resolution = true
+          }
+        ]
+
+        # Required deployments (must match actual environment names defined in environments)
+        required_deployments = [
+          {
+            required_deployment_environments = ["prod", "stg"]
+          }
+        ]
+
+        # Required status checks
+        required_status_checks = [
+          {
+            required_check = [
+              {
+                context        = "ci/build"
+                integration_id = null
+              },
+              {
+                context        = "ci/test"
+                integration_id = null
+              }
+            ]
+            strict_required_status_checks_policy = true
+            do_not_enforce_on_create             = false
+          }
+        ]
+
+        # Required code scanning
+        required_code_scanning = {
+          required_code_scanning_tool = {
+            alerts_threshold          = "none" # Options: none, errors, warnings, errors_and_warnings
+            security_alerts_threshold = "none" # Options: none, errors, warnings, errors_and_warnings
+            tool                      = "CodeQL" # Options: CodeQL, or custom tool name
+          }
+        }
+      }
+    },
+    {
+      name        = "Tag Protection Ruleset"
+      target      = "tag"
+      enforcement = "active"
+
+      # Conditions to specify which tags this ruleset applies to
+      conditions = {
+        ref_name = {
+          include = ["v*"]
+          exclude = []
+        }
+      }
+
+      # Tag-specific rules
+      rules = {
+        # Tag name pattern rule (can only be used with target = "tag")
+        tag_name_pattern = {
+          name     = "Tag Name Pattern"
+          operator = "regex"
+          pattern  = "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
           negate   = false
         }
       }
