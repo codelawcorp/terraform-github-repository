@@ -192,6 +192,15 @@ module "another_repo" {
 
       # All available rules
       rules = {
+        # Basic ref protection rules
+        creation = true  # Only allow users with bypass permission to create matching refs
+        update   = true  # Only allow users with bypass permission to update matching refs
+        update_allows_fetch_and_merge = true  # Branch can pull changes from upstream (requires update = true)
+        deletion = true  # Only allow users with bypass permissions to delete matching refs
+        required_linear_history = true  # Prevent merge commits from being pushed to matching branches
+        required_signatures = false  # Commits pushed to matching branches must have verified signatures
+        non_fast_forward = false  # Prevent non-fast-forward pushes to matching branches
+
         # Branch name pattern rule
         branch_name_pattern = {
           name     = "Branch Name Pattern Rule"

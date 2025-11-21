@@ -615,6 +615,15 @@ variable "rulesets" {
           tool                      = optional(string)
         }))
       }))
+
+      # Basic ref protection rules
+      creation = optional(bool)
+      update  = optional(bool)
+      update_allows_fetch_and_merge = optional(bool)
+      deletion = optional(bool)
+      required_linear_history = optional(bool)
+      required_signatures = optional(bool)
+      non_fast_forward = optional(bool)
     }))
   }))
 
