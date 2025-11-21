@@ -270,8 +270,8 @@ module "another_repo" {
         # Required code scanning
         required_code_scanning = {
           required_code_scanning_tool = {
-            alerts_threshold          = "none" # Options: none, errors, warnings, errors_and_warnings
-            security_alerts_threshold = "none" # Options: none, errors, warnings, errors_and_warnings
+            alerts_threshold          = "none"   # Options: none, errors, warnings, errors_and_warnings
+            security_alerts_threshold = "none"   # Options: none, errors, warnings, errors_and_warnings
             tool                      = "CodeQL" # Options: CodeQL, or custom tool name
           }
         }
