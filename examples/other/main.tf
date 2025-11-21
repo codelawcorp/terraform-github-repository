@@ -58,6 +58,16 @@ module "another_repo" {
   # But still enable vulnerability alerts
   vulnerability_alerts = true
 
+  # GitHub Actions repository permissions
+  actions_repository_permissions = {
+    allowed_actions = "selected" # Options: all, local_only, selected
+    enabled         = true
+    allowed_actions_config = {
+      github_owned_allowed = true
+      patterns_allowed     = ["actions/checkout@*", "actions/setup-*@*"]
+      verified_allowed     = true
+    }
+  }
 
   # Configure a simple webhook
   webhooks = [
