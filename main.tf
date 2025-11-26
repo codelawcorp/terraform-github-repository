@@ -374,7 +374,7 @@ resource "github_repository_file" "this" {
   file                            = each.key
   content                         = each.value.content
   branch                          = each.value.branch
-  commit_message                  = each.value.commit_message
+  commit_message                  = try(each.value.commit_message, "chore: add ${each.key} file") # enforce standard commit message
   commit_author                   = each.value.commit_author
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
