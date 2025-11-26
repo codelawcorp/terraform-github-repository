@@ -218,10 +218,10 @@ variable "allow_update_branch" {
 }
 
 variable "ignore_vulnerability_alerts_during_read" {
-
-  type     = bool
-  default  = false
-  nullable = false
+  description = "Set to `true` to not call the vulnerability alerts endpoint so the resource can also be used without admin permissions during read."
+  type        = bool
+  default     = false
+  nullable    = false
 }
 
 variable "web_commit_signoff_required" {
@@ -435,7 +435,7 @@ variable "custom_properties" {
 variable "enable_dependabot_security_updates" {
   description = "Whether to enable Dependabot security updates for the repository. This automatically enables vulnerability alerts as well."
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
 }
 
@@ -467,7 +467,7 @@ variable "deploy_keys" {
 }
 
 variable "repository_files" {
-  description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties."
+  description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. ! Files can't be managed if the repository is archived."
   type = map(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file
     content                         = string
     branch                          = optional(string, null)

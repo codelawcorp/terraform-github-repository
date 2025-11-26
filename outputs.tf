@@ -11,7 +11,7 @@ output "actions_variables" {
 
 output "branch_default" {
   description = "All available outputs from github_branch_default.this"
-  value       = github_branch_default.this
+  value       = try(github_branch_default.this[0].branch, data.github_repository.this.default_branch, null)
 }
 
 output "branches" {

@@ -122,7 +122,7 @@ data "github_repository" "this" {
 
 resource "github_branch_default" "this" {
   # if  `data.github_repository.this.default_branch` is empty means the repo was just created
-  count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && coalesce(data.github_repository.this.default_branch, "main") != "main" ? 1 : 0
+  count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && try(data.github_repository.this.default_branch, null) != null ? 1 : 0
   # count = try(data.github_repository.template[0].default_branch, "no template used") != var.default_branch &&coalesce(data.github_repository.this.default_branch, "main") != "main"  ? 1 : 0 # if  `data.github_repository.this.default_branc` means the repo was just created
 
   repository = github_repository.this.name
