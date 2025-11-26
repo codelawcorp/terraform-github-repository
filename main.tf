@@ -237,7 +237,7 @@ resource "github_repository_custom_property" "this" {
 
 # Then enable Dependabot security updates
 resource "github_repository_dependabot_security_updates" "this" {
-  count      = var.enable_dependabot_security_updates ? 1 : 0
+  count      = var.enable_dependabot_security_updates && !var.archived ? 1 : 0
   repository = github_repository.this.name
   enabled    = true # False does not work properly. Getting this error Error: DELETE https://api.github.com/repos/codelawcorp-test/bootstrap/automated-security-fixes: 422 Vulnerability alerts must be enabled to configure automated security fixes. []
 }
