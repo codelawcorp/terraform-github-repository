@@ -62,9 +62,6 @@ resource "github_repository" "this" {
       include_all_branches = template.value.include_all_branches
     }
   }
-  lifecycle {
-    ignore_changes = [template] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
-  }
 
   dynamic "pages" { #  GitHub provider issue: pages branch must exist at apply time / bootstrap problem
     for_each = var.pages != null ? [var.pages] : []
@@ -79,6 +76,7 @@ resource "github_repository" "this" {
         }
       }
     }
+
   }
 
   dynamic "security_and_analysis" {
@@ -106,6 +104,10 @@ resource "github_repository" "this" {
       }
     }
   }
+  lifecycle {
+    ignore_changes = [template] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
+  }
+
 }
 
 # resource "github_branch" "default_branch" {
@@ -374,7 +376,7 @@ resource "github_repository_file" "this" {
   file                            = each.key
   content                         = each.value.content
   branch                          = each.value.branch
-  commit_message                  = try(each.value.commit_message, "chore: add ${each.key} file") # enforce standard commit message
+  commit_message                  = coalesce(each.value.commit_message, "chore: add ${each.key} file") # enforce standard commit message
   commit_author                   = each.value.commit_author
   commit_email                    = each.value.commit_email
   overwrite_on_create             = each.value.overwrite_on_create
