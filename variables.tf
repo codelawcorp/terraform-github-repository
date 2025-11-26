@@ -488,7 +488,7 @@ variable "repository_files" {
     content                         = string
     branch                          = optional(string, null)
     commit_sha                      = optional(string, null)
-    commit_message                  = optional(string, "Managed by Terraform")
+    commit_message                  = optional(string, null)
     commit_author                   = optional(string, null)
     commit_email                    = optional(string, null)
     overwrite_on_create             = optional(bool, false)
