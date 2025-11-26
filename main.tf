@@ -137,6 +137,9 @@ resource "github_branch" "this" { # seems like it does not fail when the branch 
   source_sha    = each.value.source_sha
 
   depends_on = [github_branch_default.this]
+  lifecycle {
+    ignore_changes = [source_branch]
+  }
 }
 
 resource "github_branch_protection" "this" {

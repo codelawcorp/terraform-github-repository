@@ -305,7 +305,7 @@ variable "branches" {
   description = "List of branch configurations to create" # More info here: https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch
   type = list(object({
     name          = string
-    source_branch = optional(string) # By default, the source branch is the default branch.
+    source_branch = optional(string) # By default, the source branch is the default branch. Ignored after the initial branch creation.
     source_sha    = optional(string)
     # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection
     protection = optional(object({ # Empty object means to protect with defaults
