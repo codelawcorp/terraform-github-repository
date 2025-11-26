@@ -591,6 +591,7 @@ resource "github_repository_ruleset" "this" {
       bypass_mode = try(bypass_actors.value.bypass_mode, null)
     }
   }
+  depends_on = [github_repository_environment.this]
 }
 
 resource "terraform_data" "this" {
