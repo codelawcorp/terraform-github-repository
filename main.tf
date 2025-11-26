@@ -117,13 +117,16 @@ data "github_repository" "this" {
 }
 
 
+# Deleting this resource does not do anything
 resource "github_branch_default" "this" {
+  # Should be always one, unless it is the branch which was previously created by repo template or `init` process.
   count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && coalesce(data.github_repository.this.default_branch, "main") != var.default_branch ? 1 : 0
 
   repository = github_repository.this.name
   branch     = var.default_branch
   # `true` effectively renames "main" branch after the initial repository creation, but fails if the branch name did not change.
   # `false` does not create a branch, but expects the branch to exist.
+  # Must be true, so the default branch is not managed by github_branch resource.
   rename = true
 }
 

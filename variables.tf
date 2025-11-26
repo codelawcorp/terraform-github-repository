@@ -269,19 +269,13 @@ variable "pages" {
   type = object({
     build_type = optional(string, "legacy")
     cname      = optional(string, null)
-    source = object({
+    source = optional(object({
       branch = string
       path   = string
-    })
+    }), null)
   })
   default  = null
   nullable = true
-  # validation {
-  #   condition = var.pages == null || (try(var.pages.source.branch, "") == var.default_branch || (
-  #     length([for branch in var.branches : branch.name if branch.name == try(var.pages.source.branch, "")]) > 0
-  #   ))
-  #   error_message = "The GitHub Pages branch must be either the default branch or one of the branches defined in the branches variable."
-  # }
 }
 
 variable "security_and_analysis" {

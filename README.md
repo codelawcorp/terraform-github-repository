@@ -536,7 +536,9 @@ Nonetheless, having the opportunity to spin up new projects in seconds and contr
 
 - Error: `New branch cannot be the same as the current branch` - When imporing an existing repo with a non-default-branch. This can be addressed by importing the default branch too [link](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default#import).  
 
-- Github prohibits changes to archived repos. This leads to turmoils. 
+- Github prohibits changes to archived repos. This leads to turmoils. The quick fix is to unarchive, apply, archive again.
+
+- Changing a default branch might attempt to destroy `*.github_branch_default.this[0]` - that is ok. Destroying it does not have any effect on githbub repo.
 
 ## Contributing 🐙
 
