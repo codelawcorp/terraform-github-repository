@@ -47,7 +47,8 @@ module "github_repository_complete" {
   default_branch = "prod"
   branches = [
     {
-      name = "gh-pages"
+      name       = "gh-pages"
+      build_type = "workflow"
     },
     {
       name = "prod" # Try test without prod

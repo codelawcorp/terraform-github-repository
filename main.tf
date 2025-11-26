@@ -66,10 +66,10 @@ resource "github_repository" "this" {
     for_each = var.pages != null ? [var.pages] : []
     content {
       build_type = pages.value.build_type
-      cname      = pages.value.cname
+      cname      = try(pages.value.cname, null)
       source {
-        branch = pages.value.source.branch
-        path   = pages.value.source.path
+        branch = try(pages.value.source.branch, null)
+        path   = try(pages.value.source.path, null)
       }
     }
   }

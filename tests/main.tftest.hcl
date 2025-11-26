@@ -67,18 +67,6 @@ run "no_template" {
 
 
 
-run "branch_variations_rename_to_main" {
-  command   = apply
-  state_key = "branch-variations"
-  variables {
-    default_branch = "main"
-  }
-
-  module {
-    source = "./examples/branch-variations"
-
-  }
-}
 
 
 run "bootsrap" {

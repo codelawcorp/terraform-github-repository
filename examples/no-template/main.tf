@@ -14,8 +14,15 @@ module "no_default_branch" {
   has_downloads = false # deprecated
   has_projects  = false
   has_wiki      = false
-  # pages {}
-  # security_and_analysis {}
+
+  # Testing this requires a paid plan
+  # pages = {
+  #   build_type = "legacy"
+  #   source  = {
+  #     branch = "gh-pages"
+  #     path   = "/"
+  #   }
+  # }
 
 
 
@@ -48,7 +55,10 @@ module "no_default_branch" {
     {
       name          = "tests",
       source_branch = "prod"
-    }
+    },
+    {
+      name = "gh-pages",
+    },
   ]
 
   environments = [

@@ -1,3 +1,6 @@
+test {
+  parallel = true # This is ignored for some reason
+}
 
 run "branch_variations_main" {
   command   = apply
@@ -38,6 +41,23 @@ run "branch_variations_rename_to_prod" {
   }
   assert {
     condition     = module.branch_variation_listed_default_branch.branch_default == "prod"
+    error_message = "Default branch did not match expected"
+  }
+}
+
+
+run "branch_variations_rename_to_main" {
+  command   = apply
+  state_key = "branch-variations"
+  variables {
+    default_branch = "main"
+  }
+
+  module {
+    source = "./examples/branch-variations"
+  }
+  assert {
+    condition     = module.branch_variation_listed_default_branch.branch_default == "main"
     error_message = "Default branch did not match expected"
   }
 }
