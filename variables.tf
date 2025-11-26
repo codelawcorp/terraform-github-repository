@@ -41,6 +41,27 @@ variable "homepage_url" {
   nullable    = true
 }
 
+variable "fork" {
+  description = "Set to true to create a fork of the repository"
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
+variable "source_owner" {
+  description = "Owner of the source repository"
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "source_repo" {
+
+  description = "Name of the source repository"
+  type        = string
+  default     = null
+  nullable    = true
+}
 
 variable "topics" {
   description = "List of topics to add to the repository"
@@ -347,8 +368,9 @@ variable "actions_variables" {
 
 variable "actions_secrets" {
   type = list(object({
-    name  = string
-    value = string
+    name             = string
+    value            = string
+    destroy_on_drift = optional(bool, true)
   }))
   default     = []
   nullable    = false

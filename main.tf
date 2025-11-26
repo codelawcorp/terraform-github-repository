@@ -13,6 +13,10 @@ resource "github_repository" "this" {
   visibility  = var.visibility
 
   homepage_url = var.homepage_url
+
+  fork         = var.fork
+  source_owner = var.source_owner
+  source_repo  = var.source_repo
   # topics       = # Using github_repository_topics instead
 
   has_issues      = var.has_issues
@@ -273,10 +277,11 @@ resource "github_repository_deploy_key" "this" {
 }
 
 resource "github_actions_secret" "this" {
-  for_each        = { for k, v in var.actions_secrets : v.name => v }
-  repository      = github_repository.this.name
-  secret_name     = each.key
-  encrypted_value = base64encode(each.value.value)
+  for_each         = { for k, v in var.actions_secrets : v.name => v }
+  repository       = github_repository.this.name
+  secret_name      = each.key
+  encrypted_value  = base64encode(each.value.value)
+  destroy_on_drift = each.value.destroy_on_drift
 }
 
 resource "github_repository_environment" "this" {
