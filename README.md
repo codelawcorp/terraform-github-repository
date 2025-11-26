@@ -8,6 +8,10 @@ The latest version is published to the official [Terraform registry](https://reg
 This is the most complete GitHub repo module out there.  
 It bundles all resources related to `github_repository` and abstract complexities of github provider.
 
+‼️ Before applying:  
+- Make sure you have updated local backups of the repos before `terraform apply`.
+- **Pin module's exact version**.
+
 <!-- BEGIN_TF_DOCS -->
 
 # Examples
