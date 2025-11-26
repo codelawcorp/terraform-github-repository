@@ -67,9 +67,12 @@ resource "github_repository" "this" {
     content {
       build_type = pages.value.build_type
       cname      = try(pages.value.cname, null)
-      source {
-        branch = try(pages.value.source.branch, null)
-        path   = try(pages.value.source.path, null)
+      dynamic "source" {
+        for_each = pages.value.source != null ? [pages.value.source] : []
+        content {
+          branch = try(pages.value.source.branch, null)
+          path   = try(pages.value.source.path, null)
+        }
       }
     }
   }
