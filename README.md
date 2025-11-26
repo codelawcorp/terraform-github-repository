@@ -90,7 +90,6 @@ When a variable is an object, there is a comment with a link to the provider's d
 
 
 `auto_init` is always true for other resources to work.  
-`default_branch` is always set to `prod` when not using a template. This can be changed to `main` if needed. See [explanation](https://medium.com/@maximonyshchenko/the-best-git-branching-strategy-65abceb67e6a) why `prod` is preferred over `main`.
 ➡️ Scroll right ➡️ to see Default values.
 ## Inputs
 
