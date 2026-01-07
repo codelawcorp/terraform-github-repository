@@ -55,7 +55,7 @@ jobs:
         id: decision
         run: |
           # Check if there are any changes that are relevant for the release
-          SEMVER_TAG=$(npx semantic-release --dry-run | awk '/The next release version is/ {print $NF}')
+          SEMVER_TAG=$(npx semantic-release --dry-run | awk '/next release version is/ {print $NF}')
           if [[ -n "${SEMVER_TAG}" ]]; then
             echo "should-run-build=True" >> "$GITHUB_OUTPUT"
             echo "semver_tag=$SEMVER_TAG" >> $GITHUB_OUTPUT
