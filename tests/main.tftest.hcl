@@ -78,3 +78,11 @@ run "bootsrap" {
 
   }
 }
+
+run "fork" {
+  command   = apply
+  state_key = "fork"
+  module {
+    source = "./examples/fork"
+  }
+}
