@@ -105,7 +105,7 @@ resource "github_repository" "this" {
     }
   }
   lifecycle {
-    ignore_changes = [template] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
+    ignore_changes = [template, fork] # A bug in provider - perpetual changes in plan when `include_all_branches` is true.
   }
 
 }
