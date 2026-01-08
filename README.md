@@ -1,14 +1,14 @@
 # README
 
-This is a reusable Terraform module for creating github repo and configuring it.  
+This is a reusable Terraform module for creating github repo and configuring it.
 The latest version is published to the official [Terraform registry](https://registry.terraform.io/modules/codelawcorp/repository/github/latest).
 
 ## Description 🤝
 
-This is the most complete GitHub repo module out there.  
+This is the most complete GitHub repo module out there.
 It bundles all resources related to `github_repository` and abstract complexities of github provider.
 
-‼️ Before applying:  
+‼️ Before applying:
 - Make sure you have updated local backups of the repos before `terraform apply`.
 - **Pin module's exact version**.
 
@@ -46,7 +46,7 @@ module "github_repository_minimal" {
 
 ```
 
-For more examples, scroll to the button below.  
+For more examples, scroll to the button below.
 
 ## Requirements
 
@@ -98,13 +98,13 @@ No modules.
 
 
 
-The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.  
-The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.  
+The benifit of this and other modules is that it **bundles all resources related to `github_repository`** and abstract complexities of github provider.
+The best effort was made to match the variablesdefault values with provider's defaults to avoid confusions.
 Instead of using variable prefixes, many resources are organized into nested objects: e.g. `branch -> branch protection, environment -> environment protection`.
 When a variable is an object, there is a comment with a link to the provider's documentation for the related resource.
 
 
-`auto_init` is always true for other resources to work.  
+`auto_init` is always true for other resources to work.
 ➡️ Scroll right ➡️ to see Default values.
 ## Inputs
 
@@ -437,7 +437,7 @@ module "github_repository_complete" {
   repository_files = {
     "README.md" = {
       content        = "# Example Repository\nThis is an example repository managed by Terraform."
-      branch         = "some-new-branch" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch. 
+      branch         = "some-new-branch" # If branch does not exist, it will be created. Configure signed commits if require_signed_commits is true on this branch.
       commit_message = "Add README.md"
       commit_author  = "Terraform Bot"
       commit_email   = "test@test.com"
@@ -504,7 +504,7 @@ resource "tls_private_key" "this" {
 
 
 ### Importing existing repository example
-The best part about importing existing resources is that provider does not treat existing configurations as existing resources, but simply overwrites them. You only have to import `github_repository` resource.  
+The best part about importing existing resources is that provider does not treat existing configurations as existing resources, but simply overwrites them. You only have to import `github_repository` resource.
 ```hcl
 import {
   to = module.quick_ops.github_repository.this
@@ -526,19 +526,19 @@ module "quick_ops" {
 
 ## Troubleshooting
 - Terraform destroy and authenticated via `gh` cli requires a token with elevated permissions `gh auth refresh  --scopes delete_repo`. Otherwise you would get error like this:
-`│ Error: DELETE https://api.github.com/repos/USERNAME/repo-as-a-code: 403 Must have admin rights to Repository. []`. The default `gh auth login` a token with a minimum set of scopes.  
+`│ Error: DELETE https://api.github.com/repos/USERNAME/repo-as-a-code: 403 Must have admin rights to Repository. []`. The default `gh auth login` a token with a minimum set of scopes.
 - Refer to [GitHub provider](https://registry.terraform.io/providers/integrations/github/6.9.1/docs) documentation to see all available ways to pass GitHub credentials. If you have used `gh` cli, make sure you've logged in into the right account.
 
 
 
 ## Issues
 
-While the **GitHub provider is functional, it has several limitations and edge cases** that require workarounds. It's not the most robust or fully-featured implementation compared to other Terraform providers. Terraform provider itself has ndocumented incompabilities, sometimes perpetual plans.  
+While the **GitHub provider is functional, it has several limitations and edge cases** that require workarounds. It's not the most robust or fully-featured implementation compared to other Terraform providers. Terraform provider itself has ndocumented incompabilities, sometimes perpetual plans.
 If you face some issues, try another combination of parameters and report an issue here (we will add more docs, validations on the modules's side). Thank you!
 
 Nonetheless, having the opportunity to spin up new projects in seconds and control configurations in a single place is a great advantage.
 
-- Error: `New branch cannot be the same as the current branch` - When imporing an existing repo with a non-default-branch. This can be addressed by importing the default branch too [link](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default#import).  
+- Error: `New branch cannot be the same as the current branch` - When imporing an existing repo with a non-default-branch. This can be addressed by importing the default branch too [link](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default#import).
 
 - Github prohibits changes to archived repos. This leads to turmoils. The quick fix is to unarchive, apply, archive again.
 
@@ -558,6 +558,6 @@ Apache 2 Licensed. See [LICENSE](https://github.com/codelawcorp/terraform-github
 
 ## Need Help?
 
-[CodeLaw.pro](https://codelaw.pro) — helping to structure Terraform code for maintanability, scalability, security. 
+[CodeLaw.pro](https://codelaw.pro) — helping to structure Terraform code for maintanability, scalability, security.
 
-Reach out for **Internal Development Platform** built for your needs that you actually own in just 3 days (+ migrations).  
+Reach out for **Internal Development Platform** built for your needs that you actually own in just 3 days (+ migrations).
