@@ -52,13 +52,13 @@ For more examples, scroll to the button below.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.8.3 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.9.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.8.3 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.9.1 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
@@ -527,7 +527,7 @@ module "quick_ops" {
 ## Troubleshooting
 - Terraform destroy and authenticated via `gh` cli requires a token with elevated permissions `gh auth refresh  --scopes delete_repo`. Otherwise you would get error like this:
 `│ Error: DELETE https://api.github.com/repos/USERNAME/repo-as-a-code: 403 Must have admin rights to Repository. []`. The default `gh auth login` a token with a minimum set of scopes.  
-- Refer to [GitHub provider](https://registry.terraform.io/providers/integrations/github/6.6.0/docs) documentation to see all available ways to pass GitHub credentials. If you have used `gh` cli, make sure you've logged in into the right account.
+- Refer to [GitHub provider](https://registry.terraform.io/providers/integrations/github/6.9.1/docs) documentation to see all available ways to pass GitHub credentials. If you have used `gh` cli, make sure you've logged in into the right account.
 
 
 
