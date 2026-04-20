@@ -282,7 +282,9 @@ resource "github_actions_secret" "this" {
   repository       = github_repository.this.name
   secret_name      = each.key
   encrypted_value  = base64encode(each.value.value)
-  destroy_on_drift = each.value.destroy_on_drift
+  # lifecycle {
+  #     ignore_changes = [remote_updated_at]
+  # }
 }
 
 resource "github_repository_environment" "this" {
@@ -366,6 +368,10 @@ resource "github_actions_environment_secret" "this" {
   plaintext_value = each.value.value
 
   depends_on = [github_repository_environment.this]
+
+  # lifecycle {
+  #     ignore_changes = [remote_updated_at]
+  # }
 }
 
 resource "github_repository_file" "this" {
