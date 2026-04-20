@@ -52,13 +52,13 @@ For more examples, scroll to the button below.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.8.3 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.11.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.8.3 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.11.1 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
