@@ -148,6 +148,10 @@ module "another_repo" {
         {
           name  = "PRODUCTION_API_KEY"
           value = "your-sensitive-api-key"
+        },
+        {
+          name  = "SOME_LONG_SECRET"
+          value = "some-long-secret-value-loooooooooooooooolooooooooooooooooloooooooooooooooolooooooooooooooooloooooooooooooooolooooooooooooooooloooooooooooooooolooooooooooooooooloooooooooooooooong"
         }
       ]
     },
