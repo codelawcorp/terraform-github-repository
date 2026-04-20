@@ -23,7 +23,6 @@ resource "github_repository" "this" {
   has_projects    = var.has_projects
   has_wiki        = var.has_wiki
   has_discussions = var.has_discussions
-  has_downloads   = var.has_downloads
 
   allow_auto_merge       = var.allow_auto_merge
   allow_rebase_merge     = var.allow_rebase_merge
