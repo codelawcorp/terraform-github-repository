@@ -238,12 +238,6 @@ variable "allow_update_branch" {
   nullable    = false
 }
 
-variable "ignore_vulnerability_alerts_during_read" {
-  description = "Set to `true` to not call the vulnerability alerts endpoint so the resource can also be used without admin permissions during read."
-  type        = bool
-  default     = false
-  nullable    = false
-}
 
 variable "web_commit_signoff_required" {
   description = "Require contributors to sign off on web-based commits"
