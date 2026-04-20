@@ -26,11 +26,14 @@ tfenv install <version>
 tfenv use  <version>
 ```
 
-### Deploying 🏋🏼
 
 ### Branching strategy 🚨
 
-Default branch is `prod`.
+Default branch is `prod`. Features/fixes go there.
+
+### Testing
+`GITHUB_OWNER=codelawcorp-test terraform test`
+
 
 #### Semantic Versioning
 
@@ -38,6 +41,8 @@ Code is versioned according to this convention [conventional commits](https://ww
 When a new commit is pushed to the default branch (`prod`), GHA runs an npm script which determines the next version and pushes a git tag. Optionally, it generates `CHANGELOG.md`.
 
 - To force-trigger a new version without actually making any changes, run `git commit --allow-empty -m "fix: trigger release with empty commit" && git push`
+
+
 
 ## Useful links
 
