@@ -127,6 +127,7 @@ data "github_repository" "this" {
 # Deleting this resource does not do anything
 resource "github_branch_default" "this" {
   # Should be always one, unless it is the branch which was previously created by repo template or `init` process.
+  #       try(data.github_repository.template[0].default_branch, null) != var.default_branch # THIS EVALUATES TO FALSE. It is recommended to remove `template` block after repository creation. Having this block incurs in a problem when changing branch names:  `prod` -> `smth_else` -> `prod` (`prod` is the same as the template default branch)
   count = try(data.github_repository.template[0].default_branch, null) != var.default_branch && coalesce(data.github_repository.this.default_branch, "main") != var.default_branch ? 1 : 0
 
   repository = github_repository.this.name
@@ -376,35 +377,18 @@ resource "github_actions_environment_secret" "this" {
 resource "github_repository_file" "this" {
   for_each = var.repository_files
 
-  repository                      = github_repository.this.name
-  file                            = each.key
-  content                         = each.value.content
-  branch                          = each.value.branch
-  commit_message                  = coalesce(each.value.commit_message, "chore: add ${each.key} file") # enforce standard commit message
-  commit_author                   = each.value.commit_author
-  commit_email                    = each.value.commit_email
-  overwrite_on_create             = each.value.overwrite_on_create
-  autocreate_branch               = each.value.autocreate_branch
-  autocreate_branch_source_branch = each.value.autocreate_branch_source_branch # Does it use the default branch or "main" branch ?
-  autocreate_branch_source_sha    = each.value.autocreate_branch_source_sha
+  repository          = github_repository.this.name
+  file                = each.key
+  content             = each.value.content
+  branch              = each.value.branch
+  commit_message      = coalesce(each.value.commit_message, "chore: add ${each.key} file") # enforce standard commit message
+  commit_author       = each.value.commit_author
+  commit_email        = each.value.commit_email
+  overwrite_on_create = each.value.overwrite_on_create
 
   depends_on = [github_branch.this] # Without it, getting insonsistent results as this resource might create a new branch.
 }
 
-# If repository is empty (not initialized) it does not work.
-# resource "github_repository_file" "initial_commit" {
-#   # count = var.template != null || var.repository_files != {} || var.gitignore_template != null || var.license_template  != null  ? 0 : 1
-#   count =  1
-
-#   repository                      = github_repository.this.name
-#   file                            = "README.md"
-#   content                         = "This is a placeholder README file. It will be overwritten by the template or the repository files."
-#   branch                          = local.default_branch
-#   commit_message                  = "feat: initial commit"
-#   commit_author                   = "Terraform"
-#   commit_email                    = "terraform@terraform.io"
-#   autocreate_branch               = true # Even with this option option the repo must be initialized first.
-# }
 
 resource "github_issue_label" "this" {
   for_each = { for label in try(var.issue_labels, []) : label.name => label }

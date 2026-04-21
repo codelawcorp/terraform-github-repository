@@ -479,16 +479,13 @@ variable "deploy_keys" {
 variable "repository_files" {
   description = "A map of files to create in the repository. Each key is the file path, and the value is a map with file content and other properties. ! Files can't be managed if the repository is archived."
   type = map(object({ # https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file
-    content                         = string
-    branch                          = optional(string, null)
-    commit_sha                      = optional(string, null)
-    commit_message                  = optional(string, null)
-    commit_author                   = optional(string, null)
-    commit_email                    = optional(string, null)
-    overwrite_on_create             = optional(bool, false)
-    autocreate_branch               = optional(bool, true)
-    autocreate_branch_source_branch = optional(string, null)
-    autocreate_branch_source_sha    = optional(string, null)
+    content             = string
+    branch              = optional(string, null)
+    commit_sha          = optional(string, null)
+    commit_message      = optional(string, null)
+    commit_author       = optional(string, null)
+    commit_email        = optional(string, null)
+    overwrite_on_create = optional(bool, false)
   }))
   default  = {}
   nullable = false

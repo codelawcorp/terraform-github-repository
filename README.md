@@ -541,7 +541,9 @@ Nonetheless, having the opportunity to spin up new projects in seconds and contr
 
 - Github prohibits changes to archived repos. This leads to turmoils. The quick fix is to unarchive, apply, archive again.
 
-- Changing a default branch might attempt to destroy `*.github_branch_default.this[0]` - that is ok. Destroying it does not have any effect on githbub repo.
+- Changing a default branch might attempt to destroy `*.github_branch_default.this[0]` - that is ok. Destroying it does not have any effec t on githbub repo.
+
+- It is recommended to remove `template` block after repository creation. Having this block incurs in a problem when changing branch names:  `prod` -> `smth_else` -> `prod` (`prod` is the same as the template default branch)
 
 ## Contributing 🐙
 
