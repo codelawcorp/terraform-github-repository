@@ -42,6 +42,15 @@ jobs:
 
       - name: Run Terraform init
         run: terraform init
+      - name: Test the test-org cleanup script
+        run: scripts/clean-test-org.test.sh
+      # A repository left by a failed teardown (409 while GitHub still copies a fork) would block every
+      # later run with "Name already exists"; clean the test org before and after the tests.
+      - name: Delete repositories left in the test org
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_OWNER: codelawcorp-test
+        run: scripts/clean-test-org.sh
       - name: Run Terraform tests
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
@@ -51,3 +60,9 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_OWNER}".insteadOf "https://github.com/${GITHUB_OWNER}"
           terraform test
+      - name: Delete repositories the tests left in the test org
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_OWNER: codelawcorp-test
+        run: scripts/clean-test-org.sh

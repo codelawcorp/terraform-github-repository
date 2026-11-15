@@ -4,10 +4,11 @@ module "github_repository_fork" {
   source = "../../"
   # version = "~> 2.0.0"  # It is always recommended to pin version
 
-  name         = "test-${basename(abspath(path.root))}"
-  fork         = true
-  source_owner = "terraform-aws-modules"
-  source_repo  = "terraform-aws-vpc"
+  name = "test-${basename(abspath(path.root))}"
+  fork = true
+  # A tiny repository, so the fork is fast to make.
+  source_owner = "octocat"
+  source_repo  = "Hello-World"
 
 
   archive_on_destroy = false # Not a critical repo
@@ -15,3 +16,11 @@ module "github_repository_fork" {
 
 
 
+
+# GitHub keeps a new fork locked for about 2.5 min, whatever its size (measured 165 s on 2026-11-15):
+# a delete before that gets "409 A conflicting repository operation is still in progress", and the
+# test leaves test-fork behind. Destroying this resource first waits 120 s before the fork is deleted.
+resource "time_sleep" "fork_settles" {
+  destroy_duration = "120s"
+  depends_on       = [module.github_repository_fork]
+}
